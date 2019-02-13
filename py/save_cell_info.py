@@ -1,6 +1,7 @@
 """
 For loading the data from a given neuropixels probe. Instructions taken from the script:
     http://data.cortexlab.net/dualPhase3/data/script_dualPhase3.m
+    execfile(os.path.join(os.environ['HOME'], '.pystartup'))
 """
 import os
 execfile(os.path.join(os.environ['HOME'], '.pystartup'))
@@ -14,6 +15,7 @@ from scipy.sparse import csr_matrix
 parser = argparse.ArgumentParser(description='Load the data from a given neuropixels probe.')
 parser.add_argument('-p', '--probe_dir', help='Directory of the probe data.', default='posterior', choices=['posterior', 'frontal'])
 parser.add_argument('-d', '--debug', help='Flag to enter debug mode.', action='store_true', default=False)
+parser.add_argument('-s', '--save_cell_info', help='Flag to save the cell info to a csv.', action='store_true', default=False)
 args = parser.parse_args()
 
 proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
@@ -66,6 +68,27 @@ def getTemplatePositionsAmplitudes(templates, whitening_matrix_inv, y_coords, sp
     spike_amplitudes = spike_amplitudes*0.6/512/500*1e6
     return spike_amplitudes, spike_depths, template_depths, template_amplitudes, unwhitened_template_waveforms, template_duration, waveforms
 
+def makeCellInfoTable(cluster_groups, cluster_depths, cluster_amplitudes, probe):
+    thalamus_threshold = 1634.0
+    hippocampus_threshold = 2797.0
+    v1_threshold = 3840.0
+    motor_cortex_threshold = 3840.0
+    striatum_threshold = 1550.0
+    if probe == 'posterior':
+        regions = np.repeat('thalamus', cluster_groups.size).astype(object)
+        regions[cluster_depths > thalamus_threshold] = 'hippocampus'
+        regions[cluster_depths > hippocampus_threshold] = 'v1'
+    if probe == 'frontal':
+        regions = np.repeat('striatum', cluster_groups.size).astype(object)
+        regions[cluster_depths > striatum_threshold] = 'motor_cortex'
+    cell_info = pd.DataFrame({'group':cluster_groups, 'depth':cluster_depths, 'amplitude':cluster_amplitudes, 'region':regions, 'probe':probe}, index=cluster_groups.index)
+    cell_info_file = os.path.join(proj_dir, 'csv', 'cell_info.csv')
+    if not(os.path.isfile(cell_info_file)):
+        cell_info.to_csv(cell_info_file, index_label='cluster_id')
+    else:
+        cell_info.to_csv(cell_info_file, index_label='cluster_id', header=False, mode='a')
+    return pd.read_csv(cell_info_file, index_col='cluster_id')
+
 probe_info = getProbeInfoDict()
 cluster_groups = pd.read_csv(os.path.join(probe_dir, 'cluster_groups.csv'), sep='\t', index_col='cluster_id')['group']
 cluster_ids = np.array(cluster_groups.index)
@@ -82,4 +105,14 @@ cluster_ids = np.setdiff1d(cluster_ids, noise_clusters)
 cluster_groups = cluster_groups[cluster_ids]
 templates = np.load(os.path.join(probe_dir, 'templates.npy'))
 whitening_matrix_inv = np.load(os.path.join(probe_dir, 'whitening_mat_inv.npy'))
-spike_amplitudes, spike_depths, template_depths, template_amplitudes, unwhitened_template_waveforms, template_duration, waveforms = getTemplatePositionsAmplitudes(templates, whitening_matrix_inv, y_coords, spike_templates, template_scaling_amplitudes)
+spike_amplitudes, spike_depths, template_depths, template_amplitudes, unwhitened_template_waveforms, template_duration, waveforms = getTemplatePositionsAmplitudes(templates, whitening_matrix_inv, probe_info['connected_ycoords'], spike_templates, template_scaling_amplitudes)
+cluster_depths = getClusterAveragePerSpike(spike_clusters, spike_depths)
+cluster_amplitudes = getClusterAveragePerSpike(spike_clusters, spike_amplitudes)
+if args.probe_dir == 'frontal':
+    time_correction = np.load(os.path.join(probe_dir, 'time_correction.npy'))
+    spike_times = spike_times - time_correction[1]
+
+if args.save_cell_info:
+    cell_info = makeCellInfoTable(cluster_groups, cluster_depths, cluster_amplitudes, args.probe_dir)
+else:
+    cell_info = pd.read_csv(os.path.join(proj_dir, 'csv', 'cell_info.csv'), index_col='cluster_id')
