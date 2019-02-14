@@ -18,12 +18,13 @@ parser.add_argument('-c', '--cell_choice', help='The method of choosing the cell
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=10, type=int)
 parser.add_argument('-i', '--cell_ids', help='List of cell ids. (used when cell_choice is "specified")', nargs='*', type=int, default=[1689,  286,   84, 1791,  671, 1000, 1198, 1367,  762, 1760])
 parser.add_argument('-g', '--cell_group', help='The quality of sorting for randomly chosen_cells.', default=['good', 'mua', 'unsorted'], type=str, nargs='*')
+parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 args = parser.parse_args()
 
-np.random.seed(1798)
+np.random.seed(args.numpy_seed)
 pd.set_option('max_rows',30)
 
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
 posterior_dir = os.path.join(proj_dir, 'posterior')
