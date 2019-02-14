@@ -16,5 +16,5 @@ optional arguments:
 
 Running the following command will choose ten good neurons at random, calculate the pairwise correlations between their spike counts during ten trials each of drifiting gratings, and present to you this pairwise correlation matrix, and a table of information about the cells.
 ```bash
-python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --cell_group good
+python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --cell_group good --numpy_seed 1798
 ```
