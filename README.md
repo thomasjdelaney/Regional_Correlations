@@ -2,7 +2,7 @@ A repository for calculating the pairwise correlations between neural firing dat
 
 Note that the neuropixels data shared by Nick Steinmetz is the databased used here. But it is not contained within the repo, because it takes up too much space.
 
-#### regional_correlations.py
+### regional_correlations.py
 
 Calculate pairwise correlations between given choice of neurons.
 
@@ -20,3 +20,6 @@ Running the following command will choose ten good neurons at random, calculate 
 ```bash
 python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --group good --numpy_seed 1798
 ```
+
+###### TO DO:
+- Add flags to make figures
