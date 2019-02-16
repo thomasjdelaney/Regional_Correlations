@@ -11,10 +11,12 @@ optional arguments:
 * **-c, --cell_choice**: 'random' or 'specified'. The method of choosing the cells.
 * **-n, --number_of_cells**: Int. The number of cells to choose at random.
 * **-i, --cell_ids**: List of ints corresponding to cluster_ids.  Used when cell_choice is "specified".
-* **-g, --cell_group**: Choose any combination of 'good' 'mua' 'unsorted'. The quality of sorting for randomly chosen_cells.
+* **-g, --group**: Choose any combination of 'good' 'mua' 'unsorted'. The quality of sorting for randomly chosen_cells.
+* **-p, --probe**: Filter the randomly chosen cells by probe ('posterior' or 'frontal').
+* **-r, --region**: Filter the randomly chosen cells by region ('motor_cortex', 'striatum', 'hippocampus', 'thalamus', or 'v1').
 * **-s, --numpy_seed**: The seed to use to initialise numpy.random. Determines which cells are randomly chosen.
 
 Running the following command will choose ten good neurons at random, calculate the pairwise correlations between their spike counts during ten trials each of drifiting gratings, and present to you this pairwise correlation matrix, and a table of information about the cells.
 ```bash
-python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --cell_group good --numpy_seed 1798
+python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --group good --numpy_seed 1798
 ```

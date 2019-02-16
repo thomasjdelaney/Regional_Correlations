@@ -17,14 +17,16 @@ parser = argparse.ArgumentParser(description='Calculate pairwise correlations be
 parser.add_argument('-c', '--cell_choice', help='The method of choosing the cells.', default='random', choices=['random', 'specified'])
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=10, type=int)
 parser.add_argument('-i', '--cell_ids', help='List of cell ids. (used when cell_choice is "specified")', nargs='*', type=int, default=[1689,  286,   84, 1791,  671, 1000, 1198, 1367,  762, 1760])
-parser.add_argument('-g', '--cell_group', help='The quality of sorting for randomly chosen_cells.', default=['good', 'mua', 'unsorted'], type=str, nargs='*')
+parser.add_argument('-g', '--group', help='The quality of sorting for randomly chosen_cells.', default=['good', 'mua', 'unsorted'], type=str, nargs='*')
+parser.add_argument('-p', '--probe', help='Filter the randomly chosen cells by probe', default=['posterior', 'frontal'], type=str, nargs='*')
+parser.add_argument('-r', '--region', help='Filter the randomly chosen cells by region', default=['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1'], type=str, nargs='*')
 parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 args = parser.parse_args()
 
 np.random.seed(args.numpy_seed)
 pd.set_option('max_rows',30)
 
-proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
 posterior_dir = os.path.join(proj_dir, 'posterior')
@@ -33,8 +35,11 @@ frontal_dir = os.path.join(proj_dir, 'frontal')
 cell_subset = np.array([])
 stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
 
-def getRandomSelection(cell_info, num_cells, cell_group):
-    chosen_cells = np.random.choice(cell_info.index[[group in cell_group for group in cell_info['group']]], size=num_cells)
+def getRandomSelection(cell_info, num_cells, group, probe, region):
+    is_group = np.array([g in group for g in cell_info['group']])
+    is_probe = np.array([p in probe for p in cell_info['probe']])
+    is_region = np.array([r in region for r in cell_info['region']])
+    chosen_cells = np.random.choice(cell_info.index[is_region & (is_group & is_probe)], size=num_cells, replace=False)
     chosen_cells.sort()
     return chosen_cells
 
@@ -106,7 +111,7 @@ def showCellInfoTable(cell_info, region_sorted_cell_ids):
     fig.tight_layout()
 
 cell_info, id_adjustor = loadCellInfo()
-cell_ids = getRandomSelection(cell_info, args.number_of_cells, args.cell_group)
+cell_ids = getRandomSelection(cell_info, args.number_of_cells, args.group, args.probe, args.region)
 spike_time_dict = loadSpikeTimes(cell_ids, id_adjustor)
 trials_info = getStimTimesIds(stim_info)
 exp_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info)
