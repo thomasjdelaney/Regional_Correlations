@@ -99,15 +99,20 @@ def getCorrelationMatrixForStim(exp_frame, stim_id):
     np.fill_diagonal(corr_matrix, 0.0); np.fill_diagonal(p_value_matrix, 0.0);
     return corr_matrix, p_value_matrix
 
-def plotCorrMatrixForStim(corr_matrix):
+def plotCorrMatrixForStim(corr_matrix, cell_info, region_sorted_cell_ids):
     plt.matshow(corr_matrix)
+    cell_range = np.arange(correlation_dict[2][0].shape[0])
+    cell_regions = cell_info.loc[region_sorted_cell_ids]['region'].values
+    plt.xticks(cell_range, cell_regions)
+    plt.yticks(cell_range, cell_regions)
+    plt.setp(plt.xticks()[1], rotation=-45, ha="right", rotation_mode="anchor")
     plt.colorbar()
     plt.tight_layout()
 
 def showCellInfoTable(cell_info, region_sorted_cell_ids):
     fig, ax = plt.subplots()
     fig.patch.set_visible(False); ax.axis('off'); ax.axis('tight'); # hide axes
-    ax.table(cellText=cell_info.loc[region_sorted_cell_ids].values, colLabels=cell_info.columns, loc='center')
+    ax.table(cellText=cell_info.loc[region_sorted_cell_ids].values, colLabels=cell_info.columns, loc='center', fontsize='large')
     fig.tight_layout()
 
 cell_info, id_adjustor = loadCellInfo()
@@ -120,7 +125,7 @@ for stim_id in np.unique(trials_info[:,2]).astype(int):
     correlation_dict[stim_id] = getCorrelationMatrixForStim(exp_frame, stim_id)
 correlation_dict[-1] = getCorrelationMatrixForStim(exp_frame, -1) # all stims at once
 # show example correlation matrix for all stimuli
-plotCorrMatrixForStim(correlation_dict[-1][0])
+plotCorrMatrixForStim(correlation_dict[-1][0], cell_info, exp_frame['cell_id'].unique())
 plt.show(block=False)
 # show cell info in table
 showCellInfoTable(cell_info, exp_frame['cell_id'].unique())
