@@ -5,7 +5,7 @@ then comparing these clusters to the biological paritioning of the cells.
 """
 import os
 exec(open(os.path.join(os.environ['HOME'], '.pystartup')).read())
-import argparse
+import argparse, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
