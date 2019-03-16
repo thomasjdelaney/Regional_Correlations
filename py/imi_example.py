@@ -10,19 +10,15 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter1d
 from numpy.random import normal
 from scipy.stats.stats import pearsonr
+from itertools import product
 
 parser = argparse.ArgumentParser(description='Reproducing some results from the IMI paper.')
 parser.add_argument('-v', '--underlying_variance', help='The variance of the underlying normal distributions.', type=float, default=1.0)
 parser.add_argument('-e', '--epsilon', help='The strength of the connection.', type=float, default=0.5)
 parser.add_argument('-n', '--num_samples', help='The number of samples to make.', type=int, default=1000)
 parser.add_argument('-p', '--peak_delay', help='The delay for the effect of y on x.', type=int, default=4)
-parser.add_argument('-b', '--num_bins', help='The number of bins to use in each sample', type=int, default=34)
+parser.add_argument('-b', '--num_bins', help='The number of bins to use in each sample', type=int, default=30)
 args = parser.parse_args()
-
-epsilon = 0.5 # strength of connection
-num_samples = 1000
-peak_delay = 4
-num_bins = 34
 
 def getFilteredSpikeTrains(trains, filter_var=1, filter_window=3):
     num_trials, num_bins = trains.shape
@@ -44,35 +40,31 @@ def getCorrelatedSamples(num_samples, num_bins, underlying_variance, peak_delay,
     filtered_y = getFilteredSpikeTrains(a_y)
     under_x = s_x + epsilon*filtered_y
     a_x = np.min([np.ones(s_x.shape), np.max([np.zeros(s_x.shape), np.floor(under_x)], axis=0)], axis=0)
-    return a_y[:,:num_bins-peak_delay], a_x[:,peak_delay:]
+    return a_y, np.roll(a_x, peak_delay, axis=1)
 
-def offsetSamples(y, x, offset): # positive offset indicates x should be 'ahead' relative to y
-    num_bins = y.shape[1]
-    if offset > num_bins: sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + ' Offset too big.')
-    if offset > 0:
-        offset_y = y[:, :num_bins-offset]
-        offset_x = x[:, offset:]
-    elif offset < 0:
-        offset_y = y[:, np.abs(offset):]
-        offset_x = x[:, :num_bins+offset]
-    else:
-        offset_y = y
-        offset_x = x
-    return offset_y, offset_x
-
-def measureCorrelationWithOffset(y, x, offset):
-    num_samples = y.shape[0]
-    offset_x = np.roll(x, offset, axis=1)
-    corr_coeffs = np.zeros(num_samples)
-    p_values = corr_coeffs
-    for i, (y_trial, x_trial) in enumerate(zip(y, offset_x)):
-        corr_coeffs[i], p_values[i] = pearsonr(y_trial, x_trial)
-    return corr_coeffs
+def getCorrelationWithDelay(y, x, delay):
+    num_samples, num_bins = y.shape
+    index_pairs = np.array([])
+    for i,j in product(np.arange(num_bins), np.arange(num_bins)):
+        if i-j == -delay:
+            index_pairs = np.append(index_pairs,[i,j])
+    num_pairs = index_pairs.size//2
+    index_pairs = np.reshape(index_pairs, [num_pairs, 2]).astype(int)
+    correlations = np.zeros(num_pairs)
+    p_values = np.zeros(num_pairs)
+    for ind, (i, j) in enumerate(index_pairs):
+        correlations[ind], p_values[ind] = pearsonr(y[:,i], x[:,j])
+    return correlations.mean(), correlations.std()/np.sqrt(num_pairs)
 
 y, x = getCorrelatedSamples(args.num_samples, args.num_bins, args.underlying_variance, args.peak_delay, args.epsilon)
-offsets = np.arange(-10, 10)
-correlations = np.vstack([measureCorrelationWithOffset(y, x, offset) for offset in offsets])
-plt.plot(offsets, correlations.mean(axis=1))
+delays = np.arange(-10, 11)
+correlations = np.zeros(delays.shape)
+std_errors = np.zeros(delays.shape)
+for i, delay in enumerate(delays):
+    correlations[i], std_errors[i] = getCorrelationWithDelay(y, x, delay)
+plt.plot(delays, correlations)
+plt.fill_between(delays, correlations - std_errors, correlations + std_errors, color='blue', alpha=0.3, label='standard error')
 plt.ylabel('Correlation Coefficient (a.u.)', fontsize='large')
-plt.xlabel('Delay (time bins)', fontsize='large')
+plt.xlabel('Delay (time bins)', fontsize='large'); plt.xlim([-10,10]);
+plt.xticks(delays); plt.legend(fontsize='large')
 plt.show(block=False)
