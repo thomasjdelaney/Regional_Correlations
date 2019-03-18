@@ -3,9 +3,7 @@ For calculating the pairwise correlations between many neurons, then clustering 
 then comparing these clusters to the biological paritioning of the cells.
     exec(open(os.path.join(os.environ['HOME'], '.pystartup')).read())
 """
-import os
-exec(open(os.path.join(os.environ['HOME'], '.pystartup')).read())
-import argparse, sys
+import os, argparse, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

@@ -22,4 +22,5 @@ python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 
 ```
 
 ###### TO DO:
-- Add flags to make figures
+- enable filtering by response strength, stronger response should give more accurate correlation measures.
+- implement time bins

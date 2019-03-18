@@ -3,9 +3,7 @@ For loading the data from a given neuropixels probe. Instructions taken from the
     http://data.cortexlab.net/dualPhase3/data/script_dualPhase3.m
     execfile(os.path.join(os.environ['HOME'], '.pystartup'))
 """
-import os
-execfile(os.path.join(os.environ['HOME'], '.pystartup'))
-import argparse
+import os, argparse
 import numpy as np
 import pandas as pd
 from scipy.io import loadmat
