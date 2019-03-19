@@ -70,6 +70,7 @@ def getStimTimesIds(stim_info):
     return np.vstack([stim_info['stimStarts'][0], stim_info['stimStops'][0], stim_info['stimIDs'][0]]).T
 
 def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info):
+    # TODO: Add bin length argument here.
     exp_frame = pd.DataFrame(columns=['stim_id', 'stim_start', 'stim_stop', 'cell_id', 'num_spikes'])
     for cell_id, trial_info in product(cell_ids, trials_info):
         stim_start, stim_stop, stim_id = trial_info
