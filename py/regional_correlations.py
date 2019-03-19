@@ -7,6 +7,7 @@ import os, argparse, sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import datetime as dt
 from scipy.io import loadmat
 from itertools import product
 from scipy.stats.stats import pearsonr
@@ -18,6 +19,11 @@ parser.add_argument('-i', '--cell_ids', help='List of cell ids. (used when cell_
 parser.add_argument('-g', '--group', help='The quality of sorting for randomly chosen_cells.', default=['good', 'mua', 'unsorted'], type=str, nargs='*')
 parser.add_argument('-p', '--probe', help='Filter the randomly chosen cells by probe', default=['posterior', 'frontal'], type=str, nargs='*')
 parser.add_argument('-r', '--region', help='Filter the randomly chosen cells by region', default=['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1'], type=str, nargs='*')
+parser.add_argument('-b', '--bin_length', help='The length of time bins used, in seconds.', default=0.0, type=float)
+parser.add_argument('-m', '--plot_correlation_matrix', help='Flag to plot the correlation matrix', default=False, action='store_true')
+parser.add_argument('-a', '--correlation_figure_filename', help='Where to save the correlation matrix plot.', default='', type=str)
+parser.add_argument('-e', '--save_correlation_with_bin_length', help='Flag to save a strong pairwise correlation', default=False, action='store_true')
+parser.add_argument('-j', '--stim_id', help='A stim_id for use in the correlations vs bin length.', default=2, type=int)
 parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 args = parser.parse_args()
 
@@ -29,6 +35,7 @@ csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
 posterior_dir = os.path.join(proj_dir, 'posterior')
 frontal_dir = os.path.join(proj_dir, 'frontal')
+image_dir = os.path.join(proj_dir, 'images')
 
 cell_subset = np.array([])
 stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
@@ -69,13 +76,14 @@ def loadSpikeTimes(cell_ids, id_adjustor):
 def getStimTimesIds(stim_info):
     return np.vstack([stim_info['stimStarts'][0], stim_info['stimStops'][0], stim_info['stimIDs'][0]]).T
 
-def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info):
-    # TODO: Add bin length argument here.
-    exp_frame = pd.DataFrame(columns=['stim_id', 'stim_start', 'stim_stop', 'cell_id', 'num_spikes'])
+def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_length):
+    exp_frame = pd.DataFrame(columns=['stim_id', 'stim_start', 'stim_stop', 'cell_id', 'bin_start', 'bin_stop', 'num_spikes'])
     for cell_id, trial_info in product(cell_ids, trials_info):
         stim_start, stim_stop, stim_id = trial_info
-        num_spikes = ((spike_time_dict[cell_id] > stim_start) & (spike_time_dict[cell_id] < stim_stop)).sum()
-        exp_frame = exp_frame.append({'stim_id':stim_id, 'stim_start':stim_start, 'stim_stop':stim_stop, 'cell_id':cell_id, 'num_spikes':num_spikes}, ignore_index=True)
+        bin_times = np.array([stim_start, stim_stop]) if bin_length == 0.0 else np.hstack([np.arange(stim_start, stim_stop, bin_length), stim_stop])
+        spike_counts = np.histogram(spike_time_dict[cell_id], bins=bin_times)[0]
+        for i, bin_start in enumerate(bin_times[:-1]):
+            exp_frame = exp_frame.append({'stim_id':stim_id, 'stim_start':stim_start, 'stim_stop':stim_stop, 'cell_id':cell_id, 'bin_start':bin_start, 'bin_stop':bin_times[i+1], 'num_spikes':spike_counts[i]}, ignore_index=True)
     for col in ['stim_id', 'cell_id', 'num_spikes']:
         exp_frame[col] = exp_frame[col].astype(int)
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')
@@ -98,6 +106,27 @@ def getCorrelationMatrixForStim(exp_frame, stim_id):
     np.fill_diagonal(corr_matrix, 0.0); np.fill_diagonal(p_value_matrix, 0.0);
     return corr_matrix, p_value_matrix
 
+def getStronglyRespondingPair(exp_frame, cell_info, bin_length, stim_id, region):
+    mean_responses = exp_frame[(exp_frame.stim_id == stim_id)&(exp_frame.region == region)][['cell_id', 'num_spikes']].groupby('cell_id').agg({'num_spikes':'mean'})
+    mean_responses = mean_responses[mean_responses.num_spikes >= 15*bin_length].sort_values('num_spikes', ascending=False)
+    if mean_responses.shape[0] < 2:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 strongly responding neurons...')
+        return [0,0]
+    return mean_responses.index.values[:2]
+
+def saveStronglyRespondingCorrelation(exp_frame, cell_info, bin_length, stim_id, region):
+    strong_pair = getStronglyRespondingPair(exp_frame, cell_info, args.bin_length, stim_id, region)
+    first_response = exp_frame[(exp_frame.cell_id == strong_pair[0])&(exp_frame.stim_id == 2)]['num_spikes']
+    second_response = exp_frame[(exp_frame.cell_id == strong_pair[1])&(exp_frame.stim_id == 2)]['num_spikes']
+    corr_coef, p_value = pearsonr(first_response, second_response)
+    corr_info_frame = pd.DataFrame({'stim_id':stim_id, 'region':region, 'first_cell_id':strong_pair[0], 'second_cell_id':strong_pair[1], 'corr_coef':corr_coef, 'p_value':p_value, 'bin_length':bin_length}, index=[0])
+    correlations_by_bin_length_file = os.path.join(csv_dir, 'correlations_by_bin_length.csv')
+    if not(os.path.isfile(correlations_by_bin_length_file)):
+        corr_info_frame.to_csv(correlations_by_bin_length_file, index=False)
+    else:
+        corr_info_frame.to_csv(correlations_by_bin_length_file, header=False, mode='a', index=False)
+    return pd.read_csv(correlations_by_bin_length_file)
+
 def plotCorrMatrixForStim(corr_matrix, cell_info, region_sorted_cell_ids):
     plt.matshow(corr_matrix)
     cell_range = np.arange(correlation_dict[2][0].shape[0])
@@ -114,18 +143,28 @@ def showCellInfoTable(cell_info, region_sorted_cell_ids):
     ax.table(cellText=cell_info.loc[region_sorted_cell_ids].values, colLabels=cell_info.columns, loc='center', fontsize='large')
     fig.tight_layout()
 
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = loadCellInfo()
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Selecting cells...')
 cell_ids = getRandomSelection(cell_info, args.number_of_cells, args.group, args.probe, args.region)
 spike_time_dict = loadSpikeTimes(cell_ids, id_adjustor)
-trials_info = getStimTimesIds(stim_info)
-exp_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info)
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading trial info...')
+trials_info = getStimTimesIds(stim_info) # TODO: put stim_id in here.
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating experiment frame...')
+exp_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, args.bin_length)
 correlation_dict = {}
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Measuring correlations...')
 for stim_id in np.unique(trials_info[:,2]).astype(int):
     correlation_dict[stim_id] = getCorrelationMatrixForStim(exp_frame, stim_id)
 correlation_dict[-1] = getCorrelationMatrixForStim(exp_frame, -1) # all stims at once
-# show example correlation matrix for all stimuli
-plotCorrMatrixForStim(correlation_dict[-1][0], cell_info, exp_frame['cell_id'].unique())
-plt.show(block=False)
-# show cell info in table
-showCellInfoTable(cell_info, exp_frame['cell_id'].unique())
-plt.show(block=False)
+if args.plot_correlation_matrix:# show example correlation matrix for all stimuli
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Plotting correlations...')
+    plotCorrMatrixForStim(correlation_dict[-1][0], cell_info, exp_frame['cell_id'].unique())
+    if args.correlation_figure_filename == '':
+        plt.show(block=False)
+        showCellInfoTable(cell_info, exp_frame['cell_id'].unique()) # show cell info in table
+        plt.show(block=False)
+    else:
+        plt.savefig(os.path.join(image_dir, 'pairwise_correlation_matrices', args.correlation_figure_filename))
+if args.save_correlation_with_bin_length:
+    corr_info = saveStronglyRespondingCorrelation(exp_frame, cell_info, args.bin_length, args.stim_id, args.region[0])
