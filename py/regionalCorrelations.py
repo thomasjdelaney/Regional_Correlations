@@ -69,9 +69,9 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
     for cell_id, trial_info in product(cell_ids, trials_info):
         stim_start, stim_stop, stim_id = trial_info
         bin_times = getBinTimes(stim_start, stim_stop, bin_width)
+        num_bins = bin_times.size-1
         spike_counts = np.histogram(spike_time_dict[cell_id], bins=bin_times)[0]
-        for i, bin_start in enumerate(bin_times[:-1]):
-            exp_frame = exp_frame.append({'stim_id':stim_id, 'stim_start':stim_start, 'stim_stop':stim_stop, 'cell_id':cell_id, 'bin_start':bin_start, 'bin_stop':bin_times[i+1], 'num_spikes':spike_counts[i]}, ignore_index=True)
+        exp_frame = exp_frame.append(pd.DataFrame({'stim_id':stim_id.repeat(num_bins), 'stim_start':stim_start.repeat(num_bins), 'stim_stop':stim_stop.repeat(num_bins), 'cell_id':cell_id.repeat(num_bins), 'bin_start':bin_times[0:num_bins], 'bin_stop':bin_times[1:num_bins+1], 'num_spikes':spike_counts}), ignore_index=True)
     for col in ['stim_id', 'cell_id', 'num_spikes']:
         exp_frame[col] = exp_frame[col].astype(int)
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')
