@@ -107,6 +107,3 @@ def main():
 
 if not(args.debug):
     main()
-
-if args.save_correlation_with_bin_length:
-    corr_info = saveStronglyRespondingCorrelation(exp_frame, cell_info, args.bin_length, args.stim_id, args.region[0])
