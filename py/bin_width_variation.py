@@ -23,7 +23,7 @@ np.random.seed(args.numpy_seed) # setting seed
 pd.set_option('max_rows',30) # setting display options for terminal display
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
@@ -35,16 +35,19 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def getStronglyRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, strong_threshold=40.0):
+def getStronglyRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, strong_threshold=20.0):
     big_frame = rc.getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, 0.0)
-    agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg({'num_spikes':'mean'}).sort_values('num_spikes', ascending=False)
-    strongly_responding_cells = agg_frame[agg_frame >= 40.0].index.values
+    agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg('mean').sort_values('num_spikes', ascending=False)
+    strongly_responding_cells = agg_frame.index[agg_frame['num_spikes'] >= strong_threshold].values
+    if strongly_responding_cells.size < 2:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 strongly responding cells.')
+        return np.array([0,0])
     all_strong_pairs = np.array(list(combinations(strongly_responding_cells, 2)))
     num_strong_pairs = all_strong_pairs.shape[0]
     if num_strong_pairs >= num_pairs:
         randomly_chosen_pairs = all_strong_pairs[np.random.choice(np.arange(0,num_strong_pairs), num_pairs, replace=False),:]
     else:
-        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_strong_pairs) + ' found.')
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_strong_pairs) + ' pairs found.')
         randomly_chosen_pairs = all_strong_pairs
     return randomly_chosen_pairs
 
@@ -85,7 +88,9 @@ def main():
     stim_ids = np.unique(stim_info['stimIDs'][0])
     bin_widths = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
     regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
-    return pd.concat([getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, args.group, args.wanted_num_pairs, bin_widths) for region,stim_id in product(regions, stim_ids)], ignore_index=True)
+    all_regions_stims_pairs_widths = pd.concat([getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, args.group, args.wanted_num_pairs, bin_widths) for region,stim_id in product(regions, stim_ids)], ignore_index=True)
+    all_regions_stims_pairs_widths.to_csv(os.path.join(csv_dir, 'all_regions_stims_pairs_widths.csv'))
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
 
 if not(args.debug):
-    everything = main()
+    main()

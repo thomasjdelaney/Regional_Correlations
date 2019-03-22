@@ -66,6 +66,8 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
     # returns a frame with number of rows = number of bins X number of trials X number of cells X number of stimuli
     # each row contains the number of spikes in the associated bin.
     exp_frame = pd.DataFrame(columns=['stim_id', 'stim_start', 'stim_stop', 'cell_id', 'bin_start', 'bin_stop', 'num_spikes'])
+    if all(cell_ids == 0):
+        return exp_frame
     for cell_id, trial_info in product(cell_ids, trials_info):
         stim_start, stim_stop, stim_id = trial_info
         bin_times = getBinTimes(stim_start, stim_stop, bin_width)
