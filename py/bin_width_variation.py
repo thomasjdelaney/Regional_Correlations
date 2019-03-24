@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 from scipy.io import loadmat
 from itertools import combinations, product
-from scipy.stats.stats import pearsonr
+from scipy.stats import pearsonr
 
 parser = argparse.ArgumentParser(description='Calculate pairwise correlations between given choice of neurons.')
 parser.add_argument('-n', '--wanted_num_pairs', help='The number of strongly responding pairs to use.', default=30, type=int)

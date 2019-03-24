@@ -1,0 +1,137 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[margin=3cm]{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{mathtools}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Thomas Delaney}
+\rhead{Affect of time bin widths on correlations}
+\cfoot{\thepage}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\newcommand{\boldnabla}{\mbox{\boldmath$\nabla$}} % to be used in mathmode
+\newcommand{\cbar}{\overline{\mathbb{C}}}% to be used in mathmode
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}% to be used in mathmode
+\newcommand{\difff}[2]{\frac{d^2 #1}{d #2^2}}% to be used in mathmode
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}} % to be used in mathmode
+\newcommand{\pdifff}[2]{\frac{\partial^2 #1}{\partial #2^2}}% to be used in mathmode
+\newcommand{\upperth}{$^{\mbox{\footnotesize{th}}}$}%to be used in text mode
+\newcommand{\vect}[1]{\mathbf{#1}}% to be used in mathmode
+\newcommand{\curl}[1]{\boldnabla \times \vect{#1}} % to be used in mathmode
+\newcommand{\divr}[1]{\boldnabla \cdot \vect{#1}} %to be used in mathmode
+\newcommand{\modu}[1]{\left| #1 \right|} %to be used in mathmode
+\newcommand{\brak}[1]{\left( #1 \right)} % to be used in mathmode
+\newcommand{\comm}[2]{\left[ #1 , #2 \right]} %to be used in mathmode
+\newcommand{\dop}{\vect{d}} %to be used in mathmode
+\newcommand{\cov}{\text{cov}} %to be used in mathmode
+\newcommand{\var}{\text{var}} %to be used in mathmode
+\newcommand{\mb}{\mathbf} %to be used in mathmode
+\newcommand{\bs}{\boldsymbol} %to be used in mathmode
+% Title Page
+\title{How informative are retinal ganglion cells?}
+\author{Thomas Delaney 1330432}
+
+\begin{document}
+
+\subsection*{Motivation}
+In their review entitled `Measuring and interpreting neural correlations', Cohen and Kohn studied the affects of response strength and time bin width on neural correlation measurement. Using simulated data, they found that correlation measurements taken between weakly responding neurons (i.e. neurons with firing rates of $<10$ spikes per s) will be less than the true pairwise correlation value. They also found that binning the neural spiking data into small time bins can cause the measured correlation to be less than the true value. How small is 'small' in this case is related to width of the cross-correlogram of the pair of neurons. But, it was shown in simulation that time bins should be at least $0.1$ seconds wide in order for the measured correlation value to be close to the true correlation value \cite{cohen}.
+
+Our aim here is to measure a big enough sample of pairwise correlations from actual neural data across a selection of time bin widths and compare our results to those of Cohen and Kohn. In order to do this we used data collected using `Neuropixels' probes \cite{jun}. These data are made available publicly online by Dr. Nick Steinmetz \footnote{\url{http://data.cortexlab.net/dualPhase3/}}.
+
+\subsection*{Data}
+The recent development of Neuropixels probes has allowed extracellular voltage measurements to be collected from multiple brain regions simultaneously routinely, and in much larger numbers than traditional methods.
+
+Using two probes, spiking activity was simultaneously collected from over $800$ neurons in an awake mouse brain for a period of $84$ minutes. During this period, the mouse was shown various visual stimuli. The $800$ neurons were distributed across $5$ different brain regions: V1, hippocampus, thalamus, motor cortex, and striatum.
+
+The stimulus was a full field moving bar grating. There were $17$ stimulus conditions corresponding to $16$ drift directions ($0$ degrees to $337.5$ degrees in $22.5$ degree increments) with $2$Hz temporal frequency and $0.08$ cycles/degree spatial frequency (conditions $1-16$) plus a blank condition ($17$). Each condition was presented $10$ times for $2$ seconds each time, with $1.5$ seconds between trials.
+
+The data consist of spike timings and cell/cluster idenifiers associating spikes with a certain cell/cluster and a certain time. Each cell/cluster is classified as `good', `multi-unit activity', or `unsorted', referring to the quality of spike sorting. This classification was performed by those who analysed the data. Only the cell/clusters classified as `good' are used in this project.
+
+\subsection*{Methods}
+\subsubsection*{Binning data}
+The data were divided into time bins or various widths ranging from $0.01$ to $2$ seconds. If the bin width was not an integer divisor of the trial period ($2$ seconds), only the bins that lay totally within the trial period were included. For example, when dividing the trials into bins of $0.3$ seconds, the final bin of $0.2$ seconds was excluded. We measured the number of spikes in each time bin.
+
+When performing calculations on the binned data, each bin was treated as an individual measurement. For example, when calculating the spike count correlation coefficient for a given pair of neurons, if the time bin used was $2.0$ seconds, then we had $10$ measurements for each neuron with which to calculate the coefficient. But, if we were using a bin width of $1.0$ second, then we would have $20$ measurements for each neuron.
+
+\subsubsection*{Pairing strongly responding neurons}
+A weak response, or low firing rate, has a diminishing affect on measured correlation \cite{cohen}. In order to avoid this affect, we filtered out any neurons with a mean firing rate of less than $10$ spikes per second measured across the $10$ trials. Once these neurons were filtered out, we randomly chose $30$ pairs from all the possible pairs of the remaining neurons. We used these $30$ pairs to calculate $30$ correlation coefficients. We repeated this process for each brain region, and each stimulus condition.
+
+If less than $9$ strongly responding neurons were found it was not possible to make $30$ pairs of strongly responding neurons. In that case, we just used all the strongly responding pairs.
+
+\subsubsection*{Correlation coefficient}
+We calculated Pearson's correlation coefficient for pairs of neurons. For jointly distributed random variables $X$ and $Y$, Pearson's correlation coefficient is defined as:
+\begin{align}\label{eq:dist_pearsons_corr}
+  \rho_{XY} =& \frac{\cov(X,Y)}{\sigma_X \sigma_Y} \\
+            =& \frac{E[(X - \mu_X)(Y - \mu_Y)]}{\sigma_X \sigma_Y}
+\end{align}
+where $E$ denotes the expected value, $\mu$ denotes the mean, and $\sigma$ denotes the standard deviation. The correlation coefficient is a normalised measure of the covariance. It can take values between $1$ (completely correlated) and $-1$ (completely anti-correlated). Two independent variables will have a correlation coefficient of $0$. But, having $0$ correlation does not imply independence.
+
+If we do not know the means and standard deviations required for equation \ref{eq:dist_pearsons_corr}, but we have samples from $X$ and $Y$, Pearson's sample correlation coefficient is defined as:
+\begin{align}
+  r_{XY} = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}}
+\end{align}
+where $\lbrace (x_i, y_i) \rbrace$ for $i \in \lbrace 1, \dots, n \rbrace$ are the paired samples from $X$ and $Y$, and $\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$, and $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ are the sample means.
+
+In practice we used the python function \texttt{scipy.stats.pearsonr} to calculate the correlation coefficients.
+
+\subsection*{Results}
+For each stimulus and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their correlation coefficient using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that the measured correlation coefficients increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter. This is in agreement with the findings of the simulated experiment in \cite{cohen}.
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/bin_width_correlations_hippocampus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/bin_width_correlations_motor_cortex_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/bin_width_correlations_striatum_14.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/bin_width_correlations_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/bin_width_correlations_v1_6.png}
+  \end{subfigure}
+  \caption{Absolute values of correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were avilable. The absolute correlation increases approximately log-linearly with the bin width up to a bin width of $1$ second and levels out somewhat thereafter.}
+  \label{fig:bin_width_vs_correlation_by_region}
+\end{figure}
+
+\subsection*{Things to discuss with Cian}
+\begin{enumerate}
+  \item Is all of the above clear?
+  \item Are my methods sound?
+  \item Could any of my methods be improved?
+  \item How can this document be improved? (The figures with the linear x-axis might be better.)
+\end{enumerate}
+
+
+\newpage
+
+\bibliography{fluorescence_modelling.bbl}
+
+\end{document}
