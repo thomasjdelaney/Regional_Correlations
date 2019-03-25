@@ -31,7 +31,7 @@ def plotCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, 
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
     agg_frame.loc[:,'std_err'] = agg_frame.corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
     fig = plt.figure(figsize=(4,3))
-    plt.plot(agg_frame.corr_coef.index.values, agg_frame.corr_coef['mean'], color=region_to_colour[region], label=region.replace('_', ' '))
+    plt.plot(agg_frame.corr_coef.index.values, agg_frame.corr_coef['mean'], color=region_to_colour[region], label=region.replace('_', ' ').capitalize())
     plt.fill_between(agg_frame.corr_coef.index.values, agg_frame.corr_coef['mean']-agg_frame['std_err'], agg_frame.corr_coef['mean']+agg_frame['std_err'], color=region_to_colour[region], alpha=0.3)
     plt.xlim([agg_frame.corr_coef.index.min(), agg_frame.corr_coef.index.max()])
     plt.xscale('log')
