@@ -1,11 +1,11 @@
 # Fdb version 3
-["bibtex regional_correlations"] 1553386178 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1553517914
+["bibtex regional_correlations"] 1553518047 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1553518048
   "fluorescence_modelling.bbl.bib" 0 -1 0 ""
-  "regional_correlations.aux" 1553517914 1810 7cc5b032085292f6b8cf71e229a5849b ""
+  "regional_correlations.aux" 1553518048 1812 30bce6f9ece4870d1fb24a8c8f606eff ""
   (generated)
   "regional_correlations.bbl"
   "regional_correlations.blg"
-["pdflatex"] 1553517913 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1553517914
+["pdflatex"] 1553518047 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1553518048
   "/home/thomas/.texlive2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1550972528 3682902 5edbeb781481373c7d9336db116906a2 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1544722916 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
@@ -117,12 +117,12 @@
   "figures/bin_width_correlations_striatum_14.png" 1553517904 19235 a45100a08b8256b96366eada9a7f2132 ""
   "figures/bin_width_correlations_thalamus_15.png" 1553517904 18080 04e6f049203fd058361faf998da7e7da ""
   "figures/bin_width_correlations_v1_6.png" 1553517904 18298 94d8d889fc5125d3af178767962c5b82 ""
-  "regional_correlations.aux" 1553517914 1810 7cc5b032085292f6b8cf71e229a5849b ""
+  "regional_correlations.aux" 1553518048 1812 30bce6f9ece4870d1fb24a8c8f606eff ""
   "regional_correlations.bbl" 1553366916 401 8c8844e27818a880e1596d4c279df3b7 "bibtex regional_correlations"
-  "regional_correlations.out" 1553517913 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "regional_correlations.tex" 1553517759 10155 4abcbff5613bb2e42ed308bb1c32d4f9 ""
+  "regional_correlations.out" 1553518047 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "regional_correlations.tex" 1553518043 10157 d564fbe4270fda7c48678e2fb67cf6eb ""
   (generated)
-  "regional_correlations.out"
   "regional_correlations.pdf"
   "regional_correlations.log"
+  "regional_correlations.out"
   "regional_correlations.aux"
