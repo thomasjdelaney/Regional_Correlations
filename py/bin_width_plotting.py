@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 parser = argparse.ArgumentParser(description="For plotting the data found in 'all_regions_stims_pairs_widths.csv'.")
+parser.add_argument('-f', '--filename', help='The file from which to get the pairwise correlation data.', type=str, default='all_regions_stims_pairs_widths.csv')
+parser.add_argument('-p', '--image_file_prefix', help='A prefix for the image file names.', type=str, default='')
+parser.add_argument('-x', '--x_axis_scale', help='The scale of the x-axis', type=str, default='linear', choices=['log', 'linear'])
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
 args = parser.parse_args()
 
@@ -25,7 +28,7 @@ def getBestStimFromRegion(all_regions_stims_pairs_widths, region):
     region_frame = all_regions_stims_pairs_widths[all_regions_stims_pairs_widths.region == region]
     return region_frame['stim_id'].value_counts().index[0]
 
-def plotCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, stim_id, region_to_colour):
+def plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, stim_id, region_to_colour, prefix, x_axis_scale):
     region_stim_frame = all_regions_stims_pairs_widths[(all_regions_stims_pairs_widths.region == region)&(all_regions_stims_pairs_widths.stim_id == stim_id)]
     region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
@@ -34,13 +37,13 @@ def plotCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, 
     plt.plot(agg_frame.corr_coef.index.values, agg_frame.corr_coef['mean'], color=region_to_colour[region], label=region.replace('_', ' ').capitalize())
     plt.fill_between(agg_frame.corr_coef.index.values, agg_frame.corr_coef['mean']-agg_frame['std_err'], agg_frame.corr_coef['mean']+agg_frame['std_err'], color=region_to_colour[region], alpha=0.3)
     plt.xlim([agg_frame.corr_coef.index.min(), agg_frame.corr_coef.index.max()])
-    plt.xscale('log')
+    plt.xscale('log') if x_axis_scale=='log' else 0
     plt.ylim([0,1])
     plt.xlabel('Bin width (s)', fontsize='large')
     plt.ylabel('|Corr Coef| (a.u.)', fontsize='large')
     plt.legend(fontsize='large')
     plt.tight_layout()
-    filename = 'bin_width_correlations_' + region + '_' + str(stim_id) + '.png'
+    filename = prefix + 'bin_width_correlations_' + region + '_' + str(stim_id) + '.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+filename+'...')
     plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', filename))
     plt.close()
@@ -48,13 +51,13 @@ def plotCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, 
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading all_regions_stims_pairs_widths.csv...')
-    all_regions_stims_pairs_widths = pd.read_csv(os.path.join(csv_dir, 'all_regions_stims_pairs_widths.csv'))
+    all_regions_stims_pairs_widths = pd.read_csv(os.path.join(csv_dir, args.filename))
     regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
     colours = cm.gist_rainbow(np.linspace(0, 1, 5)) # 5 regions
     region_to_colour = dict(list(zip(regions, colours)))
     for i,region in enumerate(regions):
         best_stim = getBestStimFromRegion(all_regions_stims_pairs_widths, region)
-        plotCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, best_stim, region_to_colour)
+        plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, best_stim, region_to_colour, args.prefix, args.x_axis_scale)
 
 if not(args.debug):
     main()
