@@ -19,7 +19,7 @@ pd.set_option('max_rows',30) # setting display options for terminal display
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 image_dir = os.path.join(proj_dir, 'images')
@@ -57,7 +57,7 @@ def main():
     region_to_colour = dict(list(zip(regions, colours)))
     for i,region in enumerate(regions):
         best_stim = getBestStimFromRegion(all_regions_stims_pairs_widths, region)
-        plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, best_stim, region_to_colour, args.prefix, args.x_axis_scale)
+        plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
 
 if not(args.debug):
     main()
