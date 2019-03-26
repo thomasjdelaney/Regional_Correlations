@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import datetime as dt
 from itertools import product
 
 def loadCellInfo(csv_dir):
@@ -39,7 +40,7 @@ def loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor):
         spike_times[cell_id] = np.concatenate([cell_post_spike_times, cell_front_spike_times])
     return spike_times
 
-def getStimTimesIds(stim_info, stim_id):
+def getStimTimesIds(stim_info, stim_id=0):
     # get stim start times, stim stop times, and stim IDs
     if stim_id == 0:
         trials_info = np.vstack([stim_info['stimStarts'][0], stim_info['stimStops'][0], stim_info['stimIDs'][0]]).T
@@ -62,18 +63,46 @@ def getBinTimes(stim_start, stim_stop, bin_width):
         bin_times = np.arange(stim_start, stim_stop, bin_width)
     return bin_times
 
+def excludeBumTrials(bin_array, trials_info):
+    # WARN: If the number of 'bum trials' exceeds the number of 'good trials', this function will cause problems
+    sizes = np.array([b.size for b in bin_array])
+    unique_sizes, counts = np.unique(sizes, return_counts=True)
+    common_size = unique_sizes[counts.argmax()]
+    bum_trial_inds = np.where(sizes != common_size)[0]
+    num_bum_trials = bum_trial_inds.size
+    print(dt.datetime.now().isoformat() + ' WARN: ' + 'Found ' + str(num_bum_trials) + ' bum trials...')
+    new_bin_array = np.vstack(np.delete(bin_array, bum_trial_inds))
+    new_trials_info = np.delete(trials_info, bum_trial_inds, axis=0)
+    return new_bin_array, new_trials_info
+
+def getTrialsFrame(trials_info, bin_width):
+    bin_array = np.array([getBinTimes(stim_start, stim_stop, bin_width) for stim_start, stim_stop, stim_id in trials_info])
+    if bin_array.dtype == 'O':
+        bin_array, trials_info = excludeBumTrials(bin_array, trials_info)
+    num_trials, num_bins = bin_array.shape
+    num_bins -= 1
+    trials_frame = pd.DataFrame(columns=['stim_start', 'stim_stop', 'bin_start', 'bin_stop', 'stim_id'])
+    for i, bin_times in enumerate(bin_array):
+        stim_start, stim_stop, stim_id = trials_info[i]
+        trials_frame = trials_frame.append(pd.DataFrame({'stim_start':stim_start.repeat(num_bins), 'stim_stop':stim_stop.repeat(num_bins), 'bin_start':bin_times[0:num_bins], 'bin_stop':bin_times[1:num_bins+1], 'stim_id':stim_id.repeat(num_bins)}), ignore_index=True)
+    return trials_frame, num_bins, num_trials
+
 def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_width):
     # returns a frame with number of rows = number of bins X number of trials X number of cells X number of stimuli
     # each row contains the number of spikes in the associated bin.
     exp_frame = pd.DataFrame(columns=['stim_id', 'stim_start', 'stim_stop', 'cell_id', 'bin_start', 'bin_stop', 'num_spikes'])
     if all(cell_ids == 0):
         return exp_frame
-    for cell_id, trial_info in product(cell_ids, trials_info):
-        stim_start, stim_stop, stim_id = trial_info
-        bin_times = getBinTimes(stim_start, stim_stop, bin_width)
-        num_bins = bin_times.size-1
-        spike_counts = np.histogram(spike_time_dict[cell_id], bins=bin_times)[0]
-        exp_frame = exp_frame.append(pd.DataFrame({'stim_id':stim_id.repeat(num_bins), 'stim_start':stim_start.repeat(num_bins), 'stim_stop':stim_stop.repeat(num_bins), 'cell_id':cell_id.repeat(num_bins), 'bin_start':bin_times[0:num_bins], 'bin_stop':bin_times[1:num_bins+1], 'num_spikes':spike_counts}), ignore_index=True)
+    trials_frame, num_bins, num_trials = getTrialsFrame(trials_info, bin_width)
+    bin_stops = trials_frame.bin_stop.values[[i*num_bins-1 for i in np.arange(1,num_trials+1)]]
+    starts_and_stops = np.hstack([trials_frame.bin_start.values, bin_stops])
+    starts_and_stops.sort()
+    for cell_id in cell_ids:
+        spike_counts = np.histogram(spike_time_dict[cell_id], starts_and_stops)[0]
+        spike_counts = np.delete(spike_counts, [np.where(starts_and_stops == bin_stop)[0][0] for bin_stop in bin_stops[:-1]])
+        trials_frame['num_spikes'] = spike_counts
+        trials_frame['cell_id'] = cell_id.repeat(spike_counts.size)
+        exp_frame = exp_frame.append(trials_frame, ignore_index=True)
     for col in ['stim_id', 'cell_id', 'num_spikes']:
         exp_frame[col] = exp_frame[col].astype(int)
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')

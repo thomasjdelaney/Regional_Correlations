@@ -19,7 +19,7 @@ pd.set_option('max_rows',30) # setting display options for terminal display
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 image_dir = os.path.join(proj_dir, 'images')
