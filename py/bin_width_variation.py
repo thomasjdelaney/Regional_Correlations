@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime as dt
 from scipy.io import loadmat
-from itertools import combinations, product
+from itertools import product
 from scipy.stats import pearsonr
 
 parser = argparse.ArgumentParser(description='Calculate pairwise correlations between given choice of neurons.')
@@ -37,24 +37,6 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_strong, strong_threshold=20.0):
-    big_frame = rc.getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, 0.0)
-    agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg('mean').sort_values('num_spikes', ascending=False)
-    strongly_responding_cells = agg_frame.index[agg_frame['num_spikes'] >= strong_threshold].values
-    weakly_responding_cells = agg_frame.index[(agg_frame['num_spikes'] <= strong_threshold)&(agg_frame['num_spikes'] > 0.0)].values
-    responding_cells = strongly_responding_cells if is_strong else weakly_responding_cells
-    if responding_cells.size < 2:
-        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 responding cells.')
-        return np.array([0,0])
-    all_pairs = np.array(list(combinations(responding_cells, 2)))
-    num_all_pairs = all_pairs.shape[0]
-    if num_all_pairs >= num_pairs:
-        randomly_chosen_pairs = all_pairs[np.random.choice(np.arange(0,num_all_pairs), num_pairs, replace=False),:]
-    else:
-        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_all_pairs) + ' pairs found.')
-        randomly_chosen_pairs = all_pairs
-    return randomly_chosen_pairs
-
 def getCorrCoefFromPair(pair, exp_frame):
     first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
     second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
@@ -78,7 +60,7 @@ def getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, sti
     trials_info = rc.getStimTimesIds(stim_info, stim_id)
     spike_time_dict = rc.loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor)
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting pairs of responding cells...')
-    responding_pairs = getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, wanted_num_pairs, is_strong)
+    responding_pairs = rc.getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, wanted_num_pairs, is_strong)
     num_pairs = responding_pairs.shape[0]
     responding_cells = np.unique(responding_pairs)
     spike_time_dict = {k: spike_time_dict[k] for k in responding_cells}

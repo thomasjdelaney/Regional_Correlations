@@ -1,8 +1,10 @@
 import os
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
 import datetime as dt
-from itertools import product
+from itertools import product, combinations
 
 def loadCellInfo(csv_dir):
     # load the csv containing information about the cells. Creates a unique ID for each cell
@@ -107,3 +109,21 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
         exp_frame[col] = exp_frame[col].astype(int)
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')
     return exp_frame.sort_values(['probe', 'region', 'depth'])
+
+def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_strong=True, strong_threshold=20.0):
+    big_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, 0.0)
+    agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg('mean').sort_values('num_spikes', ascending=False)
+    strongly_responding_cells = agg_frame.index[agg_frame['num_spikes'] >= strong_threshold].values
+    weakly_responding_cells = agg_frame.index[(agg_frame['num_spikes'] <= strong_threshold)&(agg_frame['num_spikes'] > 0.0)].values
+    responding_cells = strongly_responding_cells if is_strong else weakly_responding_cells
+    if responding_cells.size < 2:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 responding cells.')
+        return np.array([0,0])
+    all_pairs = np.array(list(combinations(responding_cells, 2)))
+    num_all_pairs = all_pairs.shape[0]
+    if num_all_pairs >= num_pairs:
+        randomly_chosen_pairs = all_pairs[np.random.choice(np.arange(0,num_all_pairs), num_pairs, replace=False),:]
+    else:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_all_pairs) + ' pairs found.')
+        randomly_chosen_pairs = all_pairs
+    return randomly_chosen_pairs
