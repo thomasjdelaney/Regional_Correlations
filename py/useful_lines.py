@@ -25,14 +25,37 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def rollCorrCoef(first_trial, second_trial, roll):
-    if roll == 0:
-        corr_coef, p_value = pearsonr(first_trial, second_trial)
-    elif roll > 0:
-        corr_coef, p_value = pearsonr(first_trial[roll:], np.roll(second_trial, roll)[roll:])
-    else:
-        corr_coef, p_value = pearsonr(first_trial[:roll], np.roll(second_trial, roll)[:roll])
-    return corr_coef, p_value
+def getIndexPairsWithDelay(num_samples, num_bins, delay):
+    index_pairs = np.array([])
+    for i,j in product(np.arange(num_bins), np.arange(num_bins)):
+        if i-j == -delay:
+            index_pairs = np.append(index_pairs,[i,j])
+    num_pairs = index_pairs.size//2
+    index_pairs = np.reshape(index_pairs, [num_pairs, 2]).astype(int)
+    return num_pairs, index_pairs
+
+def getCorrelationWithDelay(y, x, delay):
+    num_samples, num_bins = y.shape
+    num_pairs, index_pairs = getIndexPairsWithDelay(num_samples, num_bins, delay)
+    correlations = np.zeros(num_pairs)
+    p_values = np.zeros(num_pairs)
+    for ind, (i, j) in enumerate(index_pairs):
+        first = y[:,i]
+        second = x[:,j]
+        if any(first) & any(second):
+            correlations[ind], p_values[ind] = pearsonr(first, second)
+    non_zero_inds = correlations.nonzero()[0]
+    corr_coef_estimate = correlations[correlations.nonzero()].mean()
+    corr_coef_stderr = correlations[correlations.nonzero()].std()/np.sqrt(non_zero_inds.size)
+    return corr_coef_estimate, corr_coef_stderr
+
+def plotWithStdErrors(measure, std_errors, delays, ylabel):
+    plt.plot(delays, measure)
+    plt.fill_between(delays, measure - std_errors, measure + std_errors, color='blue', alpha=0.3, label='standard error')
+    plt.ylabel(ylabel, fontsize='large')
+    plt.xlabel('Delay (time bins)', fontsize='large')
+    plt.xlim([delays.min(), delays.max()])
+    plt.legend(fontsize='large')
 
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
 stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
@@ -47,12 +70,13 @@ pair = responding_pairs[0]
 first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
 second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
 num_responses = first_response.size
-first_trials = first_response.values.reshape(num_trials, num_responses//num_trials)
-second_trials = second_response.values.reshape(num_trials, num_responses//num_trials)
-trial_combinations = combinations(np.arange(num_trials),2)
-rolls = np.arange(-1000, 1001)
-corr_coefs_by_offset = np.zeros([num_trials, rolls.size])
-for i in np.arange(num_trials):
-    first_trial = first_trials[i]
-    second_trial = second_trials[i]
-    corr_coefs_by_offset[i] = np.array([rollCorrCoef(first_trial, second_trial, r)[0] for r in rolls])
+num_bins = num_responses//num_trials
+first_trials = first_response.values.reshape(num_trials, num_bins)
+second_trials = second_response.values.reshape(num_trials, num_bins)
+delays = np.arange(-50, 51)
+correlations = np.zeros(delays.shape)
+corr_std_errors = np.zeros(delays.shape)
+for i, delay in enumerate(delays):
+    correlations[i], corr_std_errors[i] = getCorrelationWithDelay(first_trials, second_trials, delay)
+plotWithStdErrors(correlations, corr_std_errors, delays, "Correlation Coefficient (a.u.)")
+plt.show(block=False)
