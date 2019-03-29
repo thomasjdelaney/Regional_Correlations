@@ -6,6 +6,8 @@ import pandas as pd
 import datetime as dt
 from itertools import product, combinations
 
+regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
+
 def loadCellInfo(csv_dir):
     # load the csv containing information about the cells. Creates a unique ID for each cell
     from_file = pd.read_csv(os.path.join(csv_dir, 'cell_info.csv'))

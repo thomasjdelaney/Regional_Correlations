@@ -20,7 +20,7 @@ parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise nu
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
 args = parser.parse_args()
 
-np.random.seed(1798) # setting seed
+np.random.seed(args.numpy_seed) # setting seed
 pd.set_option('max_rows',30) # setting display options for terminal display
 
 # defining useful directories
