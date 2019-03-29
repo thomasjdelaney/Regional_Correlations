@@ -7,6 +7,7 @@ import datetime as dt
 from itertools import product, combinations
 
 regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
+bin_widths = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
 
 def loadCellInfo(csv_dir):
     # load the csv containing information about the cells. Creates a unique ID for each cell
@@ -81,7 +82,7 @@ def excludeBumTrials(bin_array, trials_info):
 
 def getTrialsFrame(trials_info, bin_width):
     bin_array = np.array([getBinTimes(stim_start, stim_stop, bin_width) for stim_start, stim_stop, stim_id in trials_info])
-    if bin_array.dtype == 'O':
+    if bin_array.dtype == 'O': # if some trials have a different number of bins, we need to exclude those trials
         bin_array, trials_info = excludeBumTrials(bin_array, trials_info)
     num_trials, num_bins = bin_array.shape
     num_bins -= 1

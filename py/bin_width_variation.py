@@ -6,7 +6,6 @@ if float(sys.version[:3])<3.0:
     execfile(os.path.join(os.environ['HOME'], '.pystartup'))
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import datetime as dt
 from scipy.io import loadmat
 from itertools import product
@@ -72,9 +71,7 @@ def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
     stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
     stim_ids = np.unique(stim_info['stimIDs'][0])
-    bin_widths = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
-    regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
-    all_regions_stims_pairs_widths = pd.concat([getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, args.group, args.wanted_num_pairs, args.is_strong, bin_widths) for region,stim_id in product(regions, stim_ids)], ignore_index=True)
+    all_regions_stims_pairs_widths = pd.concat([getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, args.group, args.wanted_num_pairs, args.is_strong, rc.bin_widths) for region,stim_id in product(rc.regions, stim_ids)], ignore_index=True)
     all_regions_stims_pairs_widths.to_csv(os.path.join(csv_dir, args.filename))
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
 
