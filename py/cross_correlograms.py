@@ -15,7 +15,6 @@ from scipy.stats import pearsonr
 
 parser = argparse.ArgumentParser(description='For making cross-correlogram plots. ')
 parser.add_argument('-g', '--group', help='The quality of sorting for randomly chosen_cells.', default='good', choices=['good', 'mua', 'unsorted'], type=str, nargs='*')
-parser.add_argument('-r', '--region', help='The region for which we want to make the cross correlograms', type=str, default='thalamus', choices=['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1'])
 parser.add_argument('-i', '--stim_id', help='The id of the stimulus condition to use.', default=2, type=int)
 parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
@@ -25,7 +24,7 @@ np.random.seed(1798) # setting seed
 pd.set_option('max_rows',30) # setting display options for terminal display
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
@@ -94,20 +93,21 @@ def main():
     cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
     stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Making exp frame...')
-    cell_ids = cell_info[(cell_info.region==args.region)&(cell_info.group==args.group)].index.values
     trials_info = rc.getStimTimesIds(stim_info, args.stim_id)
     num_trials = trials_info.shape[0]
-    spike_time_dict = rc.loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor)
-    responding_pairs = rc.getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, 5, is_strong=True)
-    responding_cells = np.unique(responding_pairs)
-    exp_frame = rc.getExperimentFrame(responding_cells, trials_info, spike_time_dict, cell_info, 0.001)
     delays = np.arange(-1000, 1001)
-    for pair in responding_pairs:
-        print(dt.datetime.now().isoformat() + ' INFO: ' + 'Processing ' + str(pair) + '...')
-        correlations, corr_std_errors = getCrossCorrelogramByPair(pair, exp_frame, num_trials, delays)
-        filepath = plotWithStdErrors(correlations, corr_std_errors, delays, "Correlation Coefficient (a.u.)", pair, args.region, args.stim_id)
-        print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saved:' + filepath)
+    for region in ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']:
+        print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting region '+ region + '...')
+        cell_ids = cell_info[(cell_info.region==region)&(cell_info.group==args.group)].index.values
+        spike_time_dict = rc.loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor)
+        responding_pairs = rc.getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, 5, is_strong=True)
+        responding_cells = np.unique(responding_pairs)
+        exp_frame = rc.getExperimentFrame(responding_cells, trials_info, spike_time_dict, cell_info, 0.001)
+        for pair in responding_pairs:
+            print(dt.datetime.now().isoformat() + ' INFO: ' + 'Processing ' + str(pair) + '...')
+            correlations, corr_std_errors = getCrossCorrelogramByPair(pair, exp_frame, num_trials, delays)
+            filepath = plotWithStdErrors(correlations, corr_std_errors, delays, "Correlation Coefficient (a.u.)", pair, region, args.stim_id)
+            print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saved:' + filepath)
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
 
 if not(args.debug):
