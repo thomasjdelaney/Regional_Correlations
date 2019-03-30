@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 parser = argparse.ArgumentParser(description="For plotting the data found in 'all_regions_stims_pairs_widths.csv'.")
+parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal'], type=str)
 parser.add_argument('-f', '--filename', help='The file from which to get the pairwise correlation data.', type=str, default='all_regions_stims_pairs_widths.csv')
 parser.add_argument('-p', '--image_file_prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-x', '--x_axis_scale', help='The scale of the x-axis', type=str, default='linear', choices=['log', 'linear'])
@@ -24,12 +25,16 @@ py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 image_dir = os.path.join(proj_dir, 'images')
 
-def getBestStimFromRegion(all_regions_stims_pairs_widths, region):
-    region_frame = all_regions_stims_pairs_widths[all_regions_stims_pairs_widths.region == region]
+# loading useful functions
+sys.path.append(py_dir)
+import regionalCorrelations as rc
+
+def getBestStimFromRegion(correlation_frame, region):
+    region_frame = correlation_frame[correlation_frame.region == region]
     return region_frame['stim_id'].value_counts().index[0]
 
-def plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, stim_id, region_to_colour, prefix, x_axis_scale):
-    region_stim_frame = all_regions_stims_pairs_widths[(all_regions_stims_pairs_widths.region == region)&(all_regions_stims_pairs_widths.stim_id == stim_id)]
+def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
+    region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == stim_id)]
     region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
     agg_frame.loc[:,'std_err'] = agg_frame.corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
@@ -51,13 +56,20 @@ def plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, regio
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading all_regions_stims_pairs_widths.csv...')
-    all_regions_stims_pairs_widths = pd.read_csv(os.path.join(csv_dir, args.filename))
-    regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
+    correlation_frame = pd.read_csv(os.path.join(csv_dir, args.filename))
     colours = cm.gist_rainbow(np.linspace(0, 1, 5)) # 5 regions
-    region_to_colour = dict(list(zip(regions, colours)))
-    for i,region in enumerate(regions):
-        best_stim = getBestStimFromRegion(all_regions_stims_pairs_widths, region)
-        plotAbsCorrCoefByBinWidthForRegionStim(all_regions_stims_pairs_widths, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
+    region_to_colour = dict(list(zip(rc.regions, colours)))
+    for region in rc.regions:
+        if args.correlation_type == 'spike_count':
+            best_stim = getBestStimFromRegion(correlation_frame, region)
+            plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
+        elif args.correlation_type == 'signal':
+            region_frame = correlation_frame[correlation_frame.region==region]
+            agg_frame = correlation_frame[['bin_width', 'signal_corr_coef']].groupby('bin_width').agg({'signal_corr_coef':['mean', 'std']})
+            agg_frame.loc[:,'std_err'] = agg_frame.signal_corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
+            # plot signal correlation here.
+        else:
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')
 
 if not(args.debug):
     main()
