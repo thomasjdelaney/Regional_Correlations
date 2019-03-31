@@ -33,9 +33,7 @@ def getBestStimFromRegion(correlation_frame, region):
     region_frame = correlation_frame[correlation_frame.region == region]
     return region_frame['stim_id'].value_counts().index[0]
 
-def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
-    region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == stim_id)]
-    region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
+def plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
     agg_frame.loc[:,'std_err'] = agg_frame.corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
     fig = plt.figure(figsize=(4,3))
@@ -53,6 +51,17 @@ def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, r
     plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', filename))
     plt.close()
 
+def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
+    region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == stim_id)]
+    region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
+    plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale)
+
+def plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, prefix, x_axis_scale):
+    region_frame = correlation_frame[correlation_frame.region==region]
+    region_frame.columns = ['region', 'first_cell_id', 'second_cell_id', 'corr_coef', 'p_values', 'bin_width']
+    region_frame.loc[:,'corr_coef'] = region_frame.loc[:,'corr_coef'].abs()
+    plotCorrCoefByBinWidth(region_frame, region, 0, region_to_colour, prefix, x_axis_scale)
+
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading all_regions_stims_pairs_widths.csv...')
@@ -64,10 +73,7 @@ def main():
             best_stim = getBestStimFromRegion(correlation_frame, region)
             plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
         elif args.correlation_type == 'signal':
-            region_frame = correlation_frame[correlation_frame.region==region]
-            agg_frame = correlation_frame[['bin_width', 'signal_corr_coef']].groupby('bin_width').agg({'signal_corr_coef':['mean', 'std']})
-            agg_frame.loc[:,'std_err'] = agg_frame.signal_corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
-            # plot signal correlation here.
+            plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, args.image_file_prefix, args.x_axis_scale)
         else:
             sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')
 
