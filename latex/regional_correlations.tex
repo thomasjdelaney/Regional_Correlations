@@ -52,12 +52,12 @@
 
 \begin{document}
 
-\subsection*{Motivation}
+\section{Motivation}
 In their review entitled `Measuring and interpreting neural correlations', Cohen and Kohn studied the effects of response strength and time bin width on neural correlation measurement. Using simulated data, they found that correlation measurements taken between weakly responding neurons (i.e. neurons with firing rates of $<10$ spikes per s) will be less than the true pairwise correlation value. They also found that binning the neural spiking data into small time bins can cause the measured correlation to be less than the true value. How small is 'small' in this case is related to width of the cross-correlogram of the pair of neurons. But, it was shown in simulation that time bins should be at least $0.1$ seconds wide in order for the measured correlation value to be close to the true correlation value \cite{cohen}.
 
 Our aim here is to measure a big enough sample of pairwise correlations from actual neural data across a selection of time bin widths and compare our results to those of Cohen and Kohn. In order to do this we used data collected using `Neuropixels' probes \cite{jun}. These data are made available publicly online by Dr. Nick Steinmetz \footnote{\url{http://data.cortexlab.net/dualPhase3/}}.
 
-\subsection*{Data}
+\section{Data}
 The recent development of Neuropixels probes has allowed extracellular voltage measurements to be collected from multiple brain regions simultaneously routinely, and in much larger numbers than traditional methods.
 
 Using two probes, spiking activity was simultaneously collected from over $800$ neurons in an awake mouse brain for a period of $84$ minutes. During this period, the mouse was shown various visual stimuli. The $800$ neurons were distributed across $5$ different brain regions: V1, hippocampus, thalamus, motor cortex, and striatum.
@@ -66,18 +66,18 @@ The stimulus was a full field moving bar grating. There were $17$ stimulus condi
 
 The data consist of spike timings and cell/cluster identifiers associating spikes with a certain cell/cluster and a certain time. Each cell/cluster is classified as `good', `multi-unit activity', or `unsorted', referring to the quality of spike sorting. This classification was performed by those who analysed the data. Only the cell/clusters classified as `good' are used in this project.
 
-\subsection*{Methods}
-\subsubsection*{Binning data}
+\section{Methods}
+\subsection{Binning data}
 The data were divided into time bins or various widths ranging from $0.01$ to $2$ seconds. If the bin width was not an integer divisor of the trial period ($2$ seconds), only the bins that lay totally within the trial period were included. For example, when dividing the trials into bins of $0.3$ seconds, the final bin of $0.2$ seconds was excluded. We measured the number of spikes in each time bin.
 
 When performing calculations on the binned data, each bin was treated as an individual measurement. For example, when calculating the spike count correlation coefficient for a given pair of neurons, if the time bin used was $2.0$ seconds, then we had $10$ measurements for each neuron with which to calculate the coefficient. But, if we were using a bin width of $1.0$ second, then we would have $20$ measurements for each neuron.
 
-\subsubsection*{Pairing strongly responding neurons}
+\subsection{Pairing strongly responding neurons}
 A weak response, or low firing rate, has a diminishing effect on measured correlation \cite{cohen}. In order to avoid this effect, we filtered out any neurons with a mean firing rate of less than $10$ spikes per second measured across the $10$ trials. Once these neurons were filtered out, we randomly chose $30$ pairs from all the possible pairs of the remaining neurons. We used these $30$ pairs to calculate $30$ correlation coefficients. We repeated this process for each brain region, and each stimulus condition.
 
 If less than $9$ strongly responding neurons were found it was not possible to make $30$ pairs of strongly responding neurons. In that case, we just used all the strongly responding pairs.
 
-\subsubsection*{Correlation coefficient}
+\subsection{Correlation coefficient}
 We calculated Pearson's correlation coefficient for pairs of neurons. For jointly distributed random variables $X$ and $Y$, Pearson's correlation coefficient is defined as:
 \begin{align}\label{eq:dist_pearsons_corr}
   \rho_{XY} =& \frac{\cov(X,Y)}{\sigma_X \sigma_Y} \\
@@ -93,8 +93,17 @@ where $\lbrace (x_i, y_i) \rbrace$ for $i \in \lbrace 1, \dots, n \rbrace$ are t
 
 In practice we used the python function \texttt{scipy.stats.pearsonr} to calculate the correlation coefficients.
 
-\subsection*{Results}
-For each stimulus and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their correlation coefficient using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that the measured correlation coefficients increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}. This is in agreement with the findings of the simulated experiment in \cite{cohen}.
+\subsubsection{Spike Count Correlation}
+The spike count correlation of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
+
+\subsubsection{Signal Correlation}
+The signal correlation of two cells is the correlation between the mean responses of those cells to each stimulus condition.
+
+\section{Results}
+\subsection{Correlations}
+For each stimulus and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their spike count correlations and signal correlation using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that the measured spike count correlations increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}. This is in agreement with the findings of the simulated experiment in \cite{cohen}. See figure [fig num] for the same results with linear x-axis.
+
+We found that the signal correlations maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure [fig num].
 
 In order to obtain this result, we chose the stimulus condition that evoked the strongest response from a given region. This guaranteed us $30$ strongly responding pairs for each region.
 
@@ -123,7 +132,7 @@ In order to obtain this result, we chose the stimulus condition that evoked the 
   \label{fig:bin_width_vs_correlation_by_region}
 \end{figure}
 
-\subsection*{Things to discuss with Cian}
+\section*{Things to discuss with Cian}
 \begin{enumerate}
   \item Is all of the above clear?
   \item Are my methods sound?
