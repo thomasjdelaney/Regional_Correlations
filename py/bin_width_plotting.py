@@ -29,10 +29,6 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def getBestStimFromRegion(correlation_frame, region):
-    region_frame = correlation_frame[correlation_frame.region == region]
-    return region_frame['stim_id'].value_counts().index[0]
-
 def plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale, subdirectory, y_label):
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
     agg_frame.loc[:,'std_err'] = agg_frame.corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
@@ -115,12 +111,12 @@ def main():
     region_to_colour = dict(list(zip(rc.regions, colours)))
     for region in rc.regions:
         if args.correlation_type == 'spike_count':
-            best_stim = getBestStimFromRegion(correlation_frame, region)
+            best_stim = rc.getBestStimFromRegion(correlation_frame, region)
             plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
         elif args.correlation_type == 'signal':
             plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, args.image_file_prefix, args.x_axis_scale)
         elif args.correlation_type == 'bifurcation':
-            best_stim = getBestStimFromRegion(correlation_frame, region)
+            best_stim = rc.getBestStimFromRegion(correlation_frame, region)
             plotBifurcatedCorrelationsByBinWidth(correlation_frame, region, best_stim, args.image_file_prefix, args.x_axis_scale)
         else:
             sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')

@@ -13,7 +13,7 @@ from scipy.stats import pearsonr
 
 parser = argparse.ArgumentParser(description='Calculate pairwise correlations between given choice of neurons.')
 parser.add_argument('-n', '--wanted_num_pairs', help='The number of strongly responding pairs to use.', default=30, type=int)
-parser.add_argument('-g', '--group', help='The quality of sorting for randomly chosen_cells.', default='good', choices=['good', 'mua', 'unsorted'], type=str, nargs='*')
+parser.add_argument('-g', '--group', help='The quality of sorting for randomly chosen_cells.', default='good', choices=['good', 'mua', 'unsorted'], type=str)
 parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 parser.add_argument('-a', '--is_strong', help='Flag for strongly or weakly responding cells', default=True, action='store_false')
 parser.add_argument('-f', '--filename', help='Name of file for saving the csv.', type=str, default='all_regions_stims_pairs_widths.csv')

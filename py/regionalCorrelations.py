@@ -130,3 +130,7 @@ def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pa
         print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_all_pairs) + ' pairs found.')
         randomly_chosen_pairs = all_pairs
     return randomly_chosen_pairs
+
+def getBestStimFromRegion(correlation_frame, region):
+    region_frame = correlation_frame[correlation_frame.region == region]
+    return region_frame['stim_id'].value_counts().index[0]
