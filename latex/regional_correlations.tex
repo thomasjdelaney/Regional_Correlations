@@ -52,6 +52,10 @@
 
 \begin{document}
 
+\tableofcontents
+
+\newpage
+
 \section{Motivation}
 In their review entitled `Measuring and interpreting neural correlations', Cohen and Kohn studied the effects of response strength and time bin width on neural correlation measurement. Using simulated data, they found that correlation measurements taken between weakly responding neurons (i.e. neurons with firing rates of $<10$ spikes per s) will be less than the true pairwise correlation value. They also found that binning the neural spiking data into small time bins can cause the measured correlation to be less than the true value. How small is 'small' in this case is related to width of the cross-correlogram of the pair of neurons. But, it was shown in simulation that time bins should be at least $0.1$ seconds wide in order for the measured correlation value to be close to the true correlation value \cite{cohen}.
 
@@ -62,9 +66,11 @@ The recent development of Neuropixels probes has allowed extracellular voltage m
 
 Using two probes, spiking activity was simultaneously collected from over $800$ neurons in an awake mouse brain for a period of $84$ minutes. During this period, the mouse was shown various visual stimuli. The $800$ neurons were distributed across $5$ different brain regions: V1, hippocampus, thalamus, motor cortex, and striatum.
 
-The stimulus was a full field moving bar grating. There were $17$ stimulus conditions corresponding to $16$ drift directions ($0$ degrees to $337.5$ degrees in $22.5$ degree increments) with $2$Hz temporal frequency and $0.08$ cycles/degree spatial frequency (conditions $1-16$) plus a blank condition ($17$). Each condition was presented $10$ times for $2$ seconds each time, with $1.5$ seconds between trials.
-
 The data consist of spike timings and cell/cluster identifiers associating spikes with a certain cell/cluster and a certain time. Each cell/cluster is classified as `good', `multi-unit activity', or `unsorted', referring to the quality of spike sorting. This classification was performed by those who analysed the data. Only the cell/clusters classified as `good' are used in this project.
+
+\subsection{Stimulus}
+
+The stimulus was a full field moving bar grating. There were $17$ stimulus conditions corresponding to $16$ drift directions ($0$ degrees to $337.5$ degrees in $22.5$ degree increments) with $2$Hz temporal frequency and $0.08$ cycles/degree spatial frequency (conditions $1-16$) plus a blank condition ($17$). Each condition was presented $10$ times for $2$ seconds each time, with $1.5$ seconds between trials.
 
 \section{Methods}
 \subsection{Binning data}
@@ -93,19 +99,24 @@ where $\lbrace (x_i, y_i) \rbrace$ for $i \in \lbrace 1, \dots, n \rbrace$ are t
 
 In practice we used the python function \texttt{scipy.stats.pearsonr} to calculate the correlation coefficients.
 
-\subsubsection{Spike Count Correlation}
-The spike count correlation of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
+\subsubsection{Spike Count Correlation, $r_{SC}$}
+The spike count correlation ($r_{SC}$) of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
 
-\subsubsection{Signal Correlation}
-The signal correlation of two cells is the correlation between the mean responses of those cells to each stimulus condition.
+\subsubsection{Signal Correlation, $r_{signal}$}
+The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition.
+
+\subsection{Separating Correlations \& Anti-correlations}\label{sec:corr_anti_corr}
+In order to compare the effect of bin width on measures of negative $r_{SC}$ (anti-correlation) and positive $r_{SC}$ separately, we had to separate correlated and anti-correlated pairs. To do this, we simply measured the mean $r_{SC}$, taking the mean across all the bin widths. If this quantity was positive or zero we regarded the pair as positively correlated. If this quantity was negative we regarded the pair as anti-correlated.
 
 \section{Results}
-\subsection{Correlations}
-For each stimulus and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their spike count correlations and signal correlation using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that the measured spike count correlations increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}. This is in agreement with the findings of the simulated experiment in \cite{cohen}. See figure [fig num] for the same results with linear x-axis.
+\subsection{Spike Count Correlations}
+For each stimulus condition and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their absolute spike count correlations ($|r_{SC}|$) and absolute signal correlation ($|r_{signal}|$) using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that $|r_{SC}|$ increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}, or figure \ref{fig:linear_bin_width_vs_correlation_by_region} for a linear version. This is in agreement with the findings of the simulated experiment in \cite{cohen}. For these figures, we chose the stimulus condition that evoked the strongest response from a given region. This guaranteed us $30$ strongly responding pairs for each region.
 
-We found that the signal correlations maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure [fig num].
+\subsubsection{Correlations \& Anti-correlations}
+We separated the $30$ randomly chosen pairs into correlated and anti-correlated pairs as per section \ref{sec:corr_anti_corr}. We then measured $r_{SC}$ across various bin width values. We found that the positive $r_{SC}$ got more positive as the bin width increased. We also found that the negative $r_{SC}$ got more negative as the bin width increased. Both positive and negative coefficients showed a log-linear increase similar to the absolute spike count correlation coefficients. See figure \ref{fig:corr_anti_corr_by_region}.
 
-In order to obtain this result, we chose the stimulus condition that evoked the strongest response from a given region. This guaranteed us $30$ strongly responding pairs for each region.
+\subsection{Signal Correlations}
+We found that $|r_{signal}|$ maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure \ref{fig:linear_bin_width_vs_signal_correlation_by_region}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -128,8 +139,83 @@ In order to obtain this result, we chose the stimulus condition that evoked the 
     \centering
     \includegraphics[width=\textwidth]{figures/bin_width_correlations_v1_6.png}
   \end{subfigure}
-  \caption{Absolute values of correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The absolute correlation increases approximately log-linearly with the bin width up to a bin width of $1$ second and levels out somewhat thereafter.}
+  \caption{\textbf{Spike Count Correlations:} Absolute values of correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The absolute correlation increases approximately log-linearly with the bin width up to a bin width of $1$ second and levels out somewhat thereafter.}
   \label{fig:bin_width_vs_correlation_by_region}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_correlations_hippocampus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_correlations_motor_cortex_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_correlations_striatum_14.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_correlations_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_correlations_v1_6.png}
+  \end{subfigure}
+  \caption{\textbf{Spike Count Correlations:} Absolute values of correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The absolute correlation increases approximately log-linearly with the bin width up to a bin width of $1$ second and levels out somewhat thereafter.}
+  \label{fig:linear_bin_width_vs_correlation_by_region}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_relative_correlations_hippocampus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_relative_correlations_motor_cortex_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_relative_correlations_striatum_14.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_relative_correlations_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/linear_bin_width_relative_correlations_v1_6.png}
+  \end{subfigure}
+  \caption{\textbf{Spike Count Correlations and Anti-correlations:} Correlation coefficients measured using different time bin widths and separated into positive and negative sets. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The correlations or anti-correlations get stronger as the bin width increases. We see the log linear increase similar to figures \ref{fig:bin_width_vs_correlation_by_region} and \ref{fig:linear_bin_width_vs_correlation_by_region}.}
+  \label{fig:corr_anti_corr_by_region}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/signal_linear_bin_width_correlations_hippocampus_0.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/signal_linear_bin_width_correlations_motor_cortex_0.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/signal_linear_bin_width_correlations_striatum_0.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/signal_linear_bin_width_correlations_thalamus_0.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/signal_linear_bin_width_correlations_v1_0.png}
+  \end{subfigure}
+  \caption{\textbf{Signal Correlations:} Absolute values of signal correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The signal correlation maintains a fairly constant value across bin widths for most brain regions, with some variations in V1.}
+  \label{fig:linear_bin_width_vs_signal_correlation_by_region}
 \end{figure}
 
 \section*{Things to discuss with Cian}

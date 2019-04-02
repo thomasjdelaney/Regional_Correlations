@@ -33,7 +33,7 @@ def getBestStimFromRegion(correlation_frame, region):
     region_frame = correlation_frame[correlation_frame.region == region]
     return region_frame['stim_id'].value_counts().index[0]
 
-def plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
+def plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale, subdirectory, y_label):
     agg_frame = region_stim_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
     agg_frame.loc[:,'std_err'] = agg_frame.corr_coef.loc[:,'std']/np.sqrt(agg_frame.shape[0])
     fig = plt.figure(figsize=(4,3))
@@ -43,24 +43,24 @@ def plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour,
     plt.xscale('log') if x_axis_scale=='log' else 0
     plt.ylim([0,1])
     plt.xlabel('Bin width (s)', fontsize='large')
-    plt.ylabel('|Corr Coef| (a.u.)', fontsize='large')
+    plt.ylabel(y_label, fontsize='large')
     plt.legend(fontsize='large')
     plt.tight_layout()
     filename = prefix + 'bin_width_correlations_' + region + '_' + str(stim_id) + '.png'
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+filename+'...')
-    plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', filename))
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
+    plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', subdirectory, x_axis_scale, filename))
     plt.close()
 
 def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
     region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == stim_id)]
     region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
-    plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale)
+    plotCorrCoefByBinWidth(region_stim_frame, region, stim_id, region_to_colour, prefix, x_axis_scale, 'absolute_correlations', r'$|r_{SC}|$')
 
 def plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, prefix, x_axis_scale):
     region_frame = correlation_frame[correlation_frame.region==region]
     region_frame.columns = ['region', 'first_cell_id', 'second_cell_id', 'corr_coef', 'p_values', 'bin_width']
     region_frame.loc[:,'corr_coef'] = region_frame.loc[:,'corr_coef'].abs()
-    plotCorrCoefByBinWidth(region_frame, region, 0, region_to_colour, prefix, x_axis_scale)
+    plotCorrCoefByBinWidth(region_frame, region, 0, region_to_colour, prefix, x_axis_scale, 'signal_correlations', r'$|r_{signal}|$')
 
 def getPositiveNegativePairs(region_stim_frame):
     unique_pairs = np.unique(region_stim_frame[['first_cell_id', 'second_cell_id']].values, axis=0)
@@ -73,7 +73,11 @@ def getPositiveNegativePairs(region_stim_frame):
             negative_pairs = np.hstack([negative_pairs, pair])
         else:
             positive_pairs = np.hstack([positive_pairs, pair])
-    return positive_pairs.reshape([positive_pairs.size//2, 2]).astype(int), negative_pairs.reshape([negative_pairs.size//2, 2]).astype(int)
+    num_positive_pairs = positive_pairs.size//2
+    num_negative_pairs = negative_pairs.size//2
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Num positive pairs = '+ str(num_positive_pairs) + '...')
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Num positive pairs = '+ str(num_negative_pairs) + '...')
+    return positive_pairs.reshape([num_positive_pairs, 2]).astype(int), negative_pairs.reshape([num_negative_pairs, 2]).astype(int)
 
 def plotPositiveOrNegative(pd_frame, region, colour, x_axis_scale, frame_label):
     agg_frame = pd_frame[['bin_width','corr_coef']].groupby('bin_width').agg({'corr_coef':['mean', 'std']})
@@ -94,8 +98,8 @@ def plotBifurcatedCorrelationsByBinWidth(correlation_frame, region, stim_id, pre
     plt.xscale('log') if x_axis_scale=='log' else 0
     plt.ylim([-1,1])
     plt.xlabel('Bin width (s)', fontsize='large')
-    plt.ylabel('Corr Coef (a.u.)', fontsize='large')
-    plt.legend(fontsize='large', loc='lower left')
+    plt.ylabel(r'$r_{SC}$', fontsize='large')
+    plt.legend(fontsize='large', loc='lower left') if region=='hippocampus' else 0
     plt.title(region.replace('_', ' ').capitalize(), fontsize='large')
     plt.tight_layout()
     filename = prefix + 'bin_width_relative_correlations_' + region + '_' + str(stim_id) + '.png'
