@@ -45,4 +45,4 @@ python py/bin_width_variation.py --wanted_num_pairs 30 --group good --filename t
 - update the README.md
 - fix the 'is_strong' flag.
 - consider the relative mutual information
-- check mutual information calculation
+- don't use stimulus condition 17 for figures
