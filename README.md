@@ -21,6 +21,28 @@ Running the following command will choose ten good neurons at random, calculate 
 python -i py/regional_correlations.py --cell_choice random --number_of_cells 10 --group good --numpy_seed 1798
 ```
 
+### bin_width_variation.py
+
+Find some strongly or weakly responding cells. Randomly select a given number of pairs of these cells, pairing neurons within the same region. Calculate the pairwise correlations and mutual information of these pairs across different time bin widths. Save all this down to a csv with a given filename.
+
+optional arguments:
+* **-h, --help**: show the help message and exit
+* **-n, --wanted_num_pairs**: The number of strongly (or weakly) responding pairs to use.
+* **-g, --group**: The quality of sorting for randomly chosen_cells.
+* **-s, --numpy_seed**: The seed to use to initialise numpy.random.
+* **-a, --is_strong**: Flag for strongly or weakly responding cells.
+* **-f, --filename**: Name of file for saving the csv.
+* **-t, --threshold**: Threshold spike count for trial classifying a cell as "strongly responding".
+* **-d, --debug**: Enter debug mode.
+
+Running the following command will find cells with a firing rate of at least 10 spikes per second. Then select 30 pairs from all the possible pairs of these cells. Then will calculate the pairwise correlation and mutual information for each of these 30 pairs across different time bins. Then will save down this information into a csv file in the csv directory.
+
+```bash
+python py/bin_width_variation.py --wanted_num_pairs 30 --group good --filename test.csv --threshold 20.0
+```
+
 ###### TO DO:
-- enable filtering by response strength, stronger response should give more accurate correlation measures.
-- enable filtering by stim_id before exp_frame is created, will improve efficiency.
+- update the README.md
+- fix the 'is_strong' flag.
+- consider the relative mutual information
+- check mutual information calculation

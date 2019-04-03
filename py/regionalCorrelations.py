@@ -134,3 +134,11 @@ def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pa
 def getBestStimFromRegion(correlation_frame, region):
     region_frame = correlation_frame[correlation_frame.region == region]
     return region_frame['stim_id'].value_counts().index[0]
+
+def calcEntropy(samples):
+    num_samples = samples.shape[0]
+    labels, counts = np.unique(samples, return_counts=True, axis=0)
+    if labels.size <= 1:
+        return 0
+    probs = counts/np.float(num_samples)
+    return -(probs * np.log2(probs)).sum()
