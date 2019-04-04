@@ -41,8 +41,20 @@ Running the following command will find cells with a firing rate of at least 10 
 python py/bin_width_variation.py --wanted_num_pairs 30 --group good --filename test.csv --threshold 20.0
 ```
 
+### bin_width_plotting.py
+
+Plotting results from the csv files created by ```bin_width_variation.py```. Mainly spike count correlations, signal correlations, and mutual information against bin width.
+
+### correlation_histograms.py
+
+For making histograms from the results in the csv files created by ```bin_width_variation.py```. Mainly spike count correlations and mutual information.
+
+### cross_correlograms.py
+
+For making cross correlograms for pairs of neurons.
+
 ###### TO DO:
 - update the README.md
 - fix the 'is_strong' flag.
 - consider the relative mutual information
-- don't use stimulus condition 17 for figures
+- Add to the pdf.

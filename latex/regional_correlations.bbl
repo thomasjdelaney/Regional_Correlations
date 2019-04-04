@@ -9,8 +9,14 @@
   \bibitem{jun}
   James J. Jun, Nicholas A. Steinmetz, Timothy D. Harris,
   \emph{Fully integrated silicon probes for high-density recording of neural activity}.
-  Nature 551, 
+  Nature 551,
   232–236,
   (2017)
+
+  \bibitem{shannon}
+   C. E. Shannon,
+   \emph{A Mathematical Theory of Communication},
+   The Bell System Technical Journal,
+   (1948)
 
 \end{thebibliography}

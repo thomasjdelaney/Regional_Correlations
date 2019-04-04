@@ -4,9 +4,12 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
 import datetime as dt
+import matplotlib.cm as cm
 from itertools import product, combinations
 
 regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
+colours = cm.gist_rainbow(np.linspace(0, 1, 5)) # 5 regions
+region_to_colour = dict(list(zip(regions, colours)))
 bin_widths = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
 
 def loadCellInfo(csv_dir):
@@ -133,7 +136,10 @@ def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pa
 
 def getBestStimFromRegion(correlation_frame, region):
     region_frame = correlation_frame[correlation_frame.region == region]
-    return region_frame['stim_id'].value_counts().index[0]
+    best_stim = region_frame['stim_id'].value_counts().index[0]
+    if best_stim == 17:
+        best_stim = region_frame['stim_id'].value_counts().index[1]
+    return best_stim
 
 def calcEntropy(samples):
     num_samples = samples.shape[0]

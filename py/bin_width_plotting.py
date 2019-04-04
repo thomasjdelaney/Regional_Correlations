@@ -8,7 +8,6 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 
 parser = argparse.ArgumentParser(description="For plotting the data found in 'all_regions_stims_pairs_widths.csv'.")
 parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal', 'bifurcation', 'mutual_info'], type=str)
@@ -31,14 +30,14 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def plotColumnByBinWidth(region_stim_frame, y_column, region, region_to_colour, x_axis_scale, y_label, y_lim=[0,1]):
+def plotColumnByBinWidth(region_stim_frame, y_column, region, x_axis_scale, y_label, y_lim=[0,1]):
     agg_frame = region_stim_frame[['bin_width', y_column]].groupby('bin_width').agg({y_column:['mean', 'std']})
     counts_frame = region_stim_frame['bin_width'].value_counts()
     agg_frame.loc[:, 'num_samples'] = counts_frame
     agg_frame.loc[:, 'std_err'] = agg_frame[y_column].loc[:,'std']/np.sqrt(agg_frame['num_samples'])
     fig = plt.figure(figsize=(4,3))
-    plt.plot(agg_frame[y_column].index.values, agg_frame[y_column]['mean'], color=region_to_colour[region], label=region.replace('_', ' ').capitalize())
-    plt.fill_between(agg_frame[y_column].index.values, agg_frame[y_column]['mean']-agg_frame['std_err'], agg_frame[y_column]['mean']+agg_frame['std_err'], color=region_to_colour[region], alpha=0.3)
+    plt.plot(agg_frame[y_column].index.values, agg_frame[y_column]['mean'], color=rc.region_to_colour[region], label=region.replace('_', ' ').capitalize())
+    plt.fill_between(agg_frame[y_column].index.values, agg_frame[y_column]['mean']-agg_frame['std_err'], agg_frame[y_column]['mean']+agg_frame['std_err'], color=rc.region_to_colour[region], alpha=0.3)
     plt.xlim([agg_frame[y_column].index.min(), agg_frame[y_column].index.max()])
     plt.xscale('log') if x_axis_scale=='log' else 0
     plt.ylim(y_lim)
@@ -47,31 +46,31 @@ def plotColumnByBinWidth(region_stim_frame, y_column, region, region_to_colour, 
     plt.legend(fontsize='large')
     plt.tight_layout()
 
-def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, region_to_colour, prefix, x_axis_scale):
+def plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, stim_id, prefix, x_axis_scale):
     region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == stim_id)]
     region_stim_frame.loc[:,'corr_coef'] = region_stim_frame.loc[:,'corr_coef'].abs()
-    plotColumnByBinWidth(region_stim_frame, 'corr_coef', region, region_to_colour, x_axis_scale, r'$|r_{SC}|$')
+    plotColumnByBinWidth(region_stim_frame, 'corr_coef', region, x_axis_scale, r'$|r_{SC}|$')
     filename = prefix + 'bin_width_correlations_' + region + '_' + str(stim_id) + '.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
     plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', 'absolute_correlations', x_axis_scale, filename))
     plt.close()
 
-def plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, prefix, x_axis_scale):
+def plotAbsSignalCorrByBinWidth(correlation_frame, region, prefix, x_axis_scale):
     region_frame = correlation_frame[correlation_frame.region==region]
     region_frame.columns = ['region', 'first_cell_id', 'second_cell_id', 'corr_coef', 'p_values', 'bin_width']
     region_frame.loc[:,'corr_coef'] = region_frame.loc[:,'corr_coef'].abs()
-    plotColumnByBinWidth(region_frame, 'corr_coef', region, region_to_colour, x_axis_scale, r'$|r_{signal}|$')
+    plotColumnByBinWidth(region_frame, 'corr_coef', region, x_axis_scale, r'$|r_{signal}|$')
     filename = prefix + 'bin_width_correlations_' + region + '_0.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
     plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', 'signal_correlations', x_axis_scale, filename))
     plt.close()
 
-def plotMutualInfoByBinWidth(correlation_frame, region_to_colour, prefix, x_axis_scale):
+def plotMutualInfoByBinWidth(correlation_frame, prefix, x_axis_scale):
     y_lim = [0, correlation_frame.mutual_info.max()]
     for region in rc.regions:
         best_stim = rc.getBestStimFromRegion(correlation_frame, region)
         region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == best_stim)]
-        plotColumnByBinWidth(region_stim_frame, 'mutual_info', region, region_to_colour, x_axis_scale, r'$I(X;Y)$ (bits)', y_lim=y_lim)
+        plotColumnByBinWidth(region_stim_frame, 'mutual_info', region, x_axis_scale, r'$I(X;Y)$ (bits)', y_lim=y_lim)
         filename = prefix + 'mutual_info_by_bin_width_' + region + '_' + str(best_stim) + '.png'
         print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
         plt.savefig(os.path.join(image_dir, 'mutual_info_vs_bin_width', x_axis_scale, filename))
@@ -128,21 +127,19 @@ def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading all_regions_stims_pairs_widths.csv...')
     correlation_frame = pd.read_csv(os.path.join(csv_dir, args.filename))
-    colours = cm.gist_rainbow(np.linspace(0, 1, 5)) # 5 regions
-    region_to_colour = dict(list(zip(rc.regions, colours)))
     if args.correlation_type == 'spike_count':
         for region in rc.regions:
             best_stim = rc.getBestStimFromRegion(correlation_frame, region)
-            plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, best_stim, region_to_colour, args.image_file_prefix, args.x_axis_scale)
+            plotAbsCorrCoefByBinWidthForRegionStim(correlation_frame, region, best_stim, args.image_file_prefix, args.x_axis_scale)
     elif args.correlation_type == 'signal':
         for region in rc.regions:
-            plotAbsSignalCorrByBinWidth(correlation_frame, region, region_to_colour, args.image_file_prefix, args.x_axis_scale)
+            plotAbsSignalCorrByBinWidth(correlation_frame, region, args.image_file_prefix, args.x_axis_scale)
     elif args.correlation_type == 'bifurcation':
         for region in rc.regions:
             best_stim = rc.getBestStimFromRegion(correlation_frame, region)
             plotBifurcatedCorrelationsByBinWidth(correlation_frame, region, best_stim, args.image_file_prefix, args.x_axis_scale)
     elif args.correlation_type == 'mutual_info':
-        plotMutualInfoByBinWidth(correlation_frame, region_to_colour, args.image_file_prefix, args.x_axis_scale)
+        plotMutualInfoByBinWidth(correlation_frame, args.image_file_prefix, args.x_axis_scale)
     else:
             sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')
 

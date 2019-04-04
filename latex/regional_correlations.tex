@@ -83,7 +83,7 @@ A weak response, or low firing rate, has a diminishing effect on measured correl
 
 If less than $9$ strongly responding neurons were found it was not possible to make $30$ pairs of strongly responding neurons. In that case, we just used all the strongly responding pairs.
 
-\subsection{Correlation coefficient}
+\subsection{Correlation coefficients}
 We calculated Pearson's correlation coefficient for pairs of neurons. For jointly distributed random variables $X$ and $Y$, Pearson's correlation coefficient is defined as:
 \begin{align}\label{eq:dist_pearsons_corr}
   \rho_{XY} =& \frac{\cov(X,Y)}{\sigma_X \sigma_Y} \\
@@ -105,18 +105,73 @@ The spike count correlation ($r_{SC}$) of two cells is the correlation between t
 \subsubsection{Signal Correlation, $r_{signal}$}
 The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition.
 
-\subsection{Separating Correlations \& Anti-correlations}\label{sec:corr_anti_corr}
+\subsubsection{Separating Correlations \& Anti-correlations}\label{sec:corr_anti_corr}
 In order to compare the effect of bin width on measures of negative $r_{SC}$ (anti-correlation) and positive $r_{SC}$ separately, we had to separate correlated and anti-correlated pairs. To do this, we simply measured the mean $r_{SC}$, taking the mean across all the bin widths. If this quantity was positive or zero we regarded the pair as positively correlated. If this quantity was negative we regarded the pair as anti-correlated.
 
+\subsection{Mutual Information}
+\subsubsection{Entropy $H(X)$}
+The entropy of a random variable $X$, with outcomes $x_1, \dots, x_N$, and corresponding probabilities $p_1, \dots, p_N$ is defined as
+\begin{align}\label{entropy}
+H(X) = -\sum_{n=1}^N p_n \log _2 p_n
+\end{align}
+This quantity is also known as the information entropy or the `surprise'. It measures the amount of uncertainty in a random variable. For example, a variable with a probability of $1$ for one outcome, and zero for all other outcomes will have 0 entropy, because it contains no uncertainty. But a variable with a uniform distribution will have maximal entropy as it is the least predictable. This quantity is analogous to the entropy of a physical system \cite{shannon}. Note that any base may be used for the logarithm in equation \ref{entropy}, but using base $2$ means that the quantity will be measured in `bits'.
+
+The joint entropy of two jointly distributed random variables $X$ and $Y$, where $Y$ has outcomes $y_1, \dots, y_M$, is defined as
+\begin{align}\label{joint_entropy}
+H(X, Y) = -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 P(X=x_n, Y=y_m)
+\end{align}
+If $X$ and $Y$ are independent then $H(X,Y) = H(X) + H(Y)$. Otherwise $H(X,Y) \leq H(X) + H(Y)$. When $X$ and $Y$ and completely dependent $H(X,Y) = H(X) = H(Y)$.
+
+The conditional entropy of $Y$ conditioned on $X$ is defined as
+\begin{align}
+H(Y|X) = -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 \frac{P(X=x_n, Y=y_m)}{P(X=x_n)}
+\end{align}
+When $X$ and $Y$ are independent $H(Y|X) = H(Y)$. Intuitively, we learn nothing of $Y$ by knowing $X$, so $Y$ is equally uncertain whether we know $X$ or not. If $Y$ is totally dependent on $X$, then the fraction in the logarithm is $1$, which gives $H(Y|X) = 0$.
+
+These entropy measures are the basis of the mutual information measure.
+
+\subsubsection{Mutual Information $I(X;Y)$}
+The mutual information can be defined mathematically in a number of ways, all of which are equivalent. For two jointly distributed random variables $X$ and $Y$, the mutual information $I(X;Y)$ is defined as
+\begin{align}\label{eq:mutual_info_intuitive}
+I(X;Y)  =& H(Y) - H(Y|X) \\
+        =& H(X) - H(X|Y)
+\end{align}
+Equation \ref{eq:mutual_info_intuitive} fits with the following intuition: The mutual information between $X$ and $Y$ is the reduction in uncertainty about $X$ gained by knowing $Y$, or vice versa. We could also say the mutual information is the amount of information gained about $X$ by knowing $Y$, or vice versa.
+
+Another useful entropy based definition for the mutual information is
+\begin{align}
+I(X;Y)  =& H(X) + H(Y) - H(X,Y)
+\end{align}
+This definition is useful because it does not require the calculation of conditional probabilities. This was the form we used when performing calculations.
+
+The mutual information can also be defined in terms of marginal, joint, and conditional distributions. For example,
+\begin{align}
+I(X;Y)  =& -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 \frac{P(X=x_n, Y=y_m)}{P(X=x_n) P(Y=y_m)}
+\end{align}
+Notice that this can be rewritten as a Kullback–Leibler divergence.
+\begin{align}
+I(X;Y)  =& D_{KL}(P(X,Y)|| P(X)P(Y))
+\end{align}
+So, we can also think of the mutual information as a measure of the difference between the joint distribution of $X$ and $Y$, and the product of their marginal distributions. Since the product of the marginal distributions is the joint distribution for independent variables. We can further think of the mutual information as a measure of the variables' dependence on one another.
+
 \section{Results}
-\subsection{Spike Count Correlations}
+\subsection{Varying bin width}
+In order to investigate the effect of bin width on the various measures we used, we took these measurements using a number of different values for the bin width. We found that the bin width definitely had an effect on the spike count correlation, and the mutual information.
+
+\subsubsection{Spike count correlations at various bin widths}
 For each stimulus condition and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their absolute spike count correlations ($|r_{SC}|$) and absolute signal correlation ($|r_{signal}|$) using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that $|r_{SC}|$ increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}, or figure \ref{fig:linear_bin_width_vs_correlation_by_region} for a linear version. This is in agreement with the findings of the simulated experiment in \cite{cohen}. For these figures, we chose the stimulus condition that evoked the strongest response from a given region. This guaranteed us $30$ strongly responding pairs for each region.
 
 \subsubsection{Correlations \& Anti-correlations}
 We separated the $30$ randomly chosen pairs into correlated and anti-correlated pairs as per section \ref{sec:corr_anti_corr}. We then measured $r_{SC}$ across various bin width values. We found that the positive $r_{SC}$ got more positive as the bin width increased. We also found that the negative $r_{SC}$ got more negative as the bin width increased. Both positive and negative coefficients showed a log-linear increase similar to the absolute spike count correlation coefficients. See figure \ref{fig:corr_anti_corr_by_region}.
 
-\subsection{Signal Correlations}
+\subsubsection{Signal Correlations}
 We found that $|r_{signal}|$ maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure \ref{fig:linear_bin_width_vs_signal_correlation_by_region}.
+
+\subsubsection{Mutual Information}
+
+\subsection{Spike count correlation \& Mutual Information distributions}
+\subsubsection{Spike count correlation histograms}
+For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise  spike count correlations. We created histograms using these data in order to examine the distributions of $|r_{SC}|$ in each region, see figure \ref{fig:all_corr_histograms}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -216,6 +271,31 @@ We found that $|r_{signal}|$ maintained a constant value across different bin wi
   \end{subfigure}
   \caption{\textbf{Signal Correlations:} Absolute values of signal correlation coefficients measured using different time bin widths. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The signal correlation maintains a fairly constant value across bin widths for most brain regions, with some variations in V1.}
   \label{fig:linear_bin_width_vs_signal_correlation_by_region}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_striatum_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_thalamus_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Spike Count Correlation Histograms:} Histograms of the spike count correlations of $1000$ randomly chosen pairs of neurons from within each region. The motor cortex, V1, and striatum all have similar distributions. For these regions the mean $r_{SC}$ is positive, but the median $r_{SC}$ is negative, so their distributions are skewed. The hippocampus is slightly different in that both the median and the mean are positive but close to $0$. The thalamus is different to all the other regions. Both its mean and medium are positive and are aprroximately equal to $0.14$.}
+  \label{fig:all_corr_histograms}
 \end{figure}
 
 \section*{Things to discuss with Cian}
