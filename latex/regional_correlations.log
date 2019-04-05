@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  4 APR 2019 19:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  5 APR 2019 09:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -676,30 +676,30 @@ Overfull \hbox (2.28003pt too wide) in paragraph at lines 252--272
 []$ $[]$
  []
 
-<figures/all_hippocampus_8_1p0_correlation_histogram.png, id=197, 289.08pt x 216.81pt>
-File: figures/all_hippocampus_8_1p0_correlation_histogram.png Graphic file (type png)
-<use figures/all_hippocampus_8_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_hippocampus_8_1p0_correlation_histogram.png  used on input line 279.
+<figures/linear_mutual_info_by_bin_width_hippocampus_15.png, id=197, 289.08pt x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_hippocampus_15.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_hippocampus_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_hippocampus_15.png  used on input line 279.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_motor_cortex_8_1p0_correlation_histogram.png, id=198, 289.08pt x 216.81pt>
-File: figures/all_motor_cortex_8_1p0_correlation_histogram.png Graphic file (type png)
-<use figures/all_motor_cortex_8_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_motor_cortex_8_1p0_correlation_histogram.png  used on input line 283.
+<figures/linear_mutual_info_by_bin_width_motor_cortex_15.png, id=198, 289.08pt x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_motor_cortex_15.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_motor_cortex_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_motor_cortex_15.png  used on input line 283.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_striatum_8_1p0_correlation_histogram.png, id=199, 289.08pt x 216.81pt>
-File: figures/all_striatum_8_1p0_correlation_histogram.png Graphic file (type png)
-<use figures/all_striatum_8_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_striatum_8_1p0_correlation_histogram.png  used on input line 287.
+<figures/linear_mutual_info_by_bin_width_striatum_14.png, id=199, 289.08pt x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_striatum_14.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_striatum_14.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_striatum_14.png  used on input line 287.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_thalamus_8_1p0_correlation_histogram.png, id=200, 289.08pt x 216.81pt>
-File: figures/all_thalamus_8_1p0_correlation_histogram.png Graphic file (type png)
-<use figures/all_thalamus_8_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_thalamus_8_1p0_correlation_histogram.png  used on input line 291.
+<figures/linear_mutual_info_by_bin_width_thalamus_15.png, id=200, 289.08pt x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_thalamus_15.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_thalamus_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_thalamus_15.png  used on input line 291.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_v1_8_1p0_correlation_histogram.png, id=201, 289.08pt x 216.81pt>
-File: figures/all_v1_8_1p0_correlation_histogram.png Graphic file (type png)
-<use figures/all_v1_8_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_v1_8_1p0_correlation_histogram.png  used on input line 295.
+<figures/linear_mutual_info_by_bin_width_v1_6.png, id=201, 289.08pt x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_v1_6.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_v1_6.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_v1_6.png  used on input line 295.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
 Overfull \hbox (2.28003pt too wide) in paragraph at lines 277--297
@@ -708,6 +708,41 @@ Overfull \hbox (2.28003pt too wide) in paragraph at lines 277--297
 
 
 Overfull \hbox (2.28003pt too wide) in paragraph at lines 277--297
+[]$ $[]$
+ []
+
+<figures/all_hippocampus_8_1p0_correlation_histogram.png, id=202, 289.08pt x 216.81pt>
+File: figures/all_hippocampus_8_1p0_correlation_histogram.png Graphic file (type png)
+<use figures/all_hippocampus_8_1p0_correlation_histogram.png>
+Package pdftex.def Info: figures/all_hippocampus_8_1p0_correlation_histogram.png  used on input line 304.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/all_motor_cortex_8_1p0_correlation_histogram.png, id=203, 289.08pt x 216.81pt>
+File: figures/all_motor_cortex_8_1p0_correlation_histogram.png Graphic file (type png)
+<use figures/all_motor_cortex_8_1p0_correlation_histogram.png>
+Package pdftex.def Info: figures/all_motor_cortex_8_1p0_correlation_histogram.png  used on input line 308.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/all_striatum_8_1p0_correlation_histogram.png, id=204, 289.08pt x 216.81pt>
+File: figures/all_striatum_8_1p0_correlation_histogram.png Graphic file (type png)
+<use figures/all_striatum_8_1p0_correlation_histogram.png>
+Package pdftex.def Info: figures/all_striatum_8_1p0_correlation_histogram.png  used on input line 312.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/all_thalamus_8_1p0_correlation_histogram.png, id=205, 289.08pt x 216.81pt>
+File: figures/all_thalamus_8_1p0_correlation_histogram.png Graphic file (type png)
+<use figures/all_thalamus_8_1p0_correlation_histogram.png>
+Package pdftex.def Info: figures/all_thalamus_8_1p0_correlation_histogram.png  used on input line 316.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/all_v1_8_1p0_correlation_histogram.png, id=206, 289.08pt x 216.81pt>
+File: figures/all_v1_8_1p0_correlation_histogram.png Graphic file (type png)
+<use figures/all_v1_8_1p0_correlation_histogram.png>
+Package pdftex.def Info: figures/all_v1_8_1p0_correlation_histogram.png  used on input line 320.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 302--322
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 302--322
 []$ $[]$
  []
 
@@ -752,15 +787,22 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[11 <./figures/all_hippocampus_8_1p0_correlation_histogram.png> <./figures/all_motor_cortex_8_1p0_correlation_histogram.png> <./figures/all_striatum_8_1p0_correlation_histogram.png> <./figures/all_thalamus_8_1p0_correlation_histogram.png> <./figures/all_v1_8_1p0_correlation_histogram.png>]
+[11 <./figures/linear_mutual_info_by_bin_width_hippocampus_15.png> <./figures/linear_mutual_info_by_bin_width_motor_cortex_15.png> <./figures/linear_mutual_info_by_bin_width_striatum_14.png> <./figures/linear_mutual_info_by_bin_width_thalamus_15.png> <./figures/linear_mutual_info_by_bin_width_v1_6.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[12] (./regional_correlations.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 314.
+[12 <./figures/all_hippocampus_8_1p0_correlation_histogram.png> <./figures/all_motor_cortex_8_1p0_correlation_histogram.png> <./figures/all_striatum_8_1p0_correlation_histogram.png> <./figures/all_thalamus_8_1p0_correlation_histogram.png> <./figures/all_v1_8_1p0_correlation_histogram.png>]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[13] (./regional_correlations.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 339.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -768,30 +810,30 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[13]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 314.
+[14]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 339.
  (./regional_correlations.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 314.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 314.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 339.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 339.
 Package rerunfilecheck Info: File `regional_correlations.out' has not changed.
 (rerunfilecheck)             Checksum: 945DC21A962A923C391B44731384BD5E;1582.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 314.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 339.
  ) 
 Here is how much of TeX's memory you used:
- 9361 strings out of 492701
- 146861 string characters out of 6134504
- 257720 words of memory out of 5000000
- 13001 multiletter control sequences out of 15000+600000
+ 9389 strings out of 492701
+ 148368 string characters out of 6134504
+ 260061 words of memory out of 5000000
+ 13022 multiletter control sequences out of 15000+600000
  25348 words of font info for 68 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
  42i,11n,43p,973b,461s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist, replaced by a fixed one
 
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on regional_correlations.pdf (13 pages, 463891 bytes).
+Output written on regional_correlations.pdf (14 pages, 533522 bytes).
 PDF statistics:
- 324 PDF objects out of 1000 (max. 8388607)
- 244 compressed objects within 3 object streams
- 62 named destinations out of 1000 (max. 500000)
- 294 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 339 PDF objects out of 1000 (max. 8388607)
+ 248 compressed objects within 3 object streams
+ 64 named destinations out of 1000 (max. 500000)
+ 319 words of extra memory for PDF output out of 10000 (max. 10000000)
 
