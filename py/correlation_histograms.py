@@ -32,8 +32,6 @@ import regionalCorrelations as rc
 
 def plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, x_col, x_label, x_lim):
     region_bin_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.bin_width == bin_width)&(correlation_frame.stim_id == stim_id)]
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Mean ' + x_col + ' = ' + str(region_bin_frame[x_col].mean()))
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Median ' + x_col + ' = ' + str(region_bin_frame[x_col].median()))
     region_bin_frame[x_col].hist(grid=False, bins=25, color=rc.region_to_colour[region], range=x_lim, label=region.replace('_', ' ').capitalize(), figsize=(4,3))
     plt.xlim(x_lim)
     plt.xlabel(x_label, fontsize='large')

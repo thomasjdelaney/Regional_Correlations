@@ -57,4 +57,4 @@ For making cross correlograms for pairs of neurons.
 - update the README.md
 - fix the 'is_strong' flag.
 - consider the relative mutual information
-- Add to the pdf.
+- Add the k-s test.
