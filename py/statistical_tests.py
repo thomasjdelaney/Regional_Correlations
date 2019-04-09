@@ -1,5 +1,5 @@
 """
-For carrying out statistical tests on histograms of data.
+For carrying out statistical tests on the samples in the csv directory.
 """
 import os, argparse, sys
 if float(sys.version[:3])<3.0:
@@ -11,7 +11,7 @@ from itertools import combinations
 from scipy.io import loadmat
 from scipy.stats import ks_2samp
 
-parser = argparse.ArgumentParser(description='For carrying out statistical tests on histograms of data.')
+parser = argparse.ArgumentParser(description='For carrying out statistical tests on the samples in the csv directory.')
 parser.add_argument('-f', '--filename', help='The file in which to find the correlations.', type=str, default='all_regions_stims_pairs_widths.csv')
 parser.add_argument('-b', '--bin_width', help='The bin width to use for correlations.', type=float, default=1.0)
 parser.add_argument('-p', '--prefix', help='A prefix for the image file names.', type=str, default='')

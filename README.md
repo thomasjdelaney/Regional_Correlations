@@ -53,9 +53,17 @@ For making histograms from the results in the csv files created by ```bin_width_
 
 For making cross correlograms for pairs of neurons.
 
+### signal_correlations.py
+
+For calculating the signal correlations between many neurons using different bin widths.
+
+### statistical_tests.py
+
+For carrying out statistical tests on the samples in the csv directory.
+
 ###### TO DO:
 - update the README.md
 - fix the 'is_strong' flag.
-- consider the relative mutual information
 - What use are the strong histograms?
 - consider the Mann-Whitney U test
+- I should measure the firing rates for each good cell, in each region, in response to each stimulus condition.
