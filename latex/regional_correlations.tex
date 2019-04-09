@@ -57,9 +57,15 @@
 \newpage
 
 \section{Motivation}
-In their review entitled `Measuring and interpreting neural correlations', Cohen and Kohn studied the effects of response strength and time bin width on neural correlation measurement. Using simulated data, they found that correlation measurements taken between weakly responding neurons (i.e. neurons with firing rates of $<10$ spikes per s) will be less than the true pairwise correlation value. They also found that binning the neural spiking data into small time bins can cause the measured correlation to be less than the true value. How small is 'small' in this case is related to width of the cross-correlogram of the pair of neurons. But, it was shown in simulation that time bins should be at least $0.1$ seconds wide in order for the measured correlation value to be close to the true correlation value \cite{cohen}.
+\subsection{Effect of binning}
+In their review entitled `Measuring and interpreting neural correlations', Cohen and Kohn studied the effects of response strength and time bin width on neural correlation measurement. Using simulated data, they found that correlation measurements taken between weakly responding neurons (i.e. neurons with firing rates of $<10$ spikes per s) will be less than the true pairwise correlation value. They also found that binning the neural spiking data into small time bins can cause the measured correlation to be less than the true value. How small is `small' in this case is related to width of the cross-correlogram of the pair of neurons. But, it was shown in simulation that time bins should be at least $0.1$ seconds wide in order for the measured correlation value to be close to the true correlation value \cite{cohen}.
 
 Our aim here is to measure a big enough sample of pairwise correlations from actual neural data across a selection of time bin widths and compare our results to those of Cohen and Kohn. In order to do this we used data collected using `Neuropixels' probes \cite{jun}. These data are made available publicly online by Dr. Nick Steinmetz \footnote{\url{http://data.cortexlab.net/dualPhase3/}}.
+
+One disadvantage of measuring correlations is that only the linear relationship between the quantities is captured. The mutual information is a model free pairwise measurement that can capture information about linear and non-linear dependencies between quantities. Therefore we also measured the mutual information between pairs of neurons across the same selection of time bin widths. In doing this, we investigated the effect of binning on mutual information measurements.
+
+\subsection{Regional Spike Correlation \& Mutual Information distributions}
+We aimed to investigate the distributions of spike count correlations and mutual information within the different brain regions from which we have data available. We measured correlations and mutual information from $1000$ randomly chosen pairs in each region. We made histograms of the results in order to investigate their distributions visually. We used statistical tests to measure the probability of these samples coming from different distributions.
 
 \section{Data}
 The recent development of Neuropixels probes has allowed extracellular voltage measurements to be collected from multiple brain regions simultaneously routinely, and in much larger numbers than traditional methods.
@@ -131,7 +137,9 @@ When $X$ and $Y$ are independent $H(Y|X) = H(Y)$. Intuitively, we learn nothing 
 These entropy measures are the basis of the mutual information measure.
 
 \subsubsection{Mutual Information $I(X;Y)$}
-The mutual information can be defined mathematically in a number of ways, all of which are equivalent. For two jointly distributed random variables $X$ and $Y$, the mutual information $I(X;Y)$ is defined as
+The mutual information can be defined mathematically in a number of ways, all of which are equivalent. These definitions illustrate the different ways of interpreting the mutual information.
+
+For two jointly distributed random variables $X$ and $Y$, the mutual information $I(X;Y)$ is defined as
 \begin{align}\label{eq:mutual_info_intuitive}
 I(X;Y)  =& H(Y) - H(Y|X) \\
         =& H(X) - H(X|Y)
@@ -154,24 +162,41 @@ I(X;Y)  =& D_{KL}(P(X,Y)|| P(X)P(Y))
 \end{align}
 So, we can also think of the mutual information as a measure of the difference between the joint distribution of $X$ and $Y$, and the product of their marginal distributions. Since the product of the marginal distributions is the joint distribution for independent variables, we can think of the mutual information as a measure of the variables' dependence on one another.
 
+\subsection{Kolmogorov-Smirnov Statistical Test}\label{sec:ks_test}
+The Kolmogorov-Smirnov test is a statistical test of the equality of one dimensional probability distributions. It can also be used to measure the probability of a sample coming from a reference distribution. We use it to measure the probability of two samples coming from the same distribution. This is more commonly referred to as the `two sample K-S test'.
+
+\subsubsection{Empirical distribution function}
+The empirical distribution function is the empirical analogue of the cumulative distribution function. Given some sample $\mathbf{X}$ with $n$ data points, the empirical distribution function is a step function that increases by $1/n$ at each data point value. Mathematically,
+\begin{align}
+  \hat{F}_{n}(t) = \frac{1}{n} \sum_{i=1}^n \mathbf{1}_{X_i \leq t}
+\end{align}
+where $\mathbf{1}_{A}$ is the indicator of condition $A$.
+
+Assuming there is some underlying distribution $P(X)$ for the sample, with cumulative distribution function $F(t)$, in the regime where $n \rightarrow \infty$, $\hat{F}_n (t) \rightarrow F(X)$.
+
+\subsubsection{Two sample K-S test}
+Given two samples $\mathbf{X}_1$ and $\mathbf{X}_2$, with $n$ and $m$ data points respectively, and with two correponding empirical distribution functions $F_{1,n}(t)$ and $F_{2,m}(t)$, the Kolmogorov-Smirnov statistic is defined as
+\begin{align}
+  D_{n,m} = \sup_{t} |F_{1,n}(t) - F_{2,m}(t)|
+\end{align}
+The null hypothesis is that both samples come from the same distribution. This null hypothesis is rejected at confidence level $\alpha$ if
+\begin{align}
+  D_{n,m} > c(\alpha)\sqrt{\frac{n+m}{nm}}
+\end{align}
+where
+\begin{align}
+  c(\alpha) = \sqrt{\frac{-\ln \alpha}{2}}
+\end{align}
+Note that the two sample K-S test tests if two samples come from the same distribution, but doesn't make any assumptions about the underlying distribution(s).
+
+In practise, we used the python function \texttt{scipy.stats.ks\_2samp} to calculate the K-S test statistic and p-value.
+
 \section{Results}
 \subsection{Varying bin width}
-In order to investigate the effect of bin width on the various measures we used, we took these measurements using a number of different values for the bin width. We found that the bin width definitely had an effect on the spike count correlation, and the mutual information.
+In order to investigate the effect of bin width on the various measures we used, we took these measurements using a number of different values for the bin width. We found that the bin width used had an effect on the spike count correlation, and the mutual information.
 
-\subsubsection{Spike count correlations at various bin widths}
+\subsubsection{Spike count correlations at various bin widths}\label{sec:corr_vs_bin_widths}
 For each stimulus condition and each region, we randomly chose $30$ pairs of strongly responding neurons (or chose as many pairs as we could find), measured their absolute spike count correlations ($|r_{SC}|$) and absolute signal correlation ($|r_{signal}|$) using various values for the time bin width and examined the relationship between the coefficients and the bin width. We found that $|r_{SC}|$ increased approximately log-linearly up to a width of $1$s and appeared to level off thereafter, see figure \ref{fig:bin_width_vs_correlation_by_region}, or figure \ref{fig:linear_bin_width_vs_correlation_by_region} for a linear version. This is in agreement with the findings of the simulated experiment in \cite{cohen}. For these figures, we chose the stimulus condition that evoked the strongest response from a given region. This guaranteed us $30$ strongly responding pairs for each region.
-
-\subsubsection{Correlations \& Anti-correlations}
-We separated the $30$ randomly chosen pairs into correlated and anti-correlated pairs as per section \ref{sec:corr_anti_corr}. We then measured $r_{SC}$ across various bin width values. We found that the positive $r_{SC}$ got more positive as the bin width increased. We also found that the negative $r_{SC}$ got more negative as the bin width increased. Both positive and negative coefficients showed a log-linear increase similar to the absolute spike count correlation coefficients. See figure \ref{fig:corr_anti_corr_by_region}.
-
-\subsubsection{Signal Correlations}
-We found that $|r_{signal}|$ maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure \ref{fig:linear_bin_width_vs_signal_correlation_by_region}.
-
-\subsubsection{Mutual Information}
-
-\subsection{Spike count correlation \& Mutual Information distributions}
-\subsubsection{Spike count correlation histograms}
-For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise  spike count correlations. We created histograms using these data in order to examine the distributions of $r_{SC}$ in each region, see figure \ref{fig:all_corr_histograms}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -223,6 +248,9 @@ For each region, we found all of the cells that responded to the stimulus. We ra
   \label{fig:linear_bin_width_vs_correlation_by_region}
 \end{figure}
 
+\subsubsection{Correlations \& Anti-correlations}
+We separated the $30$ randomly chosen pairs into correlated and anti-correlated pairs as per section \ref{sec:corr_anti_corr}. We then measured $r_{SC}$ across various bin width values. We found that the positive $r_{SC}$ got more positive as the bin width increased. We also found that the negative $r_{SC}$ got more negative as the bin width increased. Both positive and negative coefficients showed a log-linear increase similar to the absolute spike count correlation coefficients. See figure \ref{fig:corr_anti_corr_by_region}.
+
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
     \centering
@@ -247,6 +275,9 @@ For each region, we found all of the cells that responded to the stimulus. We ra
   \caption{\textbf{Spike Count Correlations and Anti-correlations:} Correlation coefficients measured using different time bin widths and separated into positive and negative sets. Shaded areas indicate standard errors. One figure for each brain region from which data were available. The correlations or anti-correlations get stronger as the bin width increases. We see the log linear increase similar to figures \ref{fig:bin_width_vs_correlation_by_region} and \ref{fig:linear_bin_width_vs_correlation_by_region}.}
   \label{fig:corr_anti_corr_by_region}
 \end{figure}
+
+\subsubsection{Signal Correlations}
+We found that $|r_{signal}|$ maintained a constant value across different bin widths. This was the case in all regions, with some variations in V1. See figure \ref{fig:linear_bin_width_vs_signal_correlation_by_region}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -273,6 +304,9 @@ For each region, we found all of the cells that responded to the stimulus. We ra
   \label{fig:linear_bin_width_vs_signal_correlation_by_region}
 \end{figure}
 
+\subsubsection{Mutual Information}
+As in section \ref{sec:corr_vs_bin_widths}, we randomly chose $30$ pairs of strongly responding cells in each region for each stimulus condition and measured the mutual information ($I(X;Y)$) between these pairs using different values for the bin width. As with the spike count correlations, we found that the mutual information increased as the bin width increased up to a bin width of $1$ second, and levelled off thereafter, see figure \ref{fig:linear_bin_width_vs_mutual_information_by_region}.
+
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
     \centering
@@ -298,6 +332,11 @@ For each region, we found all of the cells that responded to the stimulus. We ra
   \label{fig:linear_bin_width_vs_mutual_information_by_region}
 \end{figure}
 
+\subsection{Spike count correlation \& Mutual Information distributions}
+
+\subsubsection{Histograms}
+For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise  spike count correlations and mutual information using a bin width of $1.0$s. We created histograms using these data in order to examine the distributions of $r_{SC}$ and $I(X;Y)$ in each region, see figures \ref{fig:all_corr_histograms} and \ref{fig:all_info_histograms}.
+
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
     \centering
@@ -319,9 +358,80 @@ For each region, we found all of the cells that responded to the stimulus. We ra
     \centering
     \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_correlation_histogram.png}
   \end{subfigure}
-  \caption{\textbf{Spike Count Correlation Histograms:} Histograms of the spike count correlations of $1000$ randomly chosen pairs of neurons from within each region. The motor cortex, V1, and striatum all have similar distributions. For these regions the mean $r_{SC}$ is positive, but the median $r_{SC}$ is negative, so their distributions are skewed. The hippocampus is slightly different in that both the median and the mean are positive but close to $0$. The thalamus is different to all the other regions. Both its mean and median are positive and are aprroximately equal to $0.14$.}
+  \caption{\textbf{Spike Count Correlation Histograms:} Histograms of the spike count correlations of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. The motor cortex, V1, and striatum all have similar distributions. For these regions the mean $r_{SC}$ is positive, but the median $r_{SC}$ is negative, so their distributions are skewed. The hippocampus is slightly different in that both the median and the mean are positive but close to $0$. The thalamus is different to all the other regions. Both its mean and median are positive and are aprroximately equal to $0.14$.}
   \label{fig:all_corr_histograms}
 \end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_striatum_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_thalamus_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Mutual Information Histograms:} Histograms of the mutual information of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. In motor cortex, V1, and striatum most pairs have mutual information of $\leq 1$ bit. The hippocampus is slightly different more spread out into greater values. In the thalamus, the pairs appear to be more dependent than in the other regions.}
+  \label{fig:all_info_histograms}
+\end{figure}
+
+\subsubsection{Statistical tests}
+We tested if the spike count correlations and mutual information measurements taken from each region could have the same underlying distributions. We used the two sample Kolmogorov-Smirnov test to do this (see section \ref{sec:ks_test}). Given a pair of regions, we tested the samples of $1000$ spike count correlations and mutual information measurements from each region. We did this for all $10$ possible pairs of regions. Results can be seen in tables \ref{tab:corr_ks_test} and \ref{tab:info_ks_test}.
+
+\begin{table}[ht!]
+  \begin{center}
+    \caption{Spike Count Correlations statistical tests. $\mathbf{P(H_0)}$ refers to the probability of the null hypothesis, i.e. the p-value.}
+    \label{tab:corr_ks_test}
+    \begin{tabular}{c|c|c|c|c} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+      \multicolumn{2}{c|}{\textbf{Regions}} & \textbf{K-S Stat} & $\mathbf{P(H_0)}$ & \textbf{Statistically Significant}\\
+      \hline
+      Striatum & Thalamus & $0.24$ & $1.0 \times 10^{-25}$ & Yes \\
+      Motor cortex & Thalamus & $0.234$ & $1.8 \times 10^{-24}$ & Yes \\
+      V1 & Thalamus  & $0.199$ & $8.1 \times 10^{-18}$ & Yes \\
+      Hippocampus & Thalamus  & $0.159$ & $1.6 \times 10^{-11}$ & Yes \\
+      Striatum & Hippocampus & $0.132$ & $4.5 \times 10^{-8}$ & Yes \\
+      Motor cortex & Hippocampus & $0.113$ & $4.9 \times 10^{-6}$ & Yes \\
+      V1 & Hippocampus & $0.083$ & $0.001$ & Yes \\
+      Striatum & V1 & $0.075$ & $0.006$ & Yes \\
+      Motor cortex & V1 & $0.047$ & $0.21$ & No \\
+      Motor cortex & Striatum & $0.037$ & $0.49$ & No \\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[ht!]
+  \begin{center}
+    \caption{Mutual Information statistical tests. $\mathbf{P(H_0)}$ refers to the probability of the null hypothesis, i.e. the p-value.}
+    \label{tab:info_ks_test}
+    \begin{tabular}{c|c|c|c|c} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+      \multicolumn{2}{c|}{\textbf{Regions}} & \textbf{K-S Stat} & $\mathbf{P(H_0)}$ & \textbf{Statistically Significant}\\
+      \hline
+      Striatum & Thalamus & $0.72$ & $1.0 \times 10^{-228}$ & Yes \\
+      V1 & Thalamus  & $0.63$ & $7.8 \times 10^{-176}$ & Yes \\
+      Motor cortex & Thalamus & $0.606$ & $1.1 \times 10^{-161}$ & Yes \\
+      Hippocampus & Thalamus  & $0.49$ & $7.2 \times 10^{-106}$ & Yes \\
+      Striatum & Hippocampus & $0.318$ & $7.8 \times 10^{-45}$ & Yes \\
+      V1 & Hippocampus & $0.191$ & $1.9 \times 10^{-16}$ & Yes \\
+      Motor cortex & Striatum & $0.163$ & $4.3 \times 10^{-12}$ & Yes \\
+      Motor cortex & Hippocampus & $0.146$ & $6.0 \times 10^{-12}$ & Yes \\
+      Striatum & V1 & $0.146$ & $8.7 \times 10^{-10}$ & Yes \\
+      Motor cortex & V1 & $0.039$ & $0.43$ & No \\
+    \end{tabular}
+  \end{center}
+\end{table}
+
 
 \section*{Things to discuss with Cian}
 \begin{enumerate}
