@@ -116,12 +116,25 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')
     return exp_frame.sort_values(['probe', 'region', 'depth'])
 
-def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_strong=True, strong_threshold=20.0):
+def getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_strong=True, strong_threshold=20.0):
     big_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, 0.0)
     agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg('mean').sort_values('num_spikes', ascending=False)
     strongly_responding_cells = agg_frame.index[agg_frame['num_spikes'] >= strong_threshold].values
     weakly_responding_cells = agg_frame.index[(agg_frame['num_spikes'] <= strong_threshold)&(agg_frame['num_spikes'] > 0.0)].values
     responding_cells = strongly_responding_cells if is_strong else weakly_responding_cells
+    num_responding_cells = responding_cells.size
+    if num_cells > 0: # we only want a certain number of cells
+        if num_responding_cells > num_cells:
+            chosen_cells = np.random.choice(responding_cells, num_cells, replace=False)
+        else:
+            print(dt.datetime.now().isoformat() + ' WARN: ' + 'Only ' + str(num_responding_cells) + ' cells found.')
+            chosen_cells = responding_cells
+    else: # we want all cells
+        chosen_cells = responding_cells
+    return chosen_cells
+
+def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_strong=True, strong_threshold=20.0):
+    responding_cells = getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_strong=is_strong, strong_threshold=strong_threshold)
     if responding_cells.size < 2:
         print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 responding cells.')
         return np.array([0,0])
