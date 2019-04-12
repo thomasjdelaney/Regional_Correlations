@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description="For plotting the data found in 'all_regions_stims_pairs_widths.csv'.")
-parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal', 'bifurcation', 'mutual_info'], type=str)
+parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal', 'bifurcation', 'mutual_info', 'firing_rate'], type=str)
 parser.add_argument('-f', '--filename', help='The file from which to get the pairwise correlation data.', type=str, default='all_regions_stims_pairs_widths.csv')
 parser.add_argument('-p', '--image_file_prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-x', '--x_axis_scale', help='The scale of the x-axis', type=str, default='linear', choices=['log', 'linear'])
@@ -64,6 +64,17 @@ def plotAbsSignalCorrByBinWidth(correlation_frame, region, prefix, x_axis_scale)
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
     plt.savefig(os.path.join(image_dir, 'correlations_vs_bin_width', 'signal_correlations', x_axis_scale, filename))
     plt.close()
+
+def plotFiringRateByBinWidth(firing_frame, prefix):
+    y_lim = [0, firing_frame.firing_rate_mean.max()]
+    for region in rc.regions:
+        best_stim = rc.getBestStimFromRegion(firing_frame, region)
+        region_stim_frame = firing_frame[(firing_frame.region == region) & (firing_frame.stim_id == best_stim)]
+        plotColumnByBinWidth(region_stim_frame, 'firing_rate_mean', region, 'linear', 'Firing Rate (Hz)', y_lim=y_lim)
+        filename = prefix + 'firing_rate_by_bin_width_' + region + '_' + str(best_stim) + '.png'
+        print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
+        plt.savefig(os.path.join(image_dir, 'firing_rate_vs_bin_width', filename))
+        plt.close()
 
 def plotMutualInfoByBinWidth(correlation_frame, prefix, x_axis_scale):
     y_lim = [0, correlation_frame.mutual_info.max()]
@@ -140,6 +151,8 @@ def main():
             plotBifurcatedCorrelationsByBinWidth(correlation_frame, region, best_stim, args.image_file_prefix, args.x_axis_scale)
     elif args.correlation_type == 'mutual_info':
         plotMutualInfoByBinWidth(correlation_frame, args.image_file_prefix, args.x_axis_scale)
+    elif args.correlation_type == 'firing_rate':
+        plotFiringRateByBinWidth(correlation_frame, args.image_file_prefix)
     else:
             sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')
 
