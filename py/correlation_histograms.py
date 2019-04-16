@@ -44,14 +44,14 @@ def plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, x_col, 
     plt.tight_layout()
 
 def plotRegionalCorrelationHistogram(correlation_frame, region, stim_id, bin_width, prefix, use_title):
-    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'corr_coef', r'$r_{SC}$', [-1,1], [0,175], use_title=use_title)
+    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'corr_coef', r'$r_{SC}$', [-1,1], [0,100], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_correlation_histogram.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
     plt.savefig(os.path.join(image_dir, 'correlation_histograms', filename))
     plt.close()
 
 def plotRegionalInfoHistogram(correlation_frame, region, stim_id, bin_width, prefix, max_mi, use_title):
-    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info', r'$I(X;Y)$ (bits)', [0, max_mi], [0,310], use_title=use_title)
+    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info', r'$I(X;Y)$ (bits)', [0, max_mi], [0,215], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_information_histogram.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
     plt.savefig(os.path.join(image_dir, 'information_histograms', filename))

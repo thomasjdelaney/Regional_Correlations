@@ -1,11 +1,11 @@
 # Fdb version 3
-["bibtex regional_correlations"] 1554826770 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1554826772
+["bibtex regional_correlations"] 1555371701 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1555371703
   "fluorescence_modelling.bbl.bib" 0 -1 0 ""
-  "regional_correlations.aux" 1554826772 12629 ba33a4c05a1b54987c5ff08adf126c46 "pdflatex"
+  "regional_correlations.aux" 1555371703 16570 9860d0a0b2734a6d78208d6f9b84bd97 "pdflatex"
   (generated)
   "regional_correlations.bbl"
   "regional_correlations.blg"
-["pdflatex"] 1554826770 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1554826772
+["pdflatex"] 1555371701 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1555371703
   "/home/thomas/.texlive2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1550972528 3682902 5edbeb781481373c7d9336db116906a2 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1553009388 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
@@ -154,14 +154,24 @@
   "figures/signal_linear_bin_width_correlations_striatum_0.png" 1554217034 15776 18381ca932baa041d1c94ef360853444 ""
   "figures/signal_linear_bin_width_correlations_thalamus_0.png" 1554217034 15512 37758d1a0441e2d3542326b7169eb655 ""
   "figures/signal_linear_bin_width_correlations_v1_0.png" 1554217034 18241 e60998e93b24bff1dfb9203fb8a3b0af ""
-  "regional_correlations.aux" 1554826772 12629 ba33a4c05a1b54987c5ff08adf126c46 "pdflatex"
+  "figures/strong_hippocampus_6_1p0_correlation_histogram.png" 1555366577 15177 c2d5b8426ef7284cbe9a34564857e855 ""
+  "figures/strong_hippocampus_6_1p0_information_histogram.png" 1555366590 15487 ff9b716a5cf39c4dbc3a6299247fda75 ""
+  "figures/strong_motor_cortex_10_1p0_correlation_histogram.png" 1555366577 15212 2a324a3df806632df28700a87dd4d6e9 ""
+  "figures/strong_motor_cortex_10_1p0_information_histogram.png" 1555366590 15462 cea22550c98e548690443c4c822188ff ""
+  "figures/strong_striatum_14_1p0_correlation_histogram.png" 1555366577 14642 22ae3f56d454a0b1f740debf06b54c98 ""
+  "figures/strong_striatum_14_1p0_information_histogram.png" 1555366590 14943 e582ab3022fb3d0a580fa83380a09a25 ""
+  "figures/strong_thalamus_8_1p0_correlation_histogram.png" 1555366577 14881 4a439436e3f6ca5c1977aa537026d176 ""
+  "figures/strong_thalamus_8_1p0_information_histogram.png" 1555366590 15148 4d1381b6b8ef8b7e01df8e0e788aec3e ""
+  "figures/strong_v1_6_1p0_correlation_histogram.png" 1555366577 13996 4340e866ae89f186794c67b7a0aa2ff7 ""
+  "figures/strong_v1_6_1p0_information_histogram.png" 1555366590 14306 5e79f8c6e3d296ffdd95b390571e112d ""
+  "regional_correlations.aux" 1555371703 16570 9860d0a0b2734a6d78208d6f9b84bd97 "pdflatex"
   "regional_correlations.bbl" 1554385025 537 6e0f53c19cea1265ed9e018919edf1a4 "bibtex regional_correlations"
-  "regional_correlations.out" 1554826772 2071 787c0002d72c6575b6e0ecc975ad1b45 "pdflatex"
-  "regional_correlations.tex" 1554826763 31233 5b441045d5cfe063e8f284882b220cda ""
-  "regional_correlations.toc" 1554826772 2509 2609b1b454405d6efc8c17506a463f2d "pdflatex"
+  "regional_correlations.out" 1555371703 2173 58305c2dc0d4b56006196196f05c8650 "pdflatex"
+  "regional_correlations.tex" 1555371697 37496 1de4182b19445153ba20b1744f0e4fd6 ""
+  "regional_correlations.toc" 1555371703 2627 1d1ec0688ee3784e108c8615c6bd5484 "pdflatex"
   (generated)
   "regional_correlations.toc"
-  "regional_correlations.pdf"
   "regional_correlations.out"
+  "regional_correlations.pdf"
   "regional_correlations.aux"
   "regional_correlations.log"

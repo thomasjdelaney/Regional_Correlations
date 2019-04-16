@@ -28,16 +28,24 @@ sys.path.append(py_dir)
 import regionalCorrelations as rc
 
 def getDataFrames(single_file, paired_file, bin_width):
-    firing_frame = pd.read_csv(os.path.join(csv_dir, args.single_file))
-    pairwise_frame = pd.read_csv(os.path.join(csv_dir, args.paired_file))
+    firing_frame = pd.read_csv(os.path.join(csv_dir, args.single_file), usecols=lambda x: x != 'Unnamed: 0')
+    pairwise_frame = pd.read_csv(os.path.join(csv_dir, args.paired_file), usecols=lambda x: x != 'Unnamed: 0')
     firing_frame = firing_frame[firing_frame.bin_width == bin_width]
     pairwise_frame = pairwise_frame[pairwise_frame.bin_width == bin_width]
     return firing_frame, pairwise_frame
 
-def getWorkingCells(firing_region_frame, pairwise_region_frame):
+def getWorkingFrame(firing_region_frame, pairwise_region_frame):
     required_cells = np.unique(pairwise_region_frame.loc[:, ['first_cell_id', 'second_cell_id']])
     available_cells = np.unique(firing_region_frame.cell_id)
-    return np.intersect1d(required_cells, available_cells)
+    working_cells = np.intersect1d(required_cells, available_cells)
+    excluded_cells = np.setdiff1d(required_cells, available_cells)
+    working_pairwise = pairwise_region_frame[np.isin(pairwise_region_frame.first_cell_id, excluded_cells, invert=True)&np.isin(pairwise_region_frame.second_cell_id, excluded_cells, invert=True)]
+    working_firing = firing_region_frame[np.isin(firing_region_frame.cell_id, working_cells)]
+    working_firing.rename(index=str, columns={'cell_id':'first_cell_id', 'firing_rate_mean':'first_firing_rate'}, inplace=True)
+    working_pairwise = working_pairwise.merge(working_firing[['first_cell_id', 'stim_id', 'first_firing_rate']], on=['first_cell_id', 'stim_id'])
+    working_firing.rename(index=str, columns={'first_cell_id':'second_cell_id', 'first_firing_rate':'second_firing_rate'}, inplace=True)
+    working_pairwise = working_pairwise.merge(working_firing[['second_cell_id', 'stim_id', 'second_firing_rate']], on=['second_cell_id', 'stim_id'])
+    return working_pairwise
 
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
@@ -46,7 +54,8 @@ def main():
     for region in rc.regions:
         firing_region_frame = firing_frame[firing_frame.region == region]
         pairwise_region_frame = pairwise_frame[pairwise_frame.region == region]
-        working_cells = getWorkingCells(firing_region_frame, pairwise_region_frame)
+        working_frame = getWorkingFrame(firing_region_frame, pairwise_region_frame)
+        working_frame.loc[:,'geometric_mean'] = np.sqrt(working_frame.first_firing_rate * working_frame.second_firing_rate)
 
 
 if not(args.debug):

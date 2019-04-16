@@ -64,6 +64,10 @@ For carrying out statistical tests on the samples in the csv directory.
 ###### TO DO:
 - update the README.md
 - fix the 'is_strong' flag.
-- What use are the strong histograms?
-- consider the Mann-Whitney U test
-- I should measure the firing rates for each good cell, in each region, in response to each stimulus condition.
+- re-write how the mutual information is calculated.
+- perform stat tests on firing rates
+- geomtric mean vs pairwise correlations
+- correlations vs mutual information
+- community detection
+- population coupling (Okun)
+- big correlation matrices

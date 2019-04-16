@@ -105,11 +105,11 @@ where $\lbrace (x_i, y_i) \rbrace$ for $i \in \lbrace 1, \dots, n \rbrace$ are t
 
 In practice we used the python function \texttt{scipy.stats.pearsonr} to calculate the correlation coefficients.
 
-\subsubsection{Spike Count Correlation, $r_{SC}$}
+\subsubsection{Spike Count Correlation, $r_{SC}$}\label{sec:spike_count_correlation}
 The spike count correlation ($r_{SC}$) of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
 
 \subsubsection{Signal Correlation, $r_{signal}$}
-The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition.
+The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition. Note the difference between this and the spike count correlation in section \ref{sec:spike_count_correlation}. The spike count correlation is in response to a given stimulus condition. The signal correlation is the correlation in the mean response to each stimulus condition.
 
 \subsubsection{Separating Correlations \& Anti-correlations}\label{sec:corr_anti_corr}
 In order to compare the effect of bin width on measures of negative $r_{SC}$ (anti-correlation) and positive $r_{SC}$ separately, we had to separate correlated and anti-correlated pairs. To do this, we simply measured the mean $r_{SC}$, taking the mean across all the bin widths. If this quantity was positive or zero we regarded the pair as positively correlated. If this quantity was negative we regarded the pair as anti-correlated.
@@ -334,7 +334,7 @@ As in section \ref{sec:corr_vs_bin_widths}, we randomly chose $30$ pairs of stro
 
 \subsection{Spike count correlation \& Mutual Information distributions}
 
-\subsubsection{Histograms}
+\subsubsection{Histograms}\label{sec:histograms}
 For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise  spike count correlations and mutual information using a bin width of $1.0$s. We created histograms using these data in order to examine the distributions of $r_{SC}$ and $I(X;Y)$ in each region, see figures \ref{fig:all_corr_histograms} and \ref{fig:all_info_histograms}.
 
 \begin{figure}[p]
@@ -432,6 +432,92 @@ We tested if the spike count correlations and mutual information measurements ta
   \end{center}
 \end{table}
 
+\subsubsection{Histograms for strongly responding neurons}
+We made histograms similar to those described in section \ref{sec:histograms} for strongly responding cells only. See figures \ref{fig:strong_corr_histograms} and \ref{fig:strong_info_histograms} for the correlation coefficient and mutual information histograms respectively. Note that the number of pairs that were available was significantly less than that for figures \ref{fig:all_corr_histograms} and \ref{fig:all_info_histograms} for most regions. Despite that, the mutual information histograms appear to show that the strongly responding neurons are more dependent than their weakly responding counterparts.
+
+We also performed statistical tests comparing the distribution of correlation coefficients and mutual information measurements in pairs of strongly responding neurons with the distributions of those measurements using the $1000$ randomly selected pairs as mentioned in section \ref{sec:histograms}. We found that some regions have the same distribution of correlation coefficients for both strongly and weakly repsonding neurons. But for mutual information, the strongly repsonding neurons always had a different distribution, see tables \ref{tab:strong_corr_ks_test} and \ref{tab:strong_info_ks_test}.
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_hippocampus_6_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_motor_cortex_10_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_striatum_14_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_thalamus_8_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_v1_6_1p0_correlation_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Spike Count Correlation Histograms, strongly responding cells:} Histograms of the spike count correlations for pairs of strongly responding cells in each region. The time bin width used was $1.0$s. For each region, the stimulus that elicited strong responses from the largest number of neurons was used. We can see that the thalamus has by far the most neurons that meet our criteria for 'strongly responding', i.e. a firing rate of at least $10$ spikes per second.}
+  \label{fig:strong_corr_histograms}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_hippocampus_6_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_motor_cortex_10_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_striatum_14_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_thalamus_8_1p0_information_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_v1_6_1p0_information_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Mutual Information Histograms, strongly responding cells:} Histograms of the mutual information for pairs of strongly responding cells in each region. The time bin width used was $1.0$s. For each region, the stimulus that elicited strong responses from the largest number of neurons was used. In each region, cells that respond more strongly appear to be more dependent on each other than their weakly responding counterparts.}
+  \label{fig:strong_info_histograms}
+\end{figure}
+
+\begin{table}[ht!]
+  \begin{center}
+    \caption{Statistical tests comparing the distribution of spike count correlations between pairs of strongly responding neurons to the distribution of spike count correlations using all responding neurons. $\mathbf{P(H_0)}$ refers to the probability of the null hypothesis, i.e. the p-value.}
+    \label{tab:strong_corr_ks_test}
+    \begin{tabular}{c|c|c|c} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+      \textbf{Region} & \textbf{K-S Stat} & $\mathbf{P(H_0)}$ & \textbf{Statistically Significant}\\
+      \hline
+      Striatum      & $0.56$    & $2.3 \times 10^{-10}$   & Yes \\
+      Motor cortex  & $0.15$    & $2.4 \times 10^{-5}$    & Yes \\
+      Thalamus      & $0.054$   & $0.1$                   & No \\
+      V1            & $0.19$    & $0.13$                  & No \\
+      Hippocampus   & $0.07$    & $0.49$                  & No \\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{table}[ht!]
+  \begin{center}
+    \caption{Statistical tests comparing the distribution of mutual information measures in strongly responding neurons to the distribution of mutual information in all responding neurons. $\mathbf{P(H_0)}$ refers to the probability of the null hypothesis, i.e. the p-value.}
+    \label{tab:strong_info_ks_test}
+    \begin{tabular}{c|c|c|c} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+      \textbf{Region} & \textbf{K-S Stat} & $\mathbf{P(H_0)}$ & \textbf{Statistically Significant}\\
+      \hline
+      Thalamus      & $0.7$   & $2.2 \times 10^{-214}$  & Yes \\
+      Motor cortex  & $0.94$  & $9.6 \times 10^{-193}$  & Yes \\
+      Hippocampus   & $0.72$  & $9.7 \times 10^{-56}$   & Yes \\
+      Striatum      & $0.97$  & $2.7 \times 10^{-30}$   & Yes \\
+      V1            & $0.92$  & $1.0 \times 10^{-27}$   & Yes \\
+    \end{tabular}
+  \end{center}
+\end{table}
 
 \section*{Things to discuss with Cian}
 \begin{enumerate}

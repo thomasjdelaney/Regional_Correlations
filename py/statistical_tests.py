@@ -12,7 +12,8 @@ from scipy.io import loadmat
 from scipy.stats import ks_2samp
 
 parser = argparse.ArgumentParser(description='For carrying out statistical tests on the samples in the csv directory.')
-parser.add_argument('-f', '--filename', help='The file in which to find the correlations.', type=str, default='all_regions_stims_pairs_widths.csv')
+parser.add_argument('-c', '--comparison_type', help='For facilitating strong vs all comparison.', type=str, choices=['same', 'different'], default='same')
+parser.add_argument('-f', '--filenames', help='The file(s) in which to find the correlations.', type=str, default=['all_regions_stims_pairs_widths.csv'], nargs='*')
 parser.add_argument('-b', '--bin_width', help='The bin width to use for correlations.', type=float, default=1.0)
 parser.add_argument('-p', '--prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
@@ -46,22 +47,47 @@ def getKSStatPVal(regions, region_to_corr, region_to_info):
     info_stat, info_p_val = ks_2samp(region_to_info[regions[0]], region_to_info[regions[1]])
     return regions[0], regions[1], corr_stat, corr_p_val, info_stat, info_p_val
 
-def main():
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
-    cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
-    stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
-    correlation_frame = pd.read_csv(os.path.join(csv_dir, args.filename))
-    max_mi = correlation_frame.mutual_info.max()
+def formatStatFrame(stat_test_frame):
+    for col in ['corr_stat', 'corr_p_value', 'info_stat', 'info_p_value']:
+        stat_test_frame.loc[:,col] = stat_test_frame.loc[:,col].astype(float)
+    stat_test_frame.loc[:,'is_corr_sig'] = stat_test_frame.loc[:,'corr_p_value'] < 0.05
+    stat_test_frame.loc[:,'is_info_sig'] = stat_test_frame.loc[:,'info_p_value'] < 0.05
+    return stat_test_frame
+
+def getSameFileStatFrame(filename, bin_width):
+    correlation_frame = pd.read_csv(os.path.join(csv_dir, filename))
     region_to_corr = getRegionToSampleDict(correlation_frame, args.bin_width, 'corr_coef')
     region_to_info = getRegionToSampleDict(correlation_frame, args.bin_width, 'mutual_info')
     region_combinations = combinations(rc.regions, 2)
     stats_p_values = np.array([getKSStatPVal(regions, region_to_corr, region_to_info) for regions in region_combinations])
     stat_test_frame = pd.DataFrame(stats_p_values, columns=['first_region', 'second_region', 'corr_stat', 'corr_p_value', 'info_stat', 'info_p_value'])
-    for col in ['corr_stat', 'corr_p_value', 'info_stat', 'info_p_value']:
-        stat_test_frame.loc[:,col] = stat_test_frame.loc[:,col].astype(float)
-    stat_test_frame.loc[:,'is_corr_sig'] = stat_test_frame.loc[:,'corr_p_value'] < 0.05
-    stat_test_frame.loc[:,'is_info_sig'] = stat_test_frame.loc[:,'info_p_value'] < 0.05
+    return formatStatFrame(stat_test_frame)
+
+def getTwoFrameKSStatByRegion(region, all_bin_frame, strong_bin_frame):
+    best_stim = rc.getBestStimFromRegion(strong_bin_frame, region)
+    all_bin_stim_frame = all_bin_frame[(all_bin_frame.stim_id == best_stim)&(all_bin_frame.region == region)]
+    strong_bin_stim_frame = strong_bin_frame[(strong_bin_frame.stim_id == best_stim)&(strong_bin_frame.region == region)]
+    corr_stat, corr_p_val = ks_2samp(all_bin_stim_frame.corr_coef, strong_bin_stim_frame.corr_coef)
+    info_stat, info_p_val = ks_2samp(all_bin_stim_frame.mutual_info, strong_bin_stim_frame.mutual_info)
+    return region, corr_stat, corr_p_val, info_stat, info_p_val
+
+def getDiffFileStatFrame(filenames, bin_width):
+    all_frame = pd.read_csv(os.path.join(csv_dir, filenames[0]))
+    strong_frame = pd.read_csv(os.path.join(csv_dir, filenames[1]))
+    all_bin_frame = all_frame[all_frame.bin_width == bin_width]
+    strong_bin_frame = strong_frame[strong_frame.bin_width == bin_width]
+    stats_p_values = [getTwoFrameKSStatByRegion(region, all_bin_frame, strong_bin_frame) for region in rc.regions]
+    stat_test_frame = pd.DataFrame(stats_p_values, columns=['region', 'corr_stat', 'corr_p_value', 'info_stat', 'info_p_value'])
+    return formatStatFrame(stat_test_frame)
+
+def main():
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading correlation frame...')
+    if args.comparison_type == 'same':
+        stat_test_frame = getSameFileStatFrame(args.filenames[0], args.bin_width)
+    elif args.comparison_type == 'different':
+        stat_test_frame = getDiffFileStatFrame(args.filenames, args.bin_width)
+    else:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised comparison type!')
     print(stat_test_frame)
     filename = args.prefix + 'stats_tests.csv'
     stat_test_frame.to_csv(os.path.join(csv_dir, filename), index=False)
