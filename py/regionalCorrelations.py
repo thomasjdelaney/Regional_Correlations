@@ -116,12 +116,12 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
     exp_frame = exp_frame.join(cell_info[['region', 'probe', 'depth']], on='cell_id')
     return exp_frame.sort_values(['probe', 'region', 'depth'])
 
-def getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_strong=True, strong_threshold=20.0):
+def getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_weak=False, strong_threshold=20.0):
     big_frame = getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, 0.0)
     agg_frame = big_frame[['cell_id', 'num_spikes']].groupby('cell_id').agg('mean').sort_values('num_spikes', ascending=False)
     strongly_responding_cells = agg_frame.index[agg_frame['num_spikes'] >= strong_threshold].values
     weakly_responding_cells = agg_frame.index[(agg_frame['num_spikes'] <= strong_threshold)&(agg_frame['num_spikes'] > 0.0)].values
-    responding_cells = strongly_responding_cells if is_strong else weakly_responding_cells
+    responding_cells = weakly_responding_cells if is_weak else strongly_responding_cells
     num_responding_cells = responding_cells.size
     if num_cells > 0: # we only want a certain number of cells
         if num_responding_cells > num_cells:
@@ -133,8 +133,8 @@ def getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_ce
         chosen_cells = responding_cells
     return chosen_cells
 
-def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_strong=True, strong_threshold=20.0):
-    responding_cells = getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_strong=is_strong, strong_threshold=strong_threshold)
+def getRespondingPairs(cell_ids, trials_info, spike_time_dict, cell_info, num_pairs, is_weak=False, strong_threshold=20.0):
+    responding_cells = getRespondingCells(cell_ids, trials_info, spike_time_dict, cell_info, num_cells=0, is_weak=is_weak, strong_threshold=strong_threshold)
     if responding_cells.size < 2:
         print(dt.datetime.now().isoformat() + ' WARN: ' + 'Less than 2 responding cells.')
         return np.array([0,0])
@@ -154,10 +154,11 @@ def getBestStimFromRegion(correlation_frame, region):
         best_stim = region_frame['stim_id'].value_counts().index[1]
     return best_stim
 
-def calcEntropy(samples):
-    num_samples = samples.shape[0]
-    labels, counts = np.unique(samples, return_counts=True, axis=0)
-    if labels.size <= 1:
-        return 0
-    probs = counts/np.float(num_samples)
-    return -(probs * np.log2(probs)).sum()
+def calcEntropy(discrete_system):
+    discrete_system.calculate_entropies(method='plugin', calc=['HX', 'HXY'])
+    plugin = np.max([0, discrete_system.I()])
+    discrete_system.calculate_entropies(method='pt', calc=['HX', 'HXY'])
+    pt = np.max([0, discrete_system.I()])
+    discrete_system.calculate_entropies(method='qe', calc=['HX', 'HXY'])
+    qe = np.max([0, discrete_system.I()])
+    return np.array([plugin, pt, qe])

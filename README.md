@@ -63,8 +63,6 @@ For carrying out statistical tests on the samples in the csv directory.
 
 ###### TO DO:
 - update the README.md
-- fix the 'is_strong' flag.
-- re-write how the mutual information is calculated.
 - perform stat tests on firing rates
 - geomtric mean vs pairwise correlations
 - correlations vs mutual information

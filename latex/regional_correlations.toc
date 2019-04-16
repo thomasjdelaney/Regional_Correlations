@@ -13,6 +13,7 @@
 \contentsline {subsection}{\numberline {3.4}Mutual Information}{5}{subsection.3.4}
 \contentsline {subsubsection}{\numberline {3.4.1}Entropy $H(X)$}{5}{subsubsection.3.4.1}
 \contentsline {subsubsection}{\numberline {3.4.2}Mutual Information $I(X;Y)$}{5}{subsubsection.3.4.2}
+\contentsline {subsubsection}{\numberline {3.4.3}Measuring the mutual information}{6}{subsubsection.3.4.3}
 \contentsline {subsection}{\numberline {3.5}Kolmogorov-Smirnov Statistical Test}{6}{subsection.3.5}
 \contentsline {subsubsection}{\numberline {3.5.1}Empirical distribution function}{6}{subsubsection.3.5.1}
 \contentsline {subsubsection}{\numberline {3.5.2}Two sample K-S test}{7}{subsubsection.3.5.2}

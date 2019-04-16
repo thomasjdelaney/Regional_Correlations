@@ -162,6 +162,9 @@ I(X;Y)  =& D_{KL}(P(X,Y)|| P(X)P(Y))
 \end{align}
 So, we can also think of the mutual information as a measure of the difference between the joint distribution of $X$ and $Y$, and the product of their marginal distributions. Since the product of the marginal distributions is the joint distribution for independent variables, we can think of the mutual information as a measure of the variables' dependence on one another.
 
+\subsubsection{Measuring the mutual information}
+In practice, we measured the mutual information using Python and the python package \texttt{pyentropy} \cite{ince}. This also enabled us to use the `quadratic extrapolation' bias correction technique. [citation needed]
+
 \subsection{Kolmogorov-Smirnov Statistical Test}\label{sec:ks_test}
 The Kolmogorov-Smirnov test is a statistical test of the equality of one dimensional probability distributions. It can also be used to measure the probability of a sample coming from a reference distribution. We use it to measure the probability of two samples coming from the same distribution. This is more commonly referred to as the `two sample K-S test'.
 

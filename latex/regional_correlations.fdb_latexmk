@@ -1,11 +1,11 @@
 # Fdb version 3
-["bibtex regional_correlations"] 1555371701 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1555371703
+["bibtex regional_correlations"] 1555457866 "regional_correlations.aux" "regional_correlations.bbl" "regional_correlations" 1555457913
   "fluorescence_modelling.bbl.bib" 0 -1 0 ""
-  "regional_correlations.aux" 1555371703 16570 9860d0a0b2734a6d78208d6f9b84bd97 "pdflatex"
+  "regional_correlations.aux" 1555457913 16729 f34b4a6a7780b05f1bf2975ea95acff5 "pdflatex"
   (generated)
-  "regional_correlations.bbl"
   "regional_correlations.blg"
-["pdflatex"] 1555371701 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1555371703
+  "regional_correlations.bbl"
+["pdflatex"] 1555457911 "regional_correlations.tex" "regional_correlations.pdf" "regional_correlations" 1555457913
   "/home/thomas/.texlive2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1550972528 3682902 5edbeb781481373c7d9336db116906a2 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1553009388 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
@@ -164,14 +164,14 @@
   "figures/strong_thalamus_8_1p0_information_histogram.png" 1555366590 15148 4d1381b6b8ef8b7e01df8e0e788aec3e ""
   "figures/strong_v1_6_1p0_correlation_histogram.png" 1555366577 13996 4340e866ae89f186794c67b7a0aa2ff7 ""
   "figures/strong_v1_6_1p0_information_histogram.png" 1555366590 14306 5e79f8c6e3d296ffdd95b390571e112d ""
-  "regional_correlations.aux" 1555371703 16570 9860d0a0b2734a6d78208d6f9b84bd97 "pdflatex"
-  "regional_correlations.bbl" 1554385025 537 6e0f53c19cea1265ed9e018919edf1a4 "bibtex regional_correlations"
-  "regional_correlations.out" 1555371703 2173 58305c2dc0d4b56006196196f05c8650 "pdflatex"
-  "regional_correlations.tex" 1555371697 37496 1de4182b19445153ba20b1744f0e4fd6 ""
-  "regional_correlations.toc" 1555371703 2627 1d1ec0688ee3784e108c8615c6bd5484 "pdflatex"
+  "regional_correlations.aux" 1555457913 16729 f34b4a6a7780b05f1bf2975ea95acff5 "pdflatex"
+  "regional_correlations.bbl" 1555426357 736 f117b8dff0d735f12988aa0c112f83d2 "bibtex regional_correlations"
+  "regional_correlations.out" 1555457913 2265 dd127d00da3c659535ea87392a2de513 "pdflatex"
+  "regional_correlations.tex" 1555457909 37765 4fcf16b178acd280332d705731d8e426 ""
+  "regional_correlations.toc" 1555457913 2734 edb6f526e296a1b8246f2e15b9e0da81 "pdflatex"
   (generated)
   "regional_correlations.toc"
-  "regional_correlations.out"
-  "regional_correlations.pdf"
   "regional_correlations.aux"
   "regional_correlations.log"
+  "regional_correlations.pdf"
+  "regional_correlations.out"
