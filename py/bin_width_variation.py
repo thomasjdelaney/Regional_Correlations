@@ -27,7 +27,7 @@ np.random.seed(args.numpy_seed) # setting seed
 pd.set_option('max_rows',30) # setting display options for terminal display
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
@@ -45,7 +45,7 @@ def getMutualInfoFromPair(pair, exp_frame):
     first_response_dims = [1, 1 + first_response.max()]
     second_response_dims = [1, 1 + second_response.max()]
     discrete_system = DiscreteSystem(first_response, first_response_dims, second_response, second_response_dims)
-    return rc.calcEntropy(discrete_system)
+    return rc.calcInfo(discrete_system)
 
 def getCorrCoefFromPair(pair, exp_frame):
     first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
@@ -57,13 +57,13 @@ def getCorrFrameForWidth(bin_width, pairs, trials_info, spike_time_dict, cell_in
     cells = np.unique(pairs)
     num_pairs = pairs.shape[0]
     width_exp_frame = rc.getExperimentFrame(cells, trials_info, spike_time_dict, cell_info, bin_width)
-    mutual_infos = np.zeros((num_pairs, 3))
+    mutual_infos = np.zeros((num_pairs, 4))
     correlation_coefficients = np.zeros(num_pairs)
     p_values = np.zeros(num_pairs)
     for i, pair in enumerate(pairs):
         correlation_coefficients[i], p_values[i] = getCorrCoefFromPair(pair, width_exp_frame)
         mutual_infos[i] = getMutualInfoFromPair(pair, width_exp_frame)
-    return pd.DataFrame({'stim_id':np.repeat(stim_id, num_pairs), 'region':np.repeat(region, num_pairs), 'first_cell_id':pairs[:,0], 'second_cell_id':pairs[:,1], 'mutual_info_plugin':mutual_infos[:,0], 'mutual_info_pt':mutual_infos[:,1], 'mutual_info_qe':mutual_infos[:,2], 'corr_coef':correlation_coefficients, 'p_value':p_values, 'bin_width':np.repeat(bin_width, num_pairs)})
+    return pd.DataFrame({'stim_id':np.repeat(stim_id, num_pairs), 'region':np.repeat(region, num_pairs), 'first_cell_id':pairs[:,0], 'second_cell_id':pairs[:,1], 'mutual_info_plugin':mutual_infos[:,0], 'symm_unc_plugin':mutual_infos[:,1], 'mutual_info_qe':mutual_infos[:,2], 'symm_unc_qe':mutual_infos[:,3], 'corr_coef':correlation_coefficients, 'p_value':p_values, 'bin_width':np.repeat(bin_width, num_pairs)})
 
 def getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, group, wanted_num_pairs, is_weak, bin_widths, threshold):
     print(dt.datetime.now().isoformat() + ' INFO: Getting correlations for all widths for region = ' + region + ', stim ID = ' + str(stim_id) + '...')

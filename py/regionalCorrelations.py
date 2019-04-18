@@ -154,11 +154,14 @@ def getBestStimFromRegion(correlation_frame, region):
         best_stim = region_frame['stim_id'].value_counts().index[1]
     return best_stim
 
-def calcEntropy(discrete_system):
-    discrete_system.calculate_entropies(method='plugin', calc=['HX', 'HXY'])
-    plugin = np.max([0, discrete_system.I()])
-    discrete_system.calculate_entropies(method='pt', calc=['HX', 'HXY'])
-    pt = np.max([0, discrete_system.I()])
-    discrete_system.calculate_entropies(method='qe', calc=['HX', 'HXY'])
-    qe = np.max([0, discrete_system.I()])
-    return np.array([plugin, pt, qe])
+def getMISymmUnc(discrete_system):
+    info = np.max([0, discrete_system.I()])
+    symm_unc = 2*info/(discrete_system.H['HX'] + discrete_system.H['HY'])
+    return info, symm_unc
+
+def calcInfo(discrete_system):
+    discrete_system.calculate_entropies(method='plugin', calc=['HX', 'HXY', 'HY'])
+    plugin = getMISymmUnc(discrete_system)
+    discrete_system.calculate_entropies(method='qe', calc=['HX', 'HXY', 'HY'])
+    qe = getMISymmUnc(discrete_system)
+    return np.hstack([plugin, qe])
