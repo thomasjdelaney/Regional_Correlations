@@ -63,8 +63,7 @@ For carrying out statistical tests on the samples in the csv directory.
 
 ###### TO DO:
 - update the README.md
-- perform stat tests on firing rates
-- geomtric mean vs pairwise correlations
+- add symmetric uncertainty to the pdf
 - correlations vs mutual information
 - community detection
 - population coupling (Okun)

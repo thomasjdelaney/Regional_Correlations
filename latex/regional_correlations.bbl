@@ -25,4 +25,18 @@
    Frontiers in Neuroinformatics 3:4,
    (2009)
 
+  \bibitem{strong}
+   Strong, S., Koberle, R., de Ruyter van Steveninck, R., Bialek, W.,
+   \emph{Entropy and information in neural spike trains}.
+   Phys. Rev. Lett. 80,
+   197–200,
+   (1998)
+
+  \bibitem{treves}
+  Treves, A., Panzeri, S.,
+  \emph{The upward bias in measures of information derived from limited data samples},
+  Neural Computation 7,
+  399–407,
+  (1995)
+
 \end{thebibliography}

@@ -147,13 +147,13 @@ I(X;Y)  =& H(Y) - H(Y|X) \\
 Equation \ref{eq:mutual_info_intuitive} fits with the following intuition: The mutual information between $X$ and $Y$ is the reduction in uncertainty about $X$ gained by knowing $Y$, or vice versa. We could also say the mutual information is the amount of information gained about $X$ by knowing $Y$, or vice versa.
 
 Another useful entropy based definition for the mutual information is
-\begin{align}
+\begin{align}\label{eq:mutual_info_useful}
 I(X;Y)  =& H(X) + H(Y) - H(X,Y)
 \end{align}
 This definition is useful because it does not require the calculation of conditional probabilities. This was the form we used when performing calculations.
 
 The mutual information can also be defined in terms of marginal, joint, and conditional distributions. For example,
-\begin{align}
+\begin{align}\label{eq:mutual_info_log}
 I(X;Y)  =& -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 \frac{P(X=x_n, Y=y_m)}{P(X=x_n) P(Y=y_m)}
 \end{align}
 Notice that this can be rewritten as a Kullback–Leibler divergence.
@@ -162,8 +162,19 @@ I(X;Y)  =& D_{KL}(P(X,Y)|| P(X)P(Y))
 \end{align}
 So, we can also think of the mutual information as a measure of the difference between the joint distribution of $X$ and $Y$, and the product of their marginal distributions. Since the product of the marginal distributions is the joint distribution for independent variables, we can think of the mutual information as a measure of the variables' dependence on one another.
 
-\subsubsection{Measuring the mutual information}
-In practice, we measured the mutual information using Python and the python package \texttt{pyentropy} \cite{ince}. This also enabled us to use the `quadratic extrapolation' bias correction technique. [citation needed]
+The minimum value that $I(X;Y)$ can take is $0$. This occurs when the random variables $X$ and $Y$ are independent. Then we have $H(X|Y) = H(X)$, and $H(Y|X) = H(Y)$, which according to equation \ref{eq:mutual_info_intuitive}, gives $I(X;Y) = 0$. We also have that $H(X,Y) = H(X) + H(Y)$ in this case, which according equation \ref{eq:mutual_info_useful}, gives $I(X;Y) = 0$. Finally, we also have $P(X,Y) = P(X)P(Y)$, which leaves us with $1$ in the argument for the logarithm in equation \ref{eq:mutual_info_log}, which again gives $I(X;Y) = 0$.
+
+The mutual information reaches its maximum value when one of the variables $X$ and $Y$ is completely determined by knowing the value of the other. In that case $I(X;Y) = \min \lbrace H(X), H(Y) \rbrace$.
+
+\subsubsection{Symmetric Uncertainty $U(X;Y)$}
+The symmetric uncertainty is a normalised version of the mutual information. It is defined as
+\begin{align}\label{eq:symmetric_uncertainty}
+  U(X;Y) = 2 \frac{I(X;Y)}{H(X) + H(Y)}
+\end{align}
+The symmetric uncertainty attains its minimum value when the mutual information is $0$, i.e. independence. $U(X;Y)$ attains its maximum value when one of the variables $X$ and $Y$ is completely determined by knowing the value of the other. In that case $U(X;Y) = 1$.
+
+\subsubsection{Measuring entropies the mutual information}
+In practice, we measured the mutual information using Python and the python package \texttt{pyentropy} \cite{ince}. This also enabled us to use the `quadratic extrapolation' bias correction technique to measure $I(X;Y)$ more accurately \cite{strong, treves}.
 
 \subsection{Kolmogorov-Smirnov Statistical Test}\label{sec:ks_test}
 The Kolmogorov-Smirnov test is a statistical test of the equality of one dimensional probability distributions. It can also be used to measure the probability of a sample coming from a reference distribution. We use it to measure the probability of two samples coming from the same distribution. This is more commonly referred to as the `two sample K-S test'.
