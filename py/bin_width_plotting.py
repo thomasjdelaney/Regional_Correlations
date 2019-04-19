@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description="For plotting the data found in 'all_regions_stims_pairs_widths.csv'.")
-parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal', 'bifurcation', 'mutual_info', 'firing_rate'], type=str)
+parser.add_argument('-c', '--correlation_type', help='Signal correlation or spike count correlation.', default='spike_count', choices=['spike_count', 'signal', 'bifurcation', 'mutual_info', 'firing_rate', 'symm_unc'], type=str)
 parser.add_argument('-f', '--filename', help='The file from which to get the pairwise correlation data.', type=str, default='all_regions_stims_pairs_widths.csv')
 parser.add_argument('-p', '--image_file_prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-x', '--x_axis_scale', help='The scale of the x-axis', type=str, default='linear', choices=['log', 'linear'])
@@ -77,15 +77,24 @@ def plotFiringRateByBinWidth(firing_frame, prefix):
         plt.close()
 
 def plotMutualInfoByBinWidth(correlation_frame, prefix, x_axis_scale):
-    y_lim = [0, correlation_frame.mutual_info.max()]
+    y_lim = [0, correlation_frame.mutual_info_qe.max()]
     for region in rc.regions:
         best_stim = rc.getBestStimFromRegion(correlation_frame, region)
         region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == best_stim)]
-        plotColumnByBinWidth(region_stim_frame, 'mutual_info', region, x_axis_scale, r'$I(X;Y)$ (bits)', y_lim=y_lim)
+        plotColumnByBinWidth(region_stim_frame, 'mutual_info_qe', region, x_axis_scale, r'$I(X;Y)$ (bits)', y_lim=y_lim)
         filename = prefix + 'mutual_info_by_bin_width_' + region + '_' + str(best_stim) + '.png'
         print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
         plt.savefig(os.path.join(image_dir, 'mutual_info_vs_bin_width', x_axis_scale, filename))
         plt.close()
+
+def plotSymmUncByBinWidth(correlation_frame, region, prefix, x_axis_scale):
+    best_stim = rc.getBestStimFromRegion(correlation_frame, region)
+    region_stim_frame = correlation_frame[(correlation_frame.region == region)&(correlation_frame.stim_id == best_stim)]
+    plotColumnByBinWidth(region_stim_frame, 'symm_unc_qe', region, x_axis_scale, r'$U(X;Y)$ (a.u.)', y_lim=[0,1])
+    filename = prefix + 'symm_unc_by_bin_width_' + region + '_' + str(best_stim) + '.png'
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving ' + filename + '...')
+    plt.savefig(os.path.join(image_dir, 'symm_unc_vs_bin_width', x_axis_scale, filename))
+    plt.close()
 
 def getPositiveNegativePairs(region_stim_frame):
     unique_pairs = np.unique(region_stim_frame[['first_cell_id', 'second_cell_id']].values, axis=0)
@@ -153,6 +162,9 @@ def main():
         plotMutualInfoByBinWidth(correlation_frame, args.image_file_prefix, args.x_axis_scale)
     elif args.correlation_type == 'firing_rate':
         plotFiringRateByBinWidth(correlation_frame, args.image_file_prefix)
+    elif args.correlation_type == 'symm_unc':
+        for region in rc.regions:
+            plotSymmUncByBinWidth(correlation_frame, region, args.image_file_prefix, args.x_axis_scale)
     else:
             sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised correlation type.')
 

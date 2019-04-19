@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.io import loadmat
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
-parser.add_argument('-m', '--measure_type', help='Pairwise or single cell measurement.', default='pairwise', choices=['pairwise', 'single'], type=str)
+parser.add_argument('-m', '--measure_type', help='Pairwise or single cell measurement.', default='pairwise', choices=['pairwise', 'single', 'correction'], type=str)
 parser.add_argument('-f', '--filename', help='The file in which to find the correlations.', type=str, default='all_regions_stims_pairs_widths.csv')
 parser.add_argument('-b', '--bin_width', help='The bin width to use for correlations.', type=float, default=1.0)
 parser.add_argument('-p', '--prefix', help='A prefix for the image file names.', type=str, default='')
@@ -43,31 +43,58 @@ def plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, x_col, 
     plt.legend()
     plt.tight_layout()
 
+def saveAndClose(filename, directory):
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
+    plt.savefig(os.path.join(image_dir, directory, filename))
+    plt.close()
+
 def plotRegionalCorrelationHistogram(correlation_frame, region, stim_id, bin_width, prefix, use_title):
     plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'corr_coef', r'$r_{SC}$', [-1,1], [0,100], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_correlation_histogram.png'
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
-    plt.savefig(os.path.join(image_dir, 'correlation_histograms', filename))
-    plt.close()
+    saveAndClose(filename, 'correlation_histograms')
 
 def plotRegionalInfoHistogram(correlation_frame, region, stim_id, bin_width, prefix, max_mi, use_title):
-    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info', r'$I(X;Y)$ (bits)', [0, max_mi], [0,215], use_title=use_title)
+    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info_qe', r'$I(X;Y)$ (bits)', [0, max_mi], [0,215], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_information_histogram.png'
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
-    plt.savefig(os.path.join(image_dir, 'information_histograms', filename))
-    plt.close()
+    saveAndClose(filename, 'information_histograms')
 
 def plotRegionalFiringRateHistogram(firing_frame, region, stim_id, bin_width, prefix, max_fr, use_title):
     plotRegionalHistogram(firing_frame, region, bin_width, stim_id, 'firing_rate_mean', 'Firing Rate (Hz)', [0, max_fr], [0,200], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_firing_rate_histogram.png'
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
-    plt.savefig(os.path.join(image_dir, 'firing_rate_histograms', filename))
-    plt.close()
+    saveAndClose(filename, 'firing_rate_histograms')
+
+def plotMutualInfoCorrection(region, region_stim_bin_frame, max_max):
+    plt.scatter(region_stim_bin_frame.mutual_info_plugin, region_stim_bin_frame.mutual_info_qe, color='blue', label=region.replace('_', ' ').capitalize(), marker='.')
+    plt.plot([0, max_max], [0, max_max], color='black')
+    plt.xlabel(r'$I(X;Y)$ (bits) (plugin)', fontsize='large')
+    plt.ylabel(r'$I(X;Y)$ (bits) (bias corrected)', fontsize='large')
+    plt.xlim([0, max_max]); plt.ylim([0, max_max])
+    plt.legend(fontsize='large')
+    plt.tight_layout()
+
+def plotSymmUncCorrection(region, region_stim_bin_frame):
+    plt.scatter(region_stim_bin_frame.symm_unc_plugin, region_stim_bin_frame.symm_unc_qe, color='blue', label=region.replace('_', ' ').capitalize(), marker='.')
+    plt.plot([0, 1], [0, 1], color='black')
+    plt.xlabel(r'$U(X;Y)$ (a.u.) (plugin)', fontsize='large')
+    plt.ylabel(r'$U(X;Y)$ (a.u.) (bias corrected)', fontsize='large')
+    plt.xlim([0, 1]); plt.ylim([0, 1])
+    plt.tight_layout()
+
+def plotCorrections(correlation_frame, region, stim_id, bin_width, prefix):
+    region_stim_bin_frame = correlation_frame[(correlation_frame.region == region) & (correlation_frame.stim_id == stim_id) & (correlation_frame.bin_width == bin_width)]
+    max_max = region_stim_bin_frame[['mutual_info_plugin', 'mutual_info_qe']].max().max()
+    plt.figure(figsize=(8,3))
+    plt.subplot(1,2,1)
+    plotMutualInfoCorrection(region, region_stim_bin_frame, max_max)
+    plt.subplot(1,2,2)
+    plotSymmUncCorrection(region, region_stim_bin_frame)
+    filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.', 'p') + '_corrections.png'
+    saveAndClose(filename, 'corrections')
 
 def main():
     correlation_frame = pd.read_csv(os.path.join(csv_dir, args.filename))
     if args.measure_type == 'pairwise':
-        max_mi = correlation_frame.mutual_info.max()
+        max_mi = correlation_frame.mutual_info_qe.max()
         for region in rc.regions:
             best_stim = rc.getBestStimFromRegion(correlation_frame, region)
             plotRegionalCorrelationHistogram(correlation_frame, region, best_stim, args.bin_width, args.prefix, args.use_title)
@@ -77,6 +104,10 @@ def main():
         for region in rc.regions:
             best_stim = rc.getBestStimFromRegion(correlation_frame, region)
             plotRegionalFiringRateHistogram(correlation_frame, region, best_stim, args.bin_width, args.prefix, max_fr, args.use_title)
+    elif args.measure_type == 'correction':
+        for region in rc.regions:
+            best_stim = rc.getBestStimFromRegion(correlation_frame, region)
+            plotCorrections(correlation_frame, region, best_stim, args.bin_width, args.prefix)
     else:
         sys.exit(dt.datetime.now().isoformat() + 'ERROR: ' + 'Unrecognised measure type!')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
