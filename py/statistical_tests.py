@@ -57,7 +57,7 @@ def formatStatFrame(stat_test_frame):
 def getSameFileStatFrame(filename, bin_width):
     correlation_frame = pd.read_csv(os.path.join(csv_dir, filename))
     region_to_corr = getRegionToSampleDict(correlation_frame, args.bin_width, 'corr_coef')
-    region_to_info = getRegionToSampleDict(correlation_frame, args.bin_width, 'mutual_info')
+    region_to_info = getRegionToSampleDict(correlation_frame, args.bin_width, 'mutual_info_qe')
     region_combinations = combinations(rc.regions, 2)
     stats_p_values = np.array([getKSStatPVal(regions, region_to_corr, region_to_info) for regions in region_combinations])
     stat_test_frame = pd.DataFrame(stats_p_values, columns=['first_region', 'second_region', 'corr_stat', 'corr_p_value', 'info_stat', 'info_p_value'])
@@ -68,7 +68,7 @@ def getTwoFrameKSStatByRegion(region, all_bin_frame, strong_bin_frame):
     all_bin_stim_frame = all_bin_frame[(all_bin_frame.stim_id == best_stim)&(all_bin_frame.region == region)]
     strong_bin_stim_frame = strong_bin_frame[(strong_bin_frame.stim_id == best_stim)&(strong_bin_frame.region == region)]
     corr_stat, corr_p_val = ks_2samp(all_bin_stim_frame.corr_coef, strong_bin_stim_frame.corr_coef)
-    info_stat, info_p_val = ks_2samp(all_bin_stim_frame.mutual_info, strong_bin_stim_frame.mutual_info)
+    info_stat, info_p_val = ks_2samp(all_bin_stim_frame.mutual_info_qe, strong_bin_stim_frame.mutual_info_qe)
     return region, corr_stat, corr_p_val, info_stat, info_p_val
 
 def getDiffFileStatFrame(filenames, bin_width):

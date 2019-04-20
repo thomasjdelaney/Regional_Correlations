@@ -49,12 +49,12 @@ def saveAndClose(filename, directory):
     plt.close()
 
 def plotRegionalCorrelationHistogram(correlation_frame, region, stim_id, bin_width, prefix, use_title):
-    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'corr_coef', r'$r_{SC}$', [-1,1], [0,100], use_title=use_title)
+    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'corr_coef', r'$r_{SC}$', [-1,1], [0,175], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_correlation_histogram.png'
     saveAndClose(filename, 'correlation_histograms')
 
 def plotRegionalInfoHistogram(correlation_frame, region, stim_id, bin_width, prefix, max_mi, use_title):
-    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info_qe', r'$I(X;Y)$ (bits)', [0, max_mi], [0,215], use_title=use_title)
+    plotRegionalHistogram(correlation_frame, region, bin_width, stim_id, 'mutual_info_qe', r'$I(X;Y)$ (bits)', [0, max_mi], [0,375], use_title=use_title)
     filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_information_histogram.png'
     saveAndClose(filename, 'information_histograms')
 
