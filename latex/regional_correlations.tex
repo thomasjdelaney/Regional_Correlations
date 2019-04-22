@@ -108,6 +108,13 @@ In practice we used the python function \texttt{scipy.stats.pearsonr} to calcula
 \subsubsection{Spike Count Correlation, $r_{SC}$}\label{sec:spike_count_correlation}
 The spike count correlation ($r_{SC}$) of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
 
+\subsubsection{Geometric Mean}\label{sec:geometric_mean}
+The geometric mean of a set of numbers $x_1, \dots , x_n$ is defined by
+\begin{align}
+  \sqrt[n]{\prod_{i=1}^n x_i} = \sqrt[n]{x_1 \cdot x_2 \cdots x_n}
+\end{align}
+This quantity is an alternative to the algebraic mean. It is often used when finding the mean of quantities whose range of possible values differ. For example, imagine we wish to find the mean firing rate of two neurons, but one neuron responds much more strongly than the other. The algebraic mean of the firing rates will be dominated by the strongly responding neuron. But the geometric mean will be influenced by both repsonses.
+
 \subsubsection{Signal Correlation, $r_{signal}$}
 The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition. Note the difference between this and the spike count correlation in section \ref{sec:spike_count_correlation}. The spike count correlation is in response to a given stimulus condition. The signal correlation is the correlation in the mean response to each stimulus condition.
 
@@ -126,7 +133,7 @@ The joint entropy of two jointly distributed random variables $X$ and $Y$, where
 \begin{align}\label{joint_entropy}
 H(X, Y) = -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 P(X=x_n, Y=y_m)
 \end{align}
-If $X$ and $Y$ are independent then $H(X,Y) = H(X) + H(Y)$. Otherwise $H(X,Y) \leq H(X) + H(Y)$. When $X$ and $Y$ and completely dependent $H(X,Y) = H(X) = H(Y)$.
+If $X$ and $Y$ are independent then $H(X,Y) = H(X) + H(Y)$. Otherwise $H(X,Y) < H(X) + H(Y)$. When $X$ and $Y$ and completely dependent $H(X,Y) = H(X) = H(Y)$.
 
 The conditional entropy of $Y$ conditioned on $X$ is defined as
 \begin{align}
@@ -561,6 +568,31 @@ We also performed statistical tests comparing the distribution of correlation co
   \end{subfigure}
   \caption{\textbf{Mutual Information Histograms, strongly responding cells:} Histograms of the mutual information for pairs of strongly responding cells in each region. The time bin width used was $1.0$s. For each region, the stimulus that elicited strong responses from the largest number of neurons was used. In each region, cells that respond more strongly appear to be more dependent on each other than their weakly responding counterparts.}
   \label{fig:strong_info_histograms}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_hippocampus_6_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_striatum_14_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_thalamus_15_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/strong_v1_6_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Symmetric Uncertainty Histograms, strongly responding cells:} Histograms of the symmetric uncertainty for pairs of strongly responding cells in each region. The time bin width used was $1.0$s.}
+  \label{fig:strong_sym_unc_histograms}
 \end{figure}
 
 \begin{table}[ht!]
