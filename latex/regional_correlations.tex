@@ -349,14 +349,14 @@ As in section \ref{sec:corr_vs_bin_widths}, we randomly chose $30$ pairs of stro
 \subsubsection{Firing rate}
 We also measured the affect of bin width on firing rate measurement. As expected, the affect was minimal.
 
-\subsection{Firing rate histograms}
-In order to examine the distribution of firing rates in a given region, 
+\subsection{Firing rate distributions}
+In order to examine the distribution of firing rates in a given region,
 \begin{enumerate}
-  \item We chose a stimulus condition that evoked the most strong responses in that region 
+  \item We chose a stimulus condition that evoked the most strong responses in that region
   \item We measured the average firing rate for each neuron responding to that stimulus condition, averaging across trials.
   \item We created a histogram of these average firing rates.
 \end{enumerate}
-We followed this procedure for each region and presented the results in figure \ref{fig:firing_rate_histograms}. 
+We followed this procedure for each region and presented the results in figure \ref{fig:firing_rate_histograms}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -386,7 +386,7 @@ We followed this procedure for each region and presented the results in figure \
 \subsection{Spike count correlation \& Mutual Information distributions}
 
 \subsubsection{Histograms}\label{sec:histograms}
-For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise  spike count correlations and mutual information using a bin width of $1.0$s. We created histograms using these data in order to examine the distributions of $r_{SC}$ and $I(X;Y)$ in each region, see figures \ref{fig:all_corr_histograms} and \ref{fig:all_info_histograms}.
+For each region, we found all of the cells that responded to the stimulus. We randomly selected $1000$ pairs from all possible pairs of these cells, and we measured their pairwise spike count correlations, mutual information, and symmetric uncertainty using a bin width of $1.0$s. We created histograms using these data in order to examine the distributions of $r_{SC}$, $I(X;Y)$ and $U(X;Y)$ in each region, see figures \ref{fig:all_corr_histograms}, \ref{fig:all_info_histograms} and \ref{fig:all_symm_unc_histograms}.
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
@@ -436,6 +436,31 @@ For each region, we found all of the cells that responded to the stimulus. We ra
   \end{subfigure}
   \caption{\textbf{Mutual Information Histograms:} Histograms of the mutual information of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. In motor cortex, V1, and striatum most pairs have mutual information of $\leq 1$ bit. The hippocampus is slightly different more spread out into greater values. In the thalamus, the pairs appear to be more dependent than in the other regions.}
   \label{fig:all_info_histograms}
+\end{figure}
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_6_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_10_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_striatum_14_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_thalamus_15_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_v1_6_1p0_symm_unc_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Symmetric Uncertainty Histograms:} Histograms of the symmetric uncertainty of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. The distribution in each region largely reflects the distribution of the mutual information in the same region shown in figure \ref{fig:all_info_histograms}.}
+  \label{fig:all_symm_unc_histograms}
 \end{figure}
 
 \subsubsection{Statistical tests}
@@ -569,6 +594,9 @@ We also performed statistical tests comparing the distribution of correlation co
     \end{tabular}
   \end{center}
 \end{table}
+
+\subsection{Firing rate geometric mean, spike count correlation, mutual information}
+
 
 \section*{Things to discuss with Cian}
 \begin{enumerate}

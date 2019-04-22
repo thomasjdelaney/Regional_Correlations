@@ -84,6 +84,7 @@ def main():
         working_frame = getWorkingFrame(firing_region_frame, pairwise_region_frame)
         working_frame.loc[:,'geometric_mean'] = np.sqrt(working_frame.first_firing_rate * working_frame.second_firing_rate)
         plotMeasuresVsGeomMean(working_frame, region, best_stim, args.prefix)
+        # TODO: plot mutual information vs correlation coefficient
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
 
 if not(args.debug):
