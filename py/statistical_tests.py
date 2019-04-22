@@ -28,6 +28,9 @@ posterior_dir = os.path.join(proj_dir, 'posterior')
 frontal_dir = os.path.join(proj_dir, 'frontal')
 image_dir = os.path.join(proj_dir, 'images')
 
+pd.set_option('max_rows',30) # setting display options for terminal display
+pd.options.mode.chained_assignment = None  # default='warn'
+
 # loading useful functions
 sys.path.append(py_dir)
 import regionalCorrelations as rc

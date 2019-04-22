@@ -346,6 +346,43 @@ As in section \ref{sec:corr_vs_bin_widths}, we randomly chose $30$ pairs of stro
   \label{fig:linear_bin_width_vs_mutual_information_by_region}
 \end{figure}
 
+\subsubsection{Firing rate}
+We also measured the affect of bin width on firing rate measurement. As expected, the affect was minimal.
+
+\subsection{Firing rate histograms}
+In order to examine the distribution of firing rates in a given region, 
+\begin{enumerate}
+  \item We chose a stimulus condition that evoked the most strong responses in that region 
+  \item We measured the average firing rate for each neuron responding to that stimulus condition, averaging across trials.
+  \item We created a histogram of these average firing rates.
+\end{enumerate}
+We followed this procedure for each region and presented the results in figure \ref{fig:firing_rate_histograms}. 
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_8_1p0_firing_rate_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_8_1p0_firing_rate_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_striatum_8_1p0_firing_rate_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_thalamus_8_1p0_firing_rate_histogram.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_firing_rate_histogram.png}
+  \end{subfigure}
+  \caption{\textbf{Firing Rate Histograms:} Histograms of the average firing rates within each region. Most neurons have an average firing rate of $< 10$ Hz.}
+  \label{fig:firing_rate_histograms}
+\end{figure}
+
 \subsection{Spike count correlation \& Mutual Information distributions}
 
 \subsubsection{Histograms}\label{sec:histograms}
@@ -354,23 +391,23 @@ For each region, we found all of the cells that responded to the stimulus. We ra
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_hippocampus_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_6_1p0_correlation_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_motor_cortex_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_10_1p0_correlation_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_striatum_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_striatum_14_1p0_correlation_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_thalamus_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_thalamus_15_1p0_correlation_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_v1_6_1p0_correlation_histogram.png}
   \end{subfigure}
   \caption{\textbf{Spike Count Correlation Histograms:} Histograms of the spike count correlations of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. The motor cortex, V1, and striatum all have similar distributions. For these regions the mean $r_{SC}$ is positive, but the median $r_{SC}$ is negative, so their distributions are skewed. The hippocampus is slightly different in that both the median and the mean are positive but close to $0$. The thalamus is different to all the other regions. Both its mean and median are positive and are aprroximately equal to $0.14$.}
   \label{fig:all_corr_histograms}
@@ -379,23 +416,23 @@ For each region, we found all of the cells that responded to the stimulus. We ra
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_hippocampus_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_hippocampus_6_1p0_information_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_motor_cortex_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_motor_cortex_10_1p0_information_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_striatum_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_striatum_14_1p0_information_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_thalamus_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_thalamus_15_1p0_information_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/all_v1_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/all_v1_6_1p0_information_histogram.png}
   \end{subfigure}
   \caption{\textbf{Mutual Information Histograms:} Histograms of the mutual information of $1000$ randomly chosen pairs of neurons from within each region. The time bin width used was $1.0$s. In motor cortex, V1, and striatum most pairs have mutual information of $\leq 1$ bit. The hippocampus is slightly different more spread out into greater values. In the thalamus, the pairs appear to be more dependent than in the other regions.}
   \label{fig:all_info_histograms}
@@ -466,7 +503,7 @@ We also performed statistical tests comparing the distribution of correlation co
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/strong_thalamus_8_1p0_correlation_histogram.png}
+    \includegraphics[width=\textwidth]{figures/strong_thalamus_15_1p0_correlation_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
@@ -491,7 +528,7 @@ We also performed statistical tests comparing the distribution of correlation co
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/strong_thalamus_8_1p0_information_histogram.png}
+    \includegraphics[width=\textwidth]{figures/strong_thalamus_15_1p0_information_histogram.png}
   \end{subfigure}
   \begin{subfigure}{0.5\textwidth}
     \centering
