@@ -51,11 +51,6 @@ def saveAndClose(filename, directory):
     plt.savefig(os.path.join(image_dir, directory, filename))
     plt.close()
 
-def plotRegionalFiringRateHistogram(firing_frame, region, stim_id, bin_width, prefix, max_fr, use_title):
-    plotRegionalHistogram(firing_frame, region, bin_width, stim_id, 'firing_rate_mean', 'Firing Rate (Hz)', [0, max_fr], [0,200], use_title=use_title)
-    filename = prefix + region + '_' + str(stim_id) + '_' + str(bin_width).replace('.','p') + '_firing_rate_histogram.png'
-    saveAndClose(filename, 'firing_rate_histograms')
-
 def plotMutualInfoCorrection(region, region_stim_bin_frame, max_max):
     plt.scatter(region_stim_bin_frame.mutual_info_plugin, region_stim_bin_frame.mutual_info_qe, color='blue', label=region.replace('_', ' ').capitalize(), marker='.')
     plt.plot([0, max_max], [0, max_max], color='black')
@@ -146,7 +141,7 @@ def main():
         symm_best_stims, symm_y_lim, symm_max_bin = getBestStimsLims(corr_bin_frame,strong_corr_bin_frame, 'symm_unc_qe', [0, 1])
         plotRegionalSymmUncHistograms(corr_bin_frame, symm_best_stims, symm_y_lim, args.use_title, args.prefix, args.bin_width)
     elif args.measure_type == 'single':
-        firing_best_stims, firing_y_lim, firing_max_bin = getBestStimsLims(corr_bin_frame, strong_corr_bin_frame, 'firing_rate_mean') 
+        firing_best_stims, firing_y_lim, firing_max_bin = getBestStimsLims(corr_bin_frame, strong_corr_bin_frame, 'firing_rate_mean')
         plotRegionalFiringRateHistograms(corr_bin_frame, firing_best_stims, firing_y_lim, firing_max_bin, args.use_title, args.prefix, args.bin_width)
     elif args.measure_type == 'correction':
         for region in rc.regions:

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser(description='For plotting spike count correlations against geometric means of the product of the firing rates of the paired neurons.')
 parser.add_argument('-f', '--paired_file', help='The file in which to find the correlations and mutual info.', type=str, default='all_pairs.csv')
 parser.add_argument('-g', '--single_file', help='The file in which to find the firing rates.', type=str, default='all_firing_rates.csv')
+parser.add_argument('-t', '--plot_type', help='The type of plot we want to make', type=str, default='firing', choices=['firing', 'pairwise'])
 parser.add_argument('-b', '--bin_width', help='The bin width to use for correlations.', type=float, default=1.0)
 parser.add_argument('-p', '--prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
@@ -61,30 +62,53 @@ def plotMeasureVsGeomMeanForRegion(working_frame, region, measure, y_label, y_li
     plt.text(geom_max*0.75, text_y, r'$\rho=$' + str(round(correlation,2)), fontsize='large')
     plt.tight_layout()
 
+def saveAndClose(filename, directory):
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
+    plt.savefig(os.path.join(image_dir, directory, filename))
+    plt.close()
+
 def plotMeasuresVsGeomMean(working_frame, region, stim_id, prefix):
     plotMeasureVsGeomMeanForRegion(working_frame, region, 'corr_coef', r'$r_{SC}$', [-1,1])
     filename = prefix + 'corr_vs_geometric_' + region + '_' + str(stim_id) + '.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
     plt.savefig(os.path.join(image_dir, 'geometric_mean', filename))
     plt.close()
-    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_plugin', r'$I(X;Y)$ (bits)', [0, working_frame.mutual_info_plugin.max()])
+    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_qe', r'$I(X;Y)$ (bits)', [0, working_frame.mutual_info_qe.max()])
     filename = prefix + 'info_vs_geometric_' + region + '_' + str(stim_id) + '.png'
-    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
-    plt.savefig(os.path.join(image_dir, 'geometric_mean', filename))
-    plt.close()
+    saveAndClose(filename, 'geometric_mean')
+
+def plotInfoVsCorr(pairwise_region_frame, region, max_mi, stim_id, prefix):
+    pairwise_region_frame.plot('corr_coef', 'mutual_info_qe', kind='scatter', figsize=(4,3), grid=False, color=rc.region_to_colour[region], label=region.replace('_', ' ').capitalize(), xlim=[-1,1], ylim=[0, max_mi])
+    p = np.polyfit(pairwise_region_frame.corr_coef, pairwise_region_frame.mutual_info_qe, 2)
+    x = np.arange(-1,1.05,0.05)
+    plt.plot(x, p[0]*np.power(x,2) + p[1]*x + p[1], color='black')
+    plt.xlabel(r'$r_{SC}$', fontsize='large')
+    plt.ylabel(r'$I(X;Y)$ (bits)', fontsize='large')
+    plt.legend(fontsize='large')
+    plt.tight_layout()
+    filename = prefix + 'info_vs_corr_' + region + '_' + str(stim_id) + '.png'
+    saveAndClose(filename, 'mutual_info_vs_corr')
 
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading single and pairwise measurements...')
     firing_frame, pairwise_frame = getDataFrames(args.single_file, args.paired_file, args.bin_width)
-    for region in rc.regions:
-        best_stim = rc.getBestStimFromRegion(firing_frame, region)
-        firing_region_frame = firing_frame[(firing_frame.region == region) & (firing_frame.stim_id == best_stim)]
-        pairwise_region_frame = pairwise_frame[(pairwise_frame.region == region) & (pairwise_frame.stim_id == best_stim)]
-        working_frame = getWorkingFrame(firing_region_frame, pairwise_region_frame)
-        working_frame.loc[:,'geometric_mean'] = np.sqrt(working_frame.first_firing_rate * working_frame.second_firing_rate)
-        plotMeasuresVsGeomMean(working_frame, region, best_stim, args.prefix)
-        # TODO: plot mutual information vs correlation coefficient
+    if args.plot_type == 'firing':
+        for region in rc.regions:
+            best_stim = rc.getBestStimFromRegion(firing_frame, region)
+            firing_region_frame = firing_frame[(firing_frame.region == region) & (firing_frame.stim_id == best_stim)]
+            pairwise_region_frame = pairwise_frame[(pairwise_frame.region == region) & (pairwise_frame.stim_id == best_stim)]
+            working_frame = getWorkingFrame(firing_region_frame, pairwise_region_frame)
+            working_frame.loc[:,'geometric_mean'] = np.sqrt(working_frame.first_firing_rate * working_frame.second_firing_rate)
+            plotMeasuresVsGeomMean(working_frame, region, best_stim, args.prefix)
+    elif args.plot_type == 'pairwise':
+        max_mi = pairwise_frame.mutual_info_qe.max()
+        for region in rc.regions:
+            best_stim = rc.getBestStimFromRegion(pairwise_frame, region)
+            pairwise_region_frame = pairwise_frame[(pairwise_frame.region == region) & (pairwise_frame.stim_id == best_stim)]
+            plotInfoVsCorr(pairwise_region_frame, region, max_mi, best_stim, args.prefix)
+    else:
+        sys.exit(dt.datetime.now().isoformat() + 'ERROR: ' + 'Unrecognised measure type!')
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
 
 if not(args.debug):

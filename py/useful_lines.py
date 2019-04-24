@@ -5,6 +5,7 @@ import datetime as dt
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from math import log
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
 parser.add_argument('-f', '--filename', help='The file in which to find the correlations.', type=str, default='all_regions_stims_pairs_widths.csv')
@@ -26,14 +27,31 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-all_pairs = pd.read_csv(os.path.join(csv_dir, args.filename))
-for region in rc.regions:
-    region_bin_frame = all_pairs[(all_pairs.region == region) & (all_pairs.bin_width == args.bin_width)]
-    best_stim = rc.getBestStimFromRegion(correlation_frame, region)
-    region_stim_bin_frame = region_bin_frame[region_bin_frame.stim_id == best_stim]
-    fig = plt.figure()
-    plt.subplot(1,2,1)
-    plotMutualInfoCorrection(region, region_stim_bin_frame, region_stim_bin_frame[['mutual_info_plugin', 'mutual_info_qe']].max().max())
-    plt.subplot(1,2,2)
-    plotSymmUncCorrection(region, region_stim_bin_frame)
-    plt.show(block=False)
+def calcEntropy(x, base=2):
+    if x.size <= 1:
+        return 0
+    values, counts = np.unique(x, return_counts=True)
+    probs = counts / x.size
+    n_classes = np.count_nonzero(probs)
+    if n_classes <= 1:
+        return 0
+    return np.array([-i*log(i,base)for i in probs]).sum()
+
+num_vals_list = np.arange(1,101)
+entropies = np.zeros(num_vals_list.shape)
+firing_rates = np.zeros(num_vals_list.shape)
+for i, num_vals in enumerate(num_vals_list):
+    x = np.random.randint(0, num_vals, 1000)
+    entropies[i] = calcEntropy(x)
+    firing_rates[i] = x.sum()/1000.0
+
+fig = plt.figure(figsize=(4,3))
+plt.plot(num_vals_list-1, entropies, label='Max H(X)')
+plt.plot(num_vals_list-1, np.log2(num_vals_list), label=r'$\log_2 \left( n_{\max} + 1 \right)$', color='orange')
+plt.xlabel(r'Maximum observed spikes, $n_{\max}$', fontsize='large')
+plt.ylabel(r'$H(X)$ (bits)', fontsize='large')
+plt.xlim([0,100])
+plt.ylim([0,entropies.max()])
+plt.legend(fontsize='large')
+plt.tight_layout()
+plt.show()

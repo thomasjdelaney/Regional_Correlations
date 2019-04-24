@@ -1,7 +1,6 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  22 APR 2019 17:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  24 APR 2019 20:19
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
 **regional_correlations.tex
 (./regional_correlations.tex
@@ -22,48 +21,59 @@ File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
-) (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2018/04/06 v1.3b Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
- (/usr/share/texlive/texmf-dist/tex/latex/ucs/utf8x.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/utf8x.def
 File: utf8x.def 2004/10/17 UCS: Input encoding UTF-8
-)) (/usr/share/texlive/texmf-dist/tex/latex/ucs/ucs.sty
+))
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/ucs.sty
 Package: ucs 2013/05/11 v2.2 UCS: Unicode input support
- (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-global.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-global.def
 File: uni-global.def 2013/05/13 UCS: Unicode global data
 )
 \uc@secondtry=\count88
 \uc@combtoks=\toks16
 \uc@combtoksb=\toks17
 \uc@temptokena=\toks18
-) (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \@emptytoks=\toks19
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty
+))
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty
 Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
 \symrsfs=\mathgroup6
-) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2017/09/02 v2.17a AMS math features
 \@mathmargin=\skip43
 
 For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2000/06/29 v2.01 AMS text
- (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks20
 \ex@=\dimen103
-)) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen104
-) (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
 \inf@bad=\count89
@@ -103,7 +113,8 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
 \mathdisplay@stack=\toks24
 LaTeX Info: Redefining \[ on input line 2817.
 LaTeX Info: Redefining \] on input line 2818.
-) (/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amscls/amsthm.sty
 Package: amsthm 2017/10/31 v2.20.4
 \thm@style=\toks25
 \thm@bodyfont=\toks26
@@ -114,17 +125,22 @@ Package: amsthm 2017/10/31 v2.20.4
 \thm@postskip=\skip47
 \thm@headsep=\skip48
 \dth@everypar=\toks30
-) (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2018/04/16 v5.8 Page Geometry
- (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks31
-) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
 Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
-) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifvtex.sty
 Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
-) (/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
 \Gm@cnth=\count101
@@ -139,32 +155,41 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layouthoffset=\dimen118
 \Gm@layoutvoffset=\dimen119
 \Gm@dimlist=\toks32
-) (/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty
 Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
-) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
- (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
- (/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
-) (/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
- (/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen120
 \Gin@req@width=\dimen121
-) (/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
 Package: enumitem 2011/09/28 v3.5.2 Customized lists
 \labelindent=\skip49
 \enit@outerparindent=\dimen122
 \enit@toks=\toks33
 \enit@inbox=\box28
 \enitdp@description=\count104
-) (/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
-Package: fancyhdr 2017/06/30 v3.9a Extensive control of page headers and footers
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2017/06/30 v3.9a Extensive control of page headers and footer
+s
 \f@nch@headwidth=\skip50
 \f@nch@O@elh=\skip51
 \f@nch@O@erh=\skip52
@@ -174,11 +199,15 @@ Package: fancyhdr 2017/06/30 v3.9a Extensive control of page headers and footers
 \f@nch@O@erf=\skip56
 \f@nch@O@olf=\skip57
 \f@nch@O@orf=\skip58
-) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2018/02/06 v6.86b Hypertext links for LaTeX
- (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
 Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
- (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
 Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
 Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
 Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
@@ -195,13 +224,15 @@ Package etexcmds Info: Could not find \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
 Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
-Package: pdftexcmds 2018/01/30 v0.27 Utility functions of pdfTeX for LuaTeX (HO)
+Package: pdftexcmds 2018/01/30 v0.27 Utility functions of pdfTeX for LuaTeX (HO
+)
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
 Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
-Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
+)
 Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
 Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
 )
@@ -214,19 +245,23 @@ Package atveryend Info: \enddocument detected (standard20110627).
 Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
 Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
 Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
-) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
 Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
-) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 )
 \@linkdim=\dimen123
 \Hy@linkcounter=\count105
 \Hy@pagecounter=\count106
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2018/02/06 v6.86b Hyperref: PDFDocEncoding definition (HO)
 )
 \Hy@SavedSpaceFactor=\count107
- (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
 Package hyperref Info: Hyper figures OFF on input line 4509.
@@ -237,7 +272,8 @@ Package hyperref Info: Backreferencing OFF on input line 4529.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4762.
 \c@Hy@tempcnt=\count108
- (/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip11
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
@@ -260,20 +296,26 @@ LaTeX Info: Redefining \pageref on input line 6443.
 \c@Hfootnote=\count112
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
 File: hpdftex.def 2018/02/06 v6.86b Hyperref driver for pdfTeX
 \Fld@listcount=\count113
 \c@bookmark@seq@number=\count114
- (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
 Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
-Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 282.
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
 )
 \Hy@SectionHShift=\skip59
-) (/usr/share/texlive/texmf-dist/tex/latex/setspace/setspace.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/setspace/setspace.sty
 Package: setspace 2011/12/19 v6.7a set line spacing
-) (/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
 Package: subcaption 2018/05/01 v1.1-162 Sub-captions (AR)
- (/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2018/05/01 v3.3-147 Customizing captions (AR)
 
 (/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
@@ -292,9 +334,11 @@ Package caption Info: hyperref package is loaded.
 )
 \c@subfigure=\count116
 \c@subtable=\count117
-) (/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mathtools.sty
 Package: mathtools 2018/01/08 v1.21 mathematical typesetting tools
- (/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
 \calc@Acount=\count118
 \calc@Bcount=\count119
@@ -306,7 +350,8 @@ LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
 \calc@Ccount=\count120
 \calc@Cskip=\skip62
-) (/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty
+)
+(/usr/share/texlive/texmf-dist/tex/latex/mathtools/mhsetup.sty
 Package: mhsetup 2017/03/31 v1.3 programming setup (MH)
 )
 LaTeX Info: Thecontrolsequence`\('isalreadyrobust on input line 129.
@@ -328,7 +373,8 @@ LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
 \c@lemma=\count124
 \c@corollary=\count125
 \c@definition=\count126
- (./regional_correlations.aux)
+
+(./regional_correlations.aux)
 \openout1 = `regional_correlations.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
@@ -346,9 +392,11 @@ LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Try loading font information for OT1+ptm on input line 53.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
-) (/usr/share/texlive/texmf-dist/tex/latex/ucs/ucsencs.def
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/ucsencs.def
 File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 )
 *geometry* driver: auto-detecting
@@ -400,21 +448,28 @@ File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
 \everyMPtoPDFconversion=\toks35
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
- (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
 Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 )
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 438.
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
 Package grfext Info: Graphics extension search list:
-(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPEG,.JBIG2,.JB2,.eps]
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 456.
- (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
 ))
 \AtBeginShipoutBox=\box30
 Package hyperref Info: Link coloring OFF on input line 53.
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
- (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count133
@@ -422,7 +477,8 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 53.
 LaTeX Info: Redefining \pageref on input line 53.
 LaTeX Info: Redefining \nameref on input line 53.
- (./regional_correlations.out) (./regional_correlations.out)
+
+(./regional_correlations.out) (./regional_correlations.out)
 \@outlinefile=\write3
 \openout3 = `regional_correlations.out'.
 
@@ -430,19 +486,23 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 55.
- (./regional_correlations.toc
+
+(./regional_correlations.toc
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Try loading font information for U+msa on input line 2.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 2.
- (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for U+rsfs on input line 2.
- (/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ))
 \tf@toc=\write4
@@ -461,7 +521,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 60.
 LaTeX Font Info:    Try loading font information for OT1+pcr on input line 63.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 
@@ -471,6 +532,15 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [2]
+<figures/geometric_mean_ex.png, id=219, 534.0753pt x 286.9119pt>
+File: figures/geometric_mean_ex.png Graphic file (type png)
+<use figures/geometric_mean_ex.png>
+Package pdftex.def Info: figures/geometric_mean_ex.png  used on input line 98.
+(pdftex.def)             Requested size: 384.1096pt x 206.34874pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
@@ -479,28 +549,43 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 
 [3]
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 108.
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 108.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 108.
-
+[4 <./figures/geometric_mean_ex.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 118.
+(hyperref)                removing `math shift' on input line 124.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 118.
+(hyperref)                removing `subscript' on input line 124.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 118.
+(hyperref)                removing `math shift' on input line 124.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 127.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 127.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 127.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 134.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 134.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -508,26 +593,34 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[4]
+[5]
+Overfull \hbox (1.43636pt too wide) in paragraph at lines 162--164
+\OT1/ptm/m/n/12 Therefore, the max-i-mum en-tropy of the binned spike counts of
+ a neu-ron is $[][] []$.
+ []
+
+<figures/entropy_limit.png, id=252, 289.08pt x 216.81pt>
+File: figures/entropy_limit.png Graphic file (type png)
+<use figures/entropy_limit.png>
+Package pdftex.def Info: figures/entropy_limit.png  used on input line 167.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 125.
+(hyperref)                removing `math shift' on input line 172.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 125.
+(hyperref)                removing `math shift' on input line 172.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 146.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 146.
-
-
-Overfull \hbox (0.58937pt too wide) in paragraph at lines 149--150
-[]\OT1/ptm/m/n/12 For two jointly dis-tributed ran-dom vari-ables $\OML/cmm/m/it/12 X$ \OT1/ptm/m/n/12 and $\OML/cmm/m/it/12 Y$\OT1/ptm/m/n/12 , the mu-tual in-for-ma-tion $\OML/cmm/m/it/12 I\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 X\OT1/cmr/m/n/12 ; \OML/cmm/m/it/12 Y\OT1/cmr/m/n/12 )$
+Overfull \hbox (0.58937pt too wide) in paragraph at lines 175--176
+[]\OT1/ptm/m/n/12 For two jointly dis-tributed ran-dom vari-ables $\OML/cmm/m/i
+t/12 X$ \OT1/ptm/m/n/12 and $\OML/cmm/m/it/12 Y$\OT1/ptm/m/n/12 , the mu-tual i
+n-for-ma-tion $\OML/cmm/m/it/12 I\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 X\OT1/cmr/m/
+n/12 ; \OML/cmm/m/it/12 Y\OT1/cmr/m/n/12 )$
  []
 
 
@@ -536,205 +629,23 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[5] (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-32.def
+[6] (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-32.def
 File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
 )
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 176.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 176.
-
-
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[6]
+[7 <./figures/entropy_limit.png>]
 
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
-
-[7]
-<figures/bin_width_correlations_hippocampus_15.png, id=261, 289.08pt x 216.81pt>
-File: figures/bin_width_correlations_hippocampus_15.png Graphic file (type png)
-<use figures/bin_width_correlations_hippocampus_15.png>
-Package pdftex.def Info: figures/bin_width_correlations_hippocampus_15.png  used on input line 225.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/bin_width_correlations_motor_cortex_15.png, id=263, 289.08pt x 216.81pt>
-File: figures/bin_width_correlations_motor_cortex_15.png Graphic file (type png)
-<use figures/bin_width_correlations_motor_cortex_15.png>
-Package pdftex.def Info: figures/bin_width_correlations_motor_cortex_15.png  used on input line 229.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/bin_width_correlations_striatum_14.png, id=264, 289.08pt x 216.81pt>
-File: figures/bin_width_correlations_striatum_14.png Graphic file (type png)
-<use figures/bin_width_correlations_striatum_14.png>
-Package pdftex.def Info: figures/bin_width_correlations_striatum_14.png  used on input line 233.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/bin_width_correlations_thalamus_15.png, id=265, 289.08pt x 216.81pt>
-File: figures/bin_width_correlations_thalamus_15.png Graphic file (type png)
-<use figures/bin_width_correlations_thalamus_15.png>
-Package pdftex.def Info: figures/bin_width_correlations_thalamus_15.png  used on input line 237.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/bin_width_correlations_v1_6.png, id=266, 289.08pt x 216.81pt>
-File: figures/bin_width_correlations_v1_6.png Graphic file (type png)
-<use figures/bin_width_correlations_v1_6.png>
-Package pdftex.def Info: figures/bin_width_correlations_v1_6.png  used on input line 241.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 223--243
-[]$[]$ $[]$
- []
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 202.
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 223--243
-[]$ $[]$
- []
-
-<figures/linear_bin_width_correlations_hippocampus_15.png, id=267, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_correlations_hippocampus_15.png Graphic file (type png)
-<use figures/linear_bin_width_correlations_hippocampus_15.png>
-Package pdftex.def Info: figures/linear_bin_width_correlations_hippocampus_15.png  used on input line 250.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_correlations_motor_cortex_15.png, id=268, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_correlations_motor_cortex_15.png Graphic file (type png)
-<use figures/linear_bin_width_correlations_motor_cortex_15.png>
-Package pdftex.def Info: figures/linear_bin_width_correlations_motor_cortex_15.png  used on input line 254.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_correlations_striatum_14.png, id=269, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_correlations_striatum_14.png Graphic file (type png)
-<use figures/linear_bin_width_correlations_striatum_14.png>
-Package pdftex.def Info: figures/linear_bin_width_correlations_striatum_14.png  used on input line 258.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_correlations_thalamus_15.png, id=270, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_correlations_thalamus_15.png Graphic file (type png)
-<use figures/linear_bin_width_correlations_thalamus_15.png>
-Package pdftex.def Info: figures/linear_bin_width_correlations_thalamus_15.png  used on input line 262.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_correlations_v1_6.png, id=271, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_correlations_v1_6.png Graphic file (type png)
-<use figures/linear_bin_width_correlations_v1_6.png>
-Package pdftex.def Info: figures/linear_bin_width_correlations_v1_6.png  used on input line 266.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 248--268
-[]$[]$ $[]$
- []
-
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 248--268
-[]$ $[]$
- []
-
-<figures/linear_bin_width_relative_correlations_hippocampus_15.png, id=274, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_relative_correlations_hippocampus_15.png Graphic file (type png)
-<use figures/linear_bin_width_relative_correlations_hippocampus_15.png>
-Package pdftex.def Info: figures/linear_bin_width_relative_correlations_hippocampus_15.png  used on input line 278.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_relative_correlations_motor_cortex_15.png, id=275, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_relative_correlations_motor_cortex_15.png Graphic file (type png)
-<use figures/linear_bin_width_relative_correlations_motor_cortex_15.png>
-Package pdftex.def Info: figures/linear_bin_width_relative_correlations_motor_cortex_15.png  used on input line 282.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_relative_correlations_striatum_14.png, id=276, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_relative_correlations_striatum_14.png Graphic file (type png)
-<use figures/linear_bin_width_relative_correlations_striatum_14.png>
-Package pdftex.def Info: figures/linear_bin_width_relative_correlations_striatum_14.png  used on input line 286.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_relative_correlations_thalamus_15.png, id=277, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_relative_correlations_thalamus_15.png Graphic file (type png)
-<use figures/linear_bin_width_relative_correlations_thalamus_15.png>
-Package pdftex.def Info: figures/linear_bin_width_relative_correlations_thalamus_15.png  used on input line 290.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_bin_width_relative_correlations_v1_6.png, id=278, 289.08pt x 216.81pt>
-File: figures/linear_bin_width_relative_correlations_v1_6.png Graphic file (type png)
-<use figures/linear_bin_width_relative_correlations_v1_6.png>
-Package pdftex.def Info: figures/linear_bin_width_relative_correlations_v1_6.png  used on input line 294.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 276--296
-[]$[]$ $[]$
- []
-
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 276--296
-[]$ $[]$
- []
-
-<figures/signal_linear_bin_width_correlations_hippocampus_0.png, id=284, 289.08pt x 216.81pt>
-File: figures/signal_linear_bin_width_correlations_hippocampus_0.png Graphic file (type png)
-<use figures/signal_linear_bin_width_correlations_hippocampus_0.png>
-Package pdftex.def Info: figures/signal_linear_bin_width_correlations_hippocampus_0.png  used on input line 306.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/signal_linear_bin_width_correlations_motor_cortex_0.png, id=285, 289.08pt x 216.81pt>
-File: figures/signal_linear_bin_width_correlations_motor_cortex_0.png Graphic file (type png)
-<use figures/signal_linear_bin_width_correlations_motor_cortex_0.png>
-Package pdftex.def Info: figures/signal_linear_bin_width_correlations_motor_cortex_0.png  used on input line 310.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/signal_linear_bin_width_correlations_striatum_0.png, id=286, 289.08pt x 216.81pt>
-File: figures/signal_linear_bin_width_correlations_striatum_0.png Graphic file (type png)
-<use figures/signal_linear_bin_width_correlations_striatum_0.png>
-Package pdftex.def Info: figures/signal_linear_bin_width_correlations_striatum_0.png  used on input line 314.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/signal_linear_bin_width_correlations_thalamus_0.png, id=287, 289.08pt x 216.81pt>
-File: figures/signal_linear_bin_width_correlations_thalamus_0.png Graphic file (type png)
-<use figures/signal_linear_bin_width_correlations_thalamus_0.png>
-Package pdftex.def Info: figures/signal_linear_bin_width_correlations_thalamus_0.png  used on input line 318.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/signal_linear_bin_width_correlations_v1_0.png, id=288, 289.08pt x 216.81pt>
-File: figures/signal_linear_bin_width_correlations_v1_0.png Graphic file (type png)
-<use figures/signal_linear_bin_width_correlations_v1_0.png>
-Package pdftex.def Info: figures/signal_linear_bin_width_correlations_v1_0.png  used on input line 322.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 304--324
-[]$[]$ $[]$
- []
-
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 304--324
-[]$ $[]$
- []
-
-<figures/linear_mutual_info_by_bin_width_hippocampus_15.png, id=291, 289.08pt x 216.81pt>
-File: figures/linear_mutual_info_by_bin_width_hippocampus_15.png Graphic file (type png)
-<use figures/linear_mutual_info_by_bin_width_hippocampus_15.png>
-Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_hippocampus_15.png  used on input line 334.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_mutual_info_by_bin_width_motor_cortex_15.png, id=292, 289.08pt x 216.81pt>
-File: figures/linear_mutual_info_by_bin_width_motor_cortex_15.png Graphic file (type png)
-<use figures/linear_mutual_info_by_bin_width_motor_cortex_15.png>
-Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_motor_cortex_15.png  used on input line 338.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_mutual_info_by_bin_width_striatum_14.png, id=293, 289.08pt x 216.81pt>
-File: figures/linear_mutual_info_by_bin_width_striatum_14.png Graphic file (type png)
-<use figures/linear_mutual_info_by_bin_width_striatum_14.png>
-Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_striatum_14.png  used on input line 342.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_mutual_info_by_bin_width_thalamus_15.png, id=294, 289.08pt x 216.81pt>
-File: figures/linear_mutual_info_by_bin_width_thalamus_15.png Graphic file (type png)
-<use figures/linear_mutual_info_by_bin_width_thalamus_15.png>
-Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_thalamus_15.png  used on input line 346.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/linear_mutual_info_by_bin_width_v1_6.png, id=295, 289.08pt x 216.81pt>
-File: figures/linear_mutual_info_by_bin_width_v1_6.png Graphic file (type png)
-<use figures/linear_mutual_info_by_bin_width_v1_6.png>
-Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_v1_6.png  used on input line 350.
-(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 332--352
-[]$[]$ $[]$
- []
-
-
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 332--352
-[]$ $[]$
- []
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 202.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -743,178 +654,485 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [8]
+<figures/bin_width_correlations_hippocampus_15.png, id=293, 289.08pt x 216.81pt
+>
+File: figures/bin_width_correlations_hippocampus_15.png Graphic file (type png)
+
+<use figures/bin_width_correlations_hippocampus_15.png>
+Package pdftex.def Info: figures/bin_width_correlations_hippocampus_15.png  use
+d on input line 251.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/bin_width_correlations_motor_cortex_15.png, id=294, 289.08pt x 216.81p
+t>
+File: figures/bin_width_correlations_motor_cortex_15.png Graphic file (type png
+)
+<use figures/bin_width_correlations_motor_cortex_15.png>
+Package pdftex.def Info: figures/bin_width_correlations_motor_cortex_15.png  us
+ed on input line 255.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/bin_width_correlations_striatum_14.png, id=295, 289.08pt x 216.81pt>
+File: figures/bin_width_correlations_striatum_14.png Graphic file (type png)
+<use figures/bin_width_correlations_striatum_14.png>
+Package pdftex.def Info: figures/bin_width_correlations_striatum_14.png  used o
+n input line 259.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/bin_width_correlations_thalamus_15.png, id=296, 289.08pt x 216.81pt>
+File: figures/bin_width_correlations_thalamus_15.png Graphic file (type png)
+<use figures/bin_width_correlations_thalamus_15.png>
+Package pdftex.def Info: figures/bin_width_correlations_thalamus_15.png  used o
+n input line 263.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/bin_width_correlations_v1_6.png, id=297, 289.08pt x 216.81pt>
+File: figures/bin_width_correlations_v1_6.png Graphic file (type png)
+<use figures/bin_width_correlations_v1_6.png>
+Package pdftex.def Info: figures/bin_width_correlations_v1_6.png  used on input
+ line 267.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 249--269
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 249--269
+[]$ $[]$
+ []
+
+<figures/linear_bin_width_correlations_hippocampus_15.png, id=298, 289.08pt x 2
+16.81pt>
+File: figures/linear_bin_width_correlations_hippocampus_15.png Graphic file (ty
+pe png)
+<use figures/linear_bin_width_correlations_hippocampus_15.png>
+Package pdftex.def Info: figures/linear_bin_width_correlations_hippocampus_15.p
+ng  used on input line 276.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_correlations_motor_cortex_15.png, id=299, 289.08pt x 
+216.81pt>
+File: figures/linear_bin_width_correlations_motor_cortex_15.png Graphic file (t
+ype png)
+<use figures/linear_bin_width_correlations_motor_cortex_15.png>
+Package pdftex.def Info: figures/linear_bin_width_correlations_motor_cortex_15.
+png  used on input line 280.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_correlations_striatum_14.png, id=300, 289.08pt x 216.
+81pt>
+File: figures/linear_bin_width_correlations_striatum_14.png Graphic file (type 
+png)
+<use figures/linear_bin_width_correlations_striatum_14.png>
+Package pdftex.def Info: figures/linear_bin_width_correlations_striatum_14.png 
+ used on input line 284.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_correlations_thalamus_15.png, id=301, 289.08pt x 216.
+81pt>
+File: figures/linear_bin_width_correlations_thalamus_15.png Graphic file (type 
+png)
+<use figures/linear_bin_width_correlations_thalamus_15.png>
+Package pdftex.def Info: figures/linear_bin_width_correlations_thalamus_15.png 
+ used on input line 288.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_correlations_v1_6.png, id=302, 289.08pt x 216.81pt>
+File: figures/linear_bin_width_correlations_v1_6.png Graphic file (type png)
+<use figures/linear_bin_width_correlations_v1_6.png>
+Package pdftex.def Info: figures/linear_bin_width_correlations_v1_6.png  used o
+n input line 292.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 274--294
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 274--294
+[]$ $[]$
+ []
+
+<figures/linear_bin_width_relative_correlations_hippocampus_15.png, id=305, 289
+.08pt x 216.81pt>
+File: figures/linear_bin_width_relative_correlations_hippocampus_15.png Graphic
+ file (type png)
+<use figures/linear_bin_width_relative_correlations_hippocampus_15.png>
+Package pdftex.def Info: figures/linear_bin_width_relative_correlations_hippoca
+mpus_15.png  used on input line 304.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_relative_correlations_motor_cortex_15.png, id=306, 28
+9.08pt x 216.81pt>
+File: figures/linear_bin_width_relative_correlations_motor_cortex_15.png Graphi
+c file (type png)
+<use figures/linear_bin_width_relative_correlations_motor_cortex_15.png>
+Package pdftex.def Info: figures/linear_bin_width_relative_correlations_motor_c
+ortex_15.png  used on input line 308.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_relative_correlations_striatum_14.png, id=307, 289.08
+pt x 216.81pt>
+File: figures/linear_bin_width_relative_correlations_striatum_14.png Graphic fi
+le (type png)
+<use figures/linear_bin_width_relative_correlations_striatum_14.png>
+Package pdftex.def Info: figures/linear_bin_width_relative_correlations_striatu
+m_14.png  used on input line 312.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_relative_correlations_thalamus_15.png, id=308, 289.08
+pt x 216.81pt>
+File: figures/linear_bin_width_relative_correlations_thalamus_15.png Graphic fi
+le (type png)
+<use figures/linear_bin_width_relative_correlations_thalamus_15.png>
+Package pdftex.def Info: figures/linear_bin_width_relative_correlations_thalamu
+s_15.png  used on input line 316.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_bin_width_relative_correlations_v1_6.png, id=309, 289.08pt x 21
+6.81pt>
+File: figures/linear_bin_width_relative_correlations_v1_6.png Graphic file (typ
+e png)
+<use figures/linear_bin_width_relative_correlations_v1_6.png>
+Package pdftex.def Info: figures/linear_bin_width_relative_correlations_v1_6.pn
+g  used on input line 320.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 302--322
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 302--322
+[]$ $[]$
+ []
+
+<figures/signal_linear_bin_width_correlations_hippocampus_0.png, id=315, 289.08
+pt x 216.81pt>
+File: figures/signal_linear_bin_width_correlations_hippocampus_0.png Graphic fi
+le (type png)
+<use figures/signal_linear_bin_width_correlations_hippocampus_0.png>
+Package pdftex.def Info: figures/signal_linear_bin_width_correlations_hippocamp
+us_0.png  used on input line 332.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/signal_linear_bin_width_correlations_motor_cortex_0.png, id=316, 289.0
+8pt x 216.81pt>
+File: figures/signal_linear_bin_width_correlations_motor_cortex_0.png Graphic f
+ile (type png)
+<use figures/signal_linear_bin_width_correlations_motor_cortex_0.png>
+Package pdftex.def Info: figures/signal_linear_bin_width_correlations_motor_cor
+tex_0.png  used on input line 336.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/signal_linear_bin_width_correlations_striatum_0.png, id=317, 289.08pt 
+x 216.81pt>
+File: figures/signal_linear_bin_width_correlations_striatum_0.png Graphic file 
+(type png)
+<use figures/signal_linear_bin_width_correlations_striatum_0.png>
+Package pdftex.def Info: figures/signal_linear_bin_width_correlations_striatum_
+0.png  used on input line 340.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/signal_linear_bin_width_correlations_thalamus_0.png, id=318, 289.08pt 
+x 216.81pt>
+File: figures/signal_linear_bin_width_correlations_thalamus_0.png Graphic file 
+(type png)
+<use figures/signal_linear_bin_width_correlations_thalamus_0.png>
+Package pdftex.def Info: figures/signal_linear_bin_width_correlations_thalamus_
+0.png  used on input line 344.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/signal_linear_bin_width_correlations_v1_0.png, id=319, 289.08pt x 216.
+81pt>
+File: figures/signal_linear_bin_width_correlations_v1_0.png Graphic file (type 
+png)
+<use figures/signal_linear_bin_width_correlations_v1_0.png>
+Package pdftex.def Info: figures/signal_linear_bin_width_correlations_v1_0.png 
+ used on input line 348.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 330--350
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 330--350
+[]$ $[]$
+ []
+
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[9 <./figures/bin_width_correlations_hippocampus_15.png> <./figures/bin_width_correlations_motor_cortex_15.png> <./figures/bin_width_correlations_striatum_14.png> <./figures/bin_width_correlations_thalamus_15.png> <./figures/bin_width_correlations_v1_6.png>]
+[9]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[10 <./figures/linear_bin_width_correlations_hippocampus_15.png> <./figures/linear_bin_width_correlations_motor_cortex_15.png> <./figures/linear_bin_width_correlations_striatum_14.png> <./figures/linear_bin_width_correlations_thalamus_15.png> <./figures/linear_bin_width_correlations_v1_6.png>]
+[10 <./figures/bin_width_correlations_hippocampus_15.png> <./figures/bin_width_
+correlations_motor_cortex_15.png> <./figures/bin_width_correlations_striatum_14
+.png> <./figures/bin_width_correlations_thalamus_15.png> <./figures/bin_width_c
+orrelations_v1_6.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[11 <./figures/linear_bin_width_relative_correlations_hippocampus_15.png> <./figures/linear_bin_width_relative_correlations_motor_cortex_15.png> <./figures/linear_bin_width_relative_correlations_striatum_14.png> <./figures/linear_bin_width_relative_correlations_thalamus_15.png> <./figures/linear_bin_width_relative_correlations_v1_6.png>]
+[11 <./figures/linear_bin_width_correlations_hippocampus_15.png> <./figures/lin
+ear_bin_width_correlations_motor_cortex_15.png> <./figures/linear_bin_width_cor
+relations_striatum_14.png> <./figures/linear_bin_width_correlations_thalamus_15
+.png> <./figures/linear_bin_width_correlations_v1_6.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[12 <./figures/signal_linear_bin_width_correlations_hippocampus_0.png> <./figures/signal_linear_bin_width_correlations_motor_cortex_0.png> <./figures/signal_linear_bin_width_correlations_striatum_0.png> <./figures/signal_linear_bin_width_correlations_thalamus_0.png> <./figures/signal_linear_bin_width_correlations_v1_0.png>]
+[12 <./figures/linear_bin_width_relative_correlations_hippocampus_15.png> <./fi
+gures/linear_bin_width_relative_correlations_motor_cortex_15.png> <./figures/li
+near_bin_width_relative_correlations_striatum_14.png> <./figures/linear_bin_wid
+th_relative_correlations_thalamus_15.png> <./figures/linear_bin_width_relative_
+correlations_v1_6.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[13 <./figures/linear_mutual_info_by_bin_width_hippocampus_15.png> <./figures/linear_mutual_info_by_bin_width_motor_cortex_15.png> <./figures/linear_mutual_info_by_bin_width_striatum_14.png> <./figures/linear_mutual_info_by_bin_width_thalamus_15.png> <./figures/linear_mutual_info_by_bin_width_v1_6.png>]
-<figures/all_hippocampus_8_1p0_firing_rate_histogram.png, id=353, 289.08pt x 216.81pt>
-File: figures/all_hippocampus_8_1p0_firing_rate_histogram.png Graphic file (type png)
+[13 <./figures/signal_linear_bin_width_correlations_hippocampus_0.png> <./figur
+es/signal_linear_bin_width_correlations_motor_cortex_0.png> <./figures/signal_l
+inear_bin_width_correlations_striatum_0.png> <./figures/signal_linear_bin_width
+_correlations_thalamus_0.png> <./figures/signal_linear_bin_width_correlations_v
+1_0.png>]
+<figures/linear_mutual_info_by_bin_width_hippocampus_15.png, id=370, 289.08pt x
+ 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_hippocampus_15.png Graphic file (
+type png)
+<use figures/linear_mutual_info_by_bin_width_hippocampus_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_hippocampus_15
+.png  used on input line 360.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_mutual_info_by_bin_width_motor_cortex_15.png, id=371, 289.08pt 
+x 216.81pt>
+File: figures/linear_mutual_info_by_bin_width_motor_cortex_15.png Graphic file 
+(type png)
+<use figures/linear_mutual_info_by_bin_width_motor_cortex_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_motor_cortex_1
+5.png  used on input line 364.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_mutual_info_by_bin_width_striatum_14.png, id=372, 289.08pt x 21
+6.81pt>
+File: figures/linear_mutual_info_by_bin_width_striatum_14.png Graphic file (typ
+e png)
+<use figures/linear_mutual_info_by_bin_width_striatum_14.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_striatum_14.pn
+g  used on input line 368.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_mutual_info_by_bin_width_thalamus_15.png, id=373, 289.08pt x 21
+6.81pt>
+File: figures/linear_mutual_info_by_bin_width_thalamus_15.png Graphic file (typ
+e png)
+<use figures/linear_mutual_info_by_bin_width_thalamus_15.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_thalamus_15.pn
+g  used on input line 372.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/linear_mutual_info_by_bin_width_v1_6.png, id=374, 289.08pt x 216.81pt>
+
+File: figures/linear_mutual_info_by_bin_width_v1_6.png Graphic file (type png)
+<use figures/linear_mutual_info_by_bin_width_v1_6.png>
+Package pdftex.def Info: figures/linear_mutual_info_by_bin_width_v1_6.png  used
+ on input line 376.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 358--378
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 358--378
+[]$ $[]$
+ []
+
+<figures/all_hippocampus_8_1p0_firing_rate_histogram.png, id=376, 289.08pt x 21
+6.81pt>
+File: figures/all_hippocampus_8_1p0_firing_rate_histogram.png Graphic file (typ
+e png)
 <use figures/all_hippocampus_8_1p0_firing_rate_histogram.png>
-Package pdftex.def Info: figures/all_hippocampus_8_1p0_firing_rate_histogram.png  used on input line 371.
+Package pdftex.def Info: figures/all_hippocampus_8_1p0_firing_rate_histogram.pn
+g  used on input line 397.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_motor_cortex_8_1p0_firing_rate_histogram.png, id=354, 289.08pt x 216.81pt>
-File: figures/all_motor_cortex_8_1p0_firing_rate_histogram.png Graphic file (type png)
+<figures/all_motor_cortex_8_1p0_firing_rate_histogram.png, id=377, 289.08pt x 2
+16.81pt>
+File: figures/all_motor_cortex_8_1p0_firing_rate_histogram.png Graphic file (ty
+pe png)
 <use figures/all_motor_cortex_8_1p0_firing_rate_histogram.png>
-Package pdftex.def Info: figures/all_motor_cortex_8_1p0_firing_rate_histogram.png  used on input line 375.
+Package pdftex.def Info: figures/all_motor_cortex_8_1p0_firing_rate_histogram.p
+ng  used on input line 401.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_striatum_8_1p0_firing_rate_histogram.png, id=355, 289.08pt x 216.81pt>
-File: figures/all_striatum_8_1p0_firing_rate_histogram.png Graphic file (type png)
+<figures/all_striatum_8_1p0_firing_rate_histogram.png, id=378, 289.08pt x 216.8
+1pt>
+File: figures/all_striatum_8_1p0_firing_rate_histogram.png Graphic file (type p
+ng)
 <use figures/all_striatum_8_1p0_firing_rate_histogram.png>
-Package pdftex.def Info: figures/all_striatum_8_1p0_firing_rate_histogram.png  used on input line 379.
+Package pdftex.def Info: figures/all_striatum_8_1p0_firing_rate_histogram.png  
+used on input line 405.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_thalamus_8_1p0_firing_rate_histogram.png, id=356, 289.08pt x 216.81pt>
-File: figures/all_thalamus_8_1p0_firing_rate_histogram.png Graphic file (type png)
+<figures/all_thalamus_8_1p0_firing_rate_histogram.png, id=379, 289.08pt x 216.8
+1pt>
+File: figures/all_thalamus_8_1p0_firing_rate_histogram.png Graphic file (type p
+ng)
 <use figures/all_thalamus_8_1p0_firing_rate_histogram.png>
-Package pdftex.def Info: figures/all_thalamus_8_1p0_firing_rate_histogram.png  used on input line 383.
+Package pdftex.def Info: figures/all_thalamus_8_1p0_firing_rate_histogram.png  
+used on input line 409.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_v1_8_1p0_firing_rate_histogram.png, id=357, 289.08pt x 216.81pt>
+<figures/all_v1_8_1p0_firing_rate_histogram.png, id=380, 289.08pt x 216.81pt>
 File: figures/all_v1_8_1p0_firing_rate_histogram.png Graphic file (type png)
 <use figures/all_v1_8_1p0_firing_rate_histogram.png>
-Package pdftex.def Info: figures/all_v1_8_1p0_firing_rate_histogram.png  used on input line 387.
+Package pdftex.def Info: figures/all_v1_8_1p0_firing_rate_histogram.png  used o
+n input line 413.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 369--389
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 395--415
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 369--389
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 395--415
 []$ $[]$
  []
 
-<figures/all_hippocampus_6_1p0_correlation_histogram.png, id=361, 289.08pt x 216.81pt>
-File: figures/all_hippocampus_6_1p0_correlation_histogram.png Graphic file (type png)
+<figures/all_hippocampus_6_1p0_correlation_histogram.png, id=384, 289.08pt x 21
+6.81pt>
+File: figures/all_hippocampus_6_1p0_correlation_histogram.png Graphic file (typ
+e png)
 <use figures/all_hippocampus_6_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_hippocampus_6_1p0_correlation_histogram.png  used on input line 401.
+Package pdftex.def Info: figures/all_hippocampus_6_1p0_correlation_histogram.pn
+g  used on input line 427.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_motor_cortex_10_1p0_correlation_histogram.png, id=362, 289.08pt x 216.81pt>
-File: figures/all_motor_cortex_10_1p0_correlation_histogram.png Graphic file (type png)
+<figures/all_motor_cortex_10_1p0_correlation_histogram.png, id=385, 289.08pt x 
+216.81pt>
+File: figures/all_motor_cortex_10_1p0_correlation_histogram.png Graphic file (t
+ype png)
 <use figures/all_motor_cortex_10_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_motor_cortex_10_1p0_correlation_histogram.png  used on input line 405.
+Package pdftex.def Info: figures/all_motor_cortex_10_1p0_correlation_histogram.
+png  used on input line 431.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_striatum_14_1p0_correlation_histogram.png, id=363, 289.08pt x 216.81pt>
-File: figures/all_striatum_14_1p0_correlation_histogram.png Graphic file (type png)
+<figures/all_striatum_14_1p0_correlation_histogram.png, id=386, 289.08pt x 216.
+81pt>
+File: figures/all_striatum_14_1p0_correlation_histogram.png Graphic file (type 
+png)
 <use figures/all_striatum_14_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_striatum_14_1p0_correlation_histogram.png  used on input line 409.
+Package pdftex.def Info: figures/all_striatum_14_1p0_correlation_histogram.png 
+ used on input line 435.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_thalamus_15_1p0_correlation_histogram.png, id=364, 289.08pt x 216.81pt>
-File: figures/all_thalamus_15_1p0_correlation_histogram.png Graphic file (type png)
+<figures/all_thalamus_15_1p0_correlation_histogram.png, id=387, 289.08pt x 216.
+81pt>
+File: figures/all_thalamus_15_1p0_correlation_histogram.png Graphic file (type 
+png)
 <use figures/all_thalamus_15_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_thalamus_15_1p0_correlation_histogram.png  used on input line 413.
+Package pdftex.def Info: figures/all_thalamus_15_1p0_correlation_histogram.png 
+ used on input line 439.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_v1_6_1p0_correlation_histogram.png, id=365, 289.08pt x 216.81pt>
+<figures/all_v1_6_1p0_correlation_histogram.png, id=388, 289.08pt x 216.81pt>
 File: figures/all_v1_6_1p0_correlation_histogram.png Graphic file (type png)
 <use figures/all_v1_6_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/all_v1_6_1p0_correlation_histogram.png  used on input line 417.
+Package pdftex.def Info: figures/all_v1_6_1p0_correlation_histogram.png  used o
+n input line 443.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 399--419
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 425--445
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 399--419
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 425--445
 []$ $[]$
  []
 
-<figures/all_hippocampus_6_1p0_information_histogram.png, id=366, 289.08pt x 216.81pt>
-File: figures/all_hippocampus_6_1p0_information_histogram.png Graphic file (type png)
+<figures/all_hippocampus_6_1p0_information_histogram.png, id=389, 289.08pt x 21
+6.81pt>
+File: figures/all_hippocampus_6_1p0_information_histogram.png Graphic file (typ
+e png)
 <use figures/all_hippocampus_6_1p0_information_histogram.png>
-Package pdftex.def Info: figures/all_hippocampus_6_1p0_information_histogram.png  used on input line 426.
+Package pdftex.def Info: figures/all_hippocampus_6_1p0_information_histogram.pn
+g  used on input line 452.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_motor_cortex_10_1p0_information_histogram.png, id=367, 289.08pt x 216.81pt>
-File: figures/all_motor_cortex_10_1p0_information_histogram.png Graphic file (type png)
+<figures/all_motor_cortex_10_1p0_information_histogram.png, id=390, 289.08pt x 
+216.81pt>
+File: figures/all_motor_cortex_10_1p0_information_histogram.png Graphic file (t
+ype png)
 <use figures/all_motor_cortex_10_1p0_information_histogram.png>
-Package pdftex.def Info: figures/all_motor_cortex_10_1p0_information_histogram.png  used on input line 430.
+Package pdftex.def Info: figures/all_motor_cortex_10_1p0_information_histogram.
+png  used on input line 456.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_striatum_14_1p0_information_histogram.png, id=368, 289.08pt x 216.81pt>
-File: figures/all_striatum_14_1p0_information_histogram.png Graphic file (type png)
+<figures/all_striatum_14_1p0_information_histogram.png, id=391, 289.08pt x 216.
+81pt>
+File: figures/all_striatum_14_1p0_information_histogram.png Graphic file (type 
+png)
 <use figures/all_striatum_14_1p0_information_histogram.png>
-Package pdftex.def Info: figures/all_striatum_14_1p0_information_histogram.png  used on input line 434.
+Package pdftex.def Info: figures/all_striatum_14_1p0_information_histogram.png 
+ used on input line 460.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_thalamus_15_1p0_information_histogram.png, id=369, 289.08pt x 216.81pt>
-File: figures/all_thalamus_15_1p0_information_histogram.png Graphic file (type png)
+<figures/all_thalamus_15_1p0_information_histogram.png, id=392, 289.08pt x 216.
+81pt>
+File: figures/all_thalamus_15_1p0_information_histogram.png Graphic file (type 
+png)
 <use figures/all_thalamus_15_1p0_information_histogram.png>
-Package pdftex.def Info: figures/all_thalamus_15_1p0_information_histogram.png  used on input line 438.
+Package pdftex.def Info: figures/all_thalamus_15_1p0_information_histogram.png 
+ used on input line 464.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_v1_6_1p0_information_histogram.png, id=370, 289.08pt x 216.81pt>
+<figures/all_v1_6_1p0_information_histogram.png, id=393, 289.08pt x 216.81pt>
 File: figures/all_v1_6_1p0_information_histogram.png Graphic file (type png)
 <use figures/all_v1_6_1p0_information_histogram.png>
-Package pdftex.def Info: figures/all_v1_6_1p0_information_histogram.png  used on input line 442.
+Package pdftex.def Info: figures/all_v1_6_1p0_information_histogram.png  used o
+n input line 468.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 424--444
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 450--470
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 424--444
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 450--470
 []$ $[]$
  []
 
-<figures/all_hippocampus_6_1p0_symm_unc_histogram.png, id=371, 289.08pt x 216.81pt>
-File: figures/all_hippocampus_6_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/all_hippocampus_6_1p0_symm_unc_histogram.png, id=394, 289.08pt x 216.8
+1pt>
+File: figures/all_hippocampus_6_1p0_symm_unc_histogram.png Graphic file (type p
+ng)
 <use figures/all_hippocampus_6_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/all_hippocampus_6_1p0_symm_unc_histogram.png  used on input line 451.
+Package pdftex.def Info: figures/all_hippocampus_6_1p0_symm_unc_histogram.png  
+used on input line 477.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_motor_cortex_10_1p0_symm_unc_histogram.png, id=372, 289.08pt x 216.81pt>
-File: figures/all_motor_cortex_10_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/all_motor_cortex_10_1p0_symm_unc_histogram.png, id=395, 289.08pt x 216
+.81pt>
+File: figures/all_motor_cortex_10_1p0_symm_unc_histogram.png Graphic file (type
+ png)
 <use figures/all_motor_cortex_10_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/all_motor_cortex_10_1p0_symm_unc_histogram.png  used on input line 455.
+Package pdftex.def Info: figures/all_motor_cortex_10_1p0_symm_unc_histogram.png
+  used on input line 481.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_striatum_14_1p0_symm_unc_histogram.png, id=373, 289.08pt x 216.81pt>
-File: figures/all_striatum_14_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/all_striatum_14_1p0_symm_unc_histogram.png, id=396, 289.08pt x 216.81p
+t>
+File: figures/all_striatum_14_1p0_symm_unc_histogram.png Graphic file (type png
+)
 <use figures/all_striatum_14_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/all_striatum_14_1p0_symm_unc_histogram.png  used on input line 459.
+Package pdftex.def Info: figures/all_striatum_14_1p0_symm_unc_histogram.png  us
+ed on input line 485.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_thalamus_15_1p0_symm_unc_histogram.png, id=374, 289.08pt x 216.81pt>
-File: figures/all_thalamus_15_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/all_thalamus_15_1p0_symm_unc_histogram.png, id=397, 289.08pt x 216.81p
+t>
+File: figures/all_thalamus_15_1p0_symm_unc_histogram.png Graphic file (type png
+)
 <use figures/all_thalamus_15_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/all_thalamus_15_1p0_symm_unc_histogram.png  used on input line 463.
+Package pdftex.def Info: figures/all_thalamus_15_1p0_symm_unc_histogram.png  us
+ed on input line 489.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/all_v1_6_1p0_symm_unc_histogram.png, id=375, 289.08pt x 216.81pt>
+<figures/all_v1_6_1p0_symm_unc_histogram.png, id=398, 289.08pt x 216.81pt>
 File: figures/all_v1_6_1p0_symm_unc_histogram.png Graphic file (type png)
 <use figures/all_v1_6_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/all_v1_6_1p0_symm_unc_histogram.png  used on input line 467.
+Package pdftex.def Info: figures/all_v1_6_1p0_symm_unc_histogram.png  used on i
+nput line 493.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 449--469
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 475--495
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 449--469
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 475--495
 []$ $[]$
  []
 
@@ -931,130 +1149,195 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[15 <./figures/all_hippocampus_8_1p0_firing_rate_histogram.png> <./figures/all_motor_cortex_8_1p0_firing_rate_histogram.png> <./figures/all_striatum_8_1p0_firing_rate_histogram.png> <./figures/all_thalamus_8_1p0_firing_rate_histogram.png> <./figures/all_v1_8_1p0_firing_rate_histogram.png>]
+[15 <./figures/linear_mutual_info_by_bin_width_hippocampus_15.png> <./figures/l
+inear_mutual_info_by_bin_width_motor_cortex_15.png> <./figures/linear_mutual_in
+fo_by_bin_width_striatum_14.png> <./figures/linear_mutual_info_by_bin_width_tha
+lamus_15.png> <./figures/linear_mutual_info_by_bin_width_v1_6.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[16 <./figures/all_hippocampus_6_1p0_correlation_histogram.png> <./figures/all_motor_cortex_10_1p0_correlation_histogram.png> <./figures/all_striatum_14_1p0_correlation_histogram.png> <./figures/all_thalamus_15_1p0_correlation_histogram.png> <./figures/all_v1_6_1p0_correlation_histogram.png>]
+[16 <./figures/all_hippocampus_8_1p0_firing_rate_histogram.png> <./figures/all_
+motor_cortex_8_1p0_firing_rate_histogram.png> <./figures/all_striatum_8_1p0_fir
+ing_rate_histogram.png> <./figures/all_thalamus_8_1p0_firing_rate_histogram.png
+> <./figures/all_v1_8_1p0_firing_rate_histogram.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[17 <./figures/all_hippocampus_6_1p0_information_histogram.png> <./figures/all_motor_cortex_10_1p0_information_histogram.png> <./figures/all_striatum_14_1p0_information_histogram.png> <./figures/all_thalamus_15_1p0_information_histogram.png> <./figures/all_v1_6_1p0_information_histogram.png>]
+[17 <./figures/all_hippocampus_6_1p0_correlation_histogram.png> <./figures/all_
+motor_cortex_10_1p0_correlation_histogram.png> <./figures/all_striatum_14_1p0_c
+orrelation_histogram.png> <./figures/all_thalamus_15_1p0_correlation_histogram.
+png> <./figures/all_v1_6_1p0_correlation_histogram.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[18 <./figures/all_hippocampus_6_1p0_symm_unc_histogram.png> <./figures/all_motor_cortex_10_1p0_symm_unc_histogram.png> <./figures/all_striatum_14_1p0_symm_unc_histogram.png> <./figures/all_thalamus_15_1p0_symm_unc_histogram.png> <./figures/all_v1_6_1p0_symm_unc_histogram.png>]
-<figures/strong_hippocampus_6_1p0_correlation_histogram.png, id=439, 289.08pt x 216.81pt>
-File: figures/strong_hippocampus_6_1p0_correlation_histogram.png Graphic file (type png)
+[18 <./figures/all_hippocampus_6_1p0_information_histogram.png> <./figures/all_
+motor_cortex_10_1p0_information_histogram.png> <./figures/all_striatum_14_1p0_i
+nformation_histogram.png> <./figures/all_thalamus_15_1p0_information_histogram.
+png> <./figures/all_v1_6_1p0_information_histogram.png>]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[19 <./figures/all_hippocampus_6_1p0_symm_unc_histogram.png> <./figures/all_mot
+or_cortex_10_1p0_symm_unc_histogram.png> <./figures/all_striatum_14_1p0_symm_un
+c_histogram.png> <./figures/all_thalamus_15_1p0_symm_unc_histogram.png> <./figu
+res/all_v1_6_1p0_symm_unc_histogram.png>]
+<figures/strong_hippocampus_6_1p0_correlation_histogram.png, id=474, 289.08pt x
+ 216.81pt>
+File: figures/strong_hippocampus_6_1p0_correlation_histogram.png Graphic file (
+type png)
 <use figures/strong_hippocampus_6_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/strong_hippocampus_6_1p0_correlation_histogram.png  used on input line 526.
+Package pdftex.def Info: figures/strong_hippocampus_6_1p0_correlation_histogram
+.png  used on input line 552.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_motor_cortex_10_1p0_correlation_histogram.png, id=440, 289.08pt x 216.81pt>
-File: figures/strong_motor_cortex_10_1p0_correlation_histogram.png Graphic file (type png)
+<figures/strong_motor_cortex_10_1p0_correlation_histogram.png, id=475, 289.08pt
+ x 216.81pt>
+File: figures/strong_motor_cortex_10_1p0_correlation_histogram.png Graphic file
+ (type png)
 <use figures/strong_motor_cortex_10_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_correlation_histogram.png  used on input line 530.
+Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_correlation_histogr
+am.png  used on input line 556.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_striatum_14_1p0_correlation_histogram.png, id=441, 289.08pt x 216.81pt>
-File: figures/strong_striatum_14_1p0_correlation_histogram.png Graphic file (type png)
+<figures/strong_striatum_14_1p0_correlation_histogram.png, id=476, 289.08pt x 2
+16.81pt>
+File: figures/strong_striatum_14_1p0_correlation_histogram.png Graphic file (ty
+pe png)
 <use figures/strong_striatum_14_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/strong_striatum_14_1p0_correlation_histogram.png  used on input line 534.
+Package pdftex.def Info: figures/strong_striatum_14_1p0_correlation_histogram.p
+ng  used on input line 560.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_thalamus_15_1p0_correlation_histogram.png, id=442, 289.08pt x 216.81pt>
-File: figures/strong_thalamus_15_1p0_correlation_histogram.png Graphic file (type png)
+<figures/strong_thalamus_15_1p0_correlation_histogram.png, id=477, 289.08pt x 2
+16.81pt>
+File: figures/strong_thalamus_15_1p0_correlation_histogram.png Graphic file (ty
+pe png)
 <use figures/strong_thalamus_15_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/strong_thalamus_15_1p0_correlation_histogram.png  used on input line 538.
+Package pdftex.def Info: figures/strong_thalamus_15_1p0_correlation_histogram.p
+ng  used on input line 564.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_v1_6_1p0_correlation_histogram.png, id=443, 289.08pt x 216.81pt>
+<figures/strong_v1_6_1p0_correlation_histogram.png, id=478, 289.08pt x 216.81pt
+>
 File: figures/strong_v1_6_1p0_correlation_histogram.png Graphic file (type png)
+
 <use figures/strong_v1_6_1p0_correlation_histogram.png>
-Package pdftex.def Info: figures/strong_v1_6_1p0_correlation_histogram.png  used on input line 542.
+Package pdftex.def Info: figures/strong_v1_6_1p0_correlation_histogram.png  use
+d on input line 568.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 524--544
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 550--570
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 524--544
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 550--570
 []$ $[]$
  []
 
-<figures/strong_hippocampus_6_1p0_information_histogram.png, id=444, 289.08pt x 216.81pt>
-File: figures/strong_hippocampus_6_1p0_information_histogram.png Graphic file (type png)
+<figures/strong_hippocampus_6_1p0_information_histogram.png, id=479, 289.08pt x
+ 216.81pt>
+File: figures/strong_hippocampus_6_1p0_information_histogram.png Graphic file (
+type png)
 <use figures/strong_hippocampus_6_1p0_information_histogram.png>
-Package pdftex.def Info: figures/strong_hippocampus_6_1p0_information_histogram.png  used on input line 551.
+Package pdftex.def Info: figures/strong_hippocampus_6_1p0_information_histogram
+.png  used on input line 577.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_motor_cortex_10_1p0_information_histogram.png, id=445, 289.08pt x 216.81pt>
-File: figures/strong_motor_cortex_10_1p0_information_histogram.png Graphic file (type png)
+<figures/strong_motor_cortex_10_1p0_information_histogram.png, id=480, 289.08pt
+ x 216.81pt>
+File: figures/strong_motor_cortex_10_1p0_information_histogram.png Graphic file
+ (type png)
 <use figures/strong_motor_cortex_10_1p0_information_histogram.png>
-Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_information_histogram.png  used on input line 555.
+Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_information_histogr
+am.png  used on input line 581.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_striatum_14_1p0_information_histogram.png, id=446, 289.08pt x 216.81pt>
-File: figures/strong_striatum_14_1p0_information_histogram.png Graphic file (type png)
+<figures/strong_striatum_14_1p0_information_histogram.png, id=481, 289.08pt x 2
+16.81pt>
+File: figures/strong_striatum_14_1p0_information_histogram.png Graphic file (ty
+pe png)
 <use figures/strong_striatum_14_1p0_information_histogram.png>
-Package pdftex.def Info: figures/strong_striatum_14_1p0_information_histogram.png  used on input line 559.
+Package pdftex.def Info: figures/strong_striatum_14_1p0_information_histogram.p
+ng  used on input line 585.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_thalamus_15_1p0_information_histogram.png, id=447, 289.08pt x 216.81pt>
-File: figures/strong_thalamus_15_1p0_information_histogram.png Graphic file (type png)
+<figures/strong_thalamus_15_1p0_information_histogram.png, id=482, 289.08pt x 2
+16.81pt>
+File: figures/strong_thalamus_15_1p0_information_histogram.png Graphic file (ty
+pe png)
 <use figures/strong_thalamus_15_1p0_information_histogram.png>
-Package pdftex.def Info: figures/strong_thalamus_15_1p0_information_histogram.png  used on input line 563.
+Package pdftex.def Info: figures/strong_thalamus_15_1p0_information_histogram.p
+ng  used on input line 589.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_v1_6_1p0_information_histogram.png, id=448, 289.08pt x 216.81pt>
+<figures/strong_v1_6_1p0_information_histogram.png, id=483, 289.08pt x 216.81pt
+>
 File: figures/strong_v1_6_1p0_information_histogram.png Graphic file (type png)
+
 <use figures/strong_v1_6_1p0_information_histogram.png>
-Package pdftex.def Info: figures/strong_v1_6_1p0_information_histogram.png  used on input line 567.
+Package pdftex.def Info: figures/strong_v1_6_1p0_information_histogram.png  use
+d on input line 593.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 549--569
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 575--595
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 549--569
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 575--595
 []$ $[]$
  []
 
-<figures/strong_hippocampus_6_1p0_symm_unc_histogram.png, id=449, 289.08pt x 216.81pt>
-File: figures/strong_hippocampus_6_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/strong_hippocampus_6_1p0_symm_unc_histogram.png, id=484, 289.08pt x 21
+6.81pt>
+File: figures/strong_hippocampus_6_1p0_symm_unc_histogram.png Graphic file (typ
+e png)
 <use figures/strong_hippocampus_6_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/strong_hippocampus_6_1p0_symm_unc_histogram.png  used on input line 576.
+Package pdftex.def Info: figures/strong_hippocampus_6_1p0_symm_unc_histogram.pn
+g  used on input line 602.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png, id=450, 289.08pt x 216.81pt>
-File: figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png, id=485, 289.08pt x 
+216.81pt>
+File: figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png Graphic file (t
+ype png)
 <use figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png  used on input line 580.
+Package pdftex.def Info: figures/strong_motor_cortex_10_1p0_symm_unc_histogram.
+png  used on input line 606.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_striatum_14_1p0_symm_unc_histogram.png, id=451, 289.08pt x 216.81pt>
-File: figures/strong_striatum_14_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/strong_striatum_14_1p0_symm_unc_histogram.png, id=486, 289.08pt x 216.
+81pt>
+File: figures/strong_striatum_14_1p0_symm_unc_histogram.png Graphic file (type 
+png)
 <use figures/strong_striatum_14_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/strong_striatum_14_1p0_symm_unc_histogram.png  used on input line 584.
+Package pdftex.def Info: figures/strong_striatum_14_1p0_symm_unc_histogram.png 
+ used on input line 610.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_thalamus_15_1p0_symm_unc_histogram.png, id=452, 289.08pt x 216.81pt>
-File: figures/strong_thalamus_15_1p0_symm_unc_histogram.png Graphic file (type png)
+<figures/strong_thalamus_15_1p0_symm_unc_histogram.png, id=487, 289.08pt x 216.
+81pt>
+File: figures/strong_thalamus_15_1p0_symm_unc_histogram.png Graphic file (type 
+png)
 <use figures/strong_thalamus_15_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/strong_thalamus_15_1p0_symm_unc_histogram.png  used on input line 588.
+Package pdftex.def Info: figures/strong_thalamus_15_1p0_symm_unc_histogram.png 
+ used on input line 614.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/strong_v1_6_1p0_symm_unc_histogram.png, id=453, 289.08pt x 216.81pt>
+<figures/strong_v1_6_1p0_symm_unc_histogram.png, id=488, 289.08pt x 216.81pt>
 File: figures/strong_v1_6_1p0_symm_unc_histogram.png Graphic file (type png)
 <use figures/strong_v1_6_1p0_symm_unc_histogram.png>
-Package pdftex.def Info: figures/strong_v1_6_1p0_symm_unc_histogram.png  used on input line 592.
+Package pdftex.def Info: figures/strong_v1_6_1p0_symm_unc_histogram.png  used o
+n input line 618.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 574--594
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 600--620
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 574--594
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 600--620
 []$ $[]$
  []
 
@@ -1064,36 +1347,76 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[19]
+[20]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[20 <./figures/strong_hippocampus_6_1p0_correlation_histogram.png> <./figures/strong_motor_cortex_10_1p0_correlation_histogram.png> <./figures/strong_striatum_14_1p0_correlation_histogram.png> <./figures/strong_thalamus_15_1p0_correlation_histogram.png> <./figures/strong_v1_6_1p0_correlation_histogram.png>]
+[21 <./figures/strong_hippocampus_6_1p0_correlation_histogram.png> <./figures/s
+trong_motor_cortex_10_1p0_correlation_histogram.png> <./figures/strong_striatum
+_14_1p0_correlation_histogram.png> <./figures/strong_thalamus_15_1p0_correlatio
+n_histogram.png> <./figures/strong_v1_6_1p0_correlation_histogram.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[21 <./figures/strong_hippocampus_6_1p0_information_histogram.png> <./figures/strong_motor_cortex_10_1p0_information_histogram.png> <./figures/strong_striatum_14_1p0_information_histogram.png> <./figures/strong_thalamus_15_1p0_information_histogram.png> <./figures/strong_v1_6_1p0_information_histogram.png>]
+[22 <./figures/strong_hippocampus_6_1p0_information_histogram.png> <./figures/s
+trong_motor_cortex_10_1p0_information_histogram.png> <./figures/strong_striatum
+_14_1p0_information_histogram.png> <./figures/strong_thalamus_15_1p0_informatio
+n_histogram.png> <./figures/strong_v1_6_1p0_information_histogram.png>]
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
  Make it at least 14.49998pt.
  We now make it that large for the rest of the document.
  This may cause the page layout to be inconsistent, however.
 
-[22 <./figures/strong_hippocampus_6_1p0_symm_unc_histogram.png> <./figures/strong_motor_cortex_10_1p0_symm_unc_histogram.png> <./figures/strong_striatum_14_1p0_symm_unc_histogram.png> <./figures/strong_thalamus_15_1p0_symm_unc_histogram.png> <./figures/strong_v1_6_1p0_symm_unc_histogram.png>]
+[23 <./figures/strong_hippocampus_6_1p0_symm_unc_histogram.png> <./figures/stro
+ng_motor_cortex_10_1p0_symm_unc_histogram.png> <./figures/strong_striatum_14_1p
+0_symm_unc_histogram.png> <./figures/strong_thalamus_15_1p0_symm_unc_histogram.
+png> <./figures/strong_v1_6_1p0_symm_unc_histogram.png>]
+<figures/corr_vs_geometric_hippocampus_8.png, id=528, 289.08pt x 216.81pt>
+File: figures/corr_vs_geometric_hippocampus_8.png Graphic file (type png)
+<use figures/corr_vs_geometric_hippocampus_8.png>
+Package pdftex.def Info: figures/corr_vs_geometric_hippocampus_8.png  used on i
+nput line 667.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/corr_vs_geometric_motor_cortex_16.png, id=529, 289.08pt x 216.81pt>
+File: figures/corr_vs_geometric_motor_cortex_16.png Graphic file (type png)
+<use figures/corr_vs_geometric_motor_cortex_16.png>
+Package pdftex.def Info: figures/corr_vs_geometric_motor_cortex_16.png  used on
+ input line 671.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/corr_vs_geometric_striatum_16.png, id=530, 289.08pt x 216.81pt>
+File: figures/corr_vs_geometric_striatum_16.png Graphic file (type png)
+<use figures/corr_vs_geometric_striatum_16.png>
+Package pdftex.def Info: figures/corr_vs_geometric_striatum_16.png  used on inp
+ut line 675.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/corr_vs_geometric_thalamus_15.png, id=531, 289.08pt x 216.81pt>
+File: figures/corr_vs_geometric_thalamus_15.png Graphic file (type png)
+<use figures/corr_vs_geometric_thalamus_15.png>
+Package pdftex.def Info: figures/corr_vs_geometric_thalamus_15.png  used on inp
+ut line 679.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/corr_vs_geometric_v1_8.png, id=532, 289.08pt x 216.81pt>
+File: figures/corr_vs_geometric_v1_8.png Graphic file (type png)
+<use figures/corr_vs_geometric_v1_8.png>
+Package pdftex.def Info: figures/corr_vs_geometric_v1_8.png  used on input line
+ 683.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Package Fancyhdr Warning: \headheight is too small (12.0pt): 
- Make it at least 14.49998pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 665--685
+[]$[]$ $[]$
+ []
 
-[23] (./regional_correlations.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 646.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 665--685
+[]$ $[]$
+ []
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1102,30 +1425,168 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [24]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 646.
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[25 <./figures/corr_vs_geometric_hippocampus_8.png> <./figures/corr_vs_geometri
+c_motor_cortex_16.png> <./figures/corr_vs_geometric_striatum_16.png> <./figures
+/corr_vs_geometric_thalamus_15.png> <./figures/corr_vs_geometric_v1_8.png>]
+<figures/info_vs_geometric_hippocampus_8.png, id=551, 289.08pt x 216.81pt>
+File: figures/info_vs_geometric_hippocampus_8.png Graphic file (type png)
+<use figures/info_vs_geometric_hippocampus_8.png>
+Package pdftex.def Info: figures/info_vs_geometric_hippocampus_8.png  used on i
+nput line 695.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_geometric_motor_cortex_16.png, id=552, 289.08pt x 216.81pt>
+File: figures/info_vs_geometric_motor_cortex_16.png Graphic file (type png)
+<use figures/info_vs_geometric_motor_cortex_16.png>
+Package pdftex.def Info: figures/info_vs_geometric_motor_cortex_16.png  used on
+ input line 699.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_geometric_striatum_16.png, id=553, 289.08pt x 216.81pt>
+File: figures/info_vs_geometric_striatum_16.png Graphic file (type png)
+<use figures/info_vs_geometric_striatum_16.png>
+Package pdftex.def Info: figures/info_vs_geometric_striatum_16.png  used on inp
+ut line 703.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_geometric_thalamus_15.png, id=554, 289.08pt x 216.81pt>
+File: figures/info_vs_geometric_thalamus_15.png Graphic file (type png)
+<use figures/info_vs_geometric_thalamus_15.png>
+Package pdftex.def Info: figures/info_vs_geometric_thalamus_15.png  used on inp
+ut line 707.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_geometric_v1_8.png, id=555, 289.08pt x 216.81pt>
+File: figures/info_vs_geometric_v1_8.png Graphic file (type png)
+<use figures/info_vs_geometric_v1_8.png>
+Package pdftex.def Info: figures/info_vs_geometric_v1_8.png  used on input line
+ 711.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 693--713
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 693--713
+[]$ $[]$
+ []
+
+<figures/info_vs_corr_hippocampus_15.png, id=557, 289.08pt x 216.81pt>
+File: figures/info_vs_corr_hippocampus_15.png Graphic file (type png)
+<use figures/info_vs_corr_hippocampus_15.png>
+Package pdftex.def Info: figures/info_vs_corr_hippocampus_15.png  used on input
+ line 723.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_corr_motor_cortex_15.png, id=558, 289.08pt x 216.81pt>
+File: figures/info_vs_corr_motor_cortex_15.png Graphic file (type png)
+<use figures/info_vs_corr_motor_cortex_15.png>
+Package pdftex.def Info: figures/info_vs_corr_motor_cortex_15.png  used on inpu
+t line 727.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_corr_striatum_15.png, id=559, 289.08pt x 216.81pt>
+File: figures/info_vs_corr_striatum_15.png Graphic file (type png)
+<use figures/info_vs_corr_striatum_15.png>
+Package pdftex.def Info: figures/info_vs_corr_striatum_15.png  used on input li
+ne 731.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_corr_thalamus_15.png, id=560, 289.08pt x 216.81pt>
+File: figures/info_vs_corr_thalamus_15.png Graphic file (type png)
+<use figures/info_vs_corr_thalamus_15.png>
+Package pdftex.def Info: figures/info_vs_corr_thalamus_15.png  used on input li
+ne 735.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+<figures/info_vs_corr_v1_15.png, id=561, 289.08pt x 216.81pt>
+File: figures/info_vs_corr_v1_15.png Graphic file (type png)
+<use figures/info_vs_corr_v1_15.png>
+Package pdftex.def Info: figures/info_vs_corr_v1_15.png  used on input line 739
+.
+(pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 721--741
+[]$[]$ $[]$
+ []
+
+
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 721--741
+[]$ $[]$
+ []
+
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[26]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[27 <./figures/info_vs_geometric_hippocampus_8.png> <./figures/info_vs_geometri
+c_motor_cortex_16.png> <./figures/info_vs_geometric_striatum_16.png> <./figures
+/info_vs_geometric_thalamus_15.png> <./figures/info_vs_geometric_v1_8.png>]
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[28 <./figures/info_vs_corr_hippocampus_15.png> <./figures/info_vs_corr_motor_c
+ortex_15.png> <./figures/info_vs_corr_striatum_15.png> <./figures/info_vs_corr_
+thalamus_15.png> <./figures/info_vs_corr_v1_15.png>]
+(./regional_correlations.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 758.
+
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[29]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 758.
  (./regional_correlations.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 646.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 646.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 758.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 758.
 Package rerunfilecheck Info: File `regional_correlations.out' has not changed.
-(rerunfilecheck)             Checksum: 0292001538C5015892B4EE6046E2B343;2706.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 646.
+(rerunfilecheck)             Checksum: 13398C5BF959EE609426E84DBF31F480;3128.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 758.
  ) 
 Here is how much of TeX's memory you used:
- 9627 strings out of 492701
- 158073 string characters out of 6134504
- 267740 words of memory out of 5000000
- 13182 multiletter control sequences out of 15000+600000
+ 9736 strings out of 492701
+ 161877 string characters out of 6134504
+ 271162 words of memory out of 5000000
+ 13260 multiletter control sequences out of 15000+600000
  26276 words of font info for 71 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
- 42i,13n,43p,973b,465s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist, replaced by a fixed one
+ 42i,13n,43p,973b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exi
+st, replaced by a fixed one
 
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on regional_correlations.pdf (24 pages, 892185 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/u
+rw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8
+a.pfb>
+Output written on regional_correlations.pdf (29 pages, 1239484 bytes).
 PDF statistics:
- 580 PDF objects out of 1000 (max. 8388607)
- 412 compressed objects within 5 object streams
- 109 named destinations out of 1000 (max. 500000)
- 573 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 674 PDF objects out of 1000 (max. 8388607)
+ 466 compressed objects within 5 object streams
+ 123 named destinations out of 1000 (max. 500000)
+ 690 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -80,14 +80,30 @@ The stimulus was a full field moving bar grating. There were $17$ stimulus condi
 
 \section{Methods}
 \subsection{Binning data}
-The data were divided into time bins or various widths ranging from $0.01$ to $2$ seconds. If the bin width was not an integer divisor of the trial period ($2$ seconds), only the bins that lay totally within the trial period were included. For example, when dividing the trials into bins of $0.3$ seconds, the final bin of $0.2$ seconds was excluded. We measured the number of spikes in each time bin.
+The data were divided into time bins of various widths ranging from $0.01$ to $2$ seconds. If the bin width was not an integer divisor of the trial period ($2$ seconds), only the bins that lay totally within the trial period were included. For example, when dividing the trials into bins of $0.3$ seconds, the final bin of $0.2$ seconds was excluded. We measured the number of spikes in each time bin.
 
 When performing calculations on the binned data, each bin was treated as an individual measurement. For example, when calculating the spike count correlation coefficient for a given pair of neurons, if the time bin used was $2.0$ seconds, then we had $10$ measurements for each neuron with which to calculate the coefficient. But, if we were using a bin width of $1.0$ second, then we would have $20$ measurements for each neuron.
 
-\subsection{Pairing strongly responding neurons}
-A weak response, or low firing rate, has a diminishing effect on measured correlation \cite{cohen}. In order to avoid this effect, we filtered out any neurons with a mean firing rate of less than $10$ spikes per second measured across the $10$ trials. Once these neurons were filtered out, we randomly chose $30$ pairs from all the possible pairs of the remaining neurons. We used these $30$ pairs to calculate $30$ correlation coefficients. We repeated this process for each brain region, and each stimulus condition.
+\subsection{Geometric Mean}\label{sec:geometric_mean}
+The geometric mean of a set of numbers $x_1, \dots , x_n$ is defined by
+\begin{align}
+  \sqrt[n]{\prod_{i=1}^n x_i} = \sqrt[n]{x_1 \cdot x_2 \cdots x_n}
+\end{align}
+This quantity is an alternative to the algebraic mean. It is often used when finding the mean of quantities whose range of possible values differ. For example, imagine we wish to find the mean firing rate of two neurons, but one neuron responds much more strongly than the other. The algebraic mean of the firing rates will be dominated by the strongly responding neuron. But the geometric mean will be influenced by both repsonses.
 
-If less than $9$ strongly responding neurons were found it was not possible to make $30$ pairs of strongly responding neurons. In that case, we just used all the strongly responding pairs.
+A surface plot showing the geometric mean of two variables as they vary between $0$ and $50$ can be seen in figure \ref{fig:geometric_mean}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/geometric_mean_ex.png}
+  \caption{Surface showing the geometric mean of two numbers $x$ and $y$ (i.e. $\sqrt{xy}$) as they each vary from $0$ to $50$.}
+  \label{fig:geometric_mean}
+\end{figure}
+
+\subsection{Finding a suitable time bin width}
+In this research, we needed to chose a suitable bin width to use when making our measurements. To do this we took these measurements using different time bin widths. One of the measurements we took is spike count correlation. But, a weak response or low firing rate has a diminishing effect on measured spike count correlation \cite{cohen}. In order to avoid this effect, we filtered out any neurons with a mean firing rate of less than $10$ spikes per second measured across the $10$ trials of $2$ seconds. Neurons that met this requirement were regarded as `strongly responding'. 
+
+We analysed these strongly responding neurons by themselves as well alongside all other responding neurons during the course of this research.
 
 \subsection{Correlation coefficients}
 We calculated Pearson's correlation coefficient for pairs of neurons. For jointly distributed random variables $X$ and $Y$, Pearson's correlation coefficient is defined as:
@@ -108,13 +124,6 @@ In practice we used the python function \texttt{scipy.stats.pearsonr} to calcula
 \subsubsection{Spike Count Correlation, $r_{SC}$}\label{sec:spike_count_correlation}
 The spike count correlation ($r_{SC}$) of two cells is the correlation between the spike counts of those cells in response to a given stimulus condition.
 
-\subsubsection{Geometric Mean}\label{sec:geometric_mean}
-The geometric mean of a set of numbers $x_1, \dots , x_n$ is defined by
-\begin{align}
-  \sqrt[n]{\prod_{i=1}^n x_i} = \sqrt[n]{x_1 \cdot x_2 \cdots x_n}
-\end{align}
-This quantity is an alternative to the algebraic mean. It is often used when finding the mean of quantities whose range of possible values differ. For example, imagine we wish to find the mean firing rate of two neurons, but one neuron responds much more strongly than the other. The algebraic mean of the firing rates will be dominated by the strongly responding neuron. But the geometric mean will be influenced by both repsonses.
-
 \subsubsection{Signal Correlation, $r_{signal}$}
 The signal correlation of two cells ($r_{signal}$) is the correlation between the mean responses of those cells to each stimulus condition. Note the difference between this and the spike count correlation in section \ref{sec:spike_count_correlation}. The spike count correlation is in response to a given stimulus condition. The signal correlation is the correlation in the mean response to each stimulus condition.
 
@@ -127,7 +136,7 @@ The entropy of a random variable $X$, with outcomes $x_1, \dots, x_N$, and corre
 \begin{align}\label{entropy}
 H(X) = -\sum_{n=1}^N p_n \log _2 p_n
 \end{align}
-This quantity is also known as the information entropy or the `surprise'. It measures the amount of uncertainty in a random variable. For example, a variable with a probability of $1$ for one outcome, and zero for all other outcomes will have 0 entropy, because it contains no uncertainty. But a variable with a uniform distribution will have maximal entropy as it is the least predictable. This quantity is analogous to the entropy of a physical system \cite{shannon}. Note that any base may be used for the logarithm in equation \ref{entropy}, but using base $2$ means that the quantity will be measured in `bits'.
+This quantity is also known as the information entropy or the `surprise'. It measures the amount of uncertainty in a random variable. For example, a variable with a probability of $1$ for one outcome, and $0$ for all other outcomes will have 0 bits entropy, because it contains no uncertainty. But a variable with a uniform distribution will have maximal entropy as it is the least predictable. This quantity is analogous to the entropy of a physical system \cite{shannon}. Note that any base may be used for the logarithm in equation \ref{entropy}, but using base $2$ means that the quantity will be measured in `bits'.
 
 The joint entropy of two jointly distributed random variables $X$ and $Y$, where $Y$ has outcomes $y_1, \dots, y_M$, is defined as
 \begin{align}\label{joint_entropy}
@@ -142,6 +151,23 @@ H(Y|X) = -\sum_{n=1}^N \sum_{m=1}^M P(X=x_n, Y=y_m) \log _2 \frac{P(X=x_n, Y=y_m
 When $X$ and $Y$ are independent $H(Y|X) = H(Y)$. Intuitively, we learn nothing of $Y$ by knowing $X$, so $Y$ is equally uncertain whether we know $X$ or not. If $Y$ is totally dependent on $X$, then the fraction in the logarithm is $1$, which gives $H(Y|X) = 0$.
 
 These entropy measures are the basis of the mutual information measure.
+
+\subsubsection{Maximum entropy limit}\label{sec:entropy_limit}
+When spiking data is binned into spike counts there is an upper limit on the entropy of these data. The maximum entropy discrete distribution is the discrete uniform distribution. A random variable with this distribution will take values from some finite set with equal probabilities. Binned spike count data will take values between $0$ and some maximum observed spike count $n_{\max}$. A neuron with responses that maximises entropy will take these values with equal probability, i.e. if $i \in \lbrace 0, \dots, n_{\max} \rbrace$ then $P(X = i) = \frac{1}{n_{\max} + 1}$. The entropy of this neuron will be
+\begin{align*}
+  H(X)  &= - \sum_{i=0}^{n_{\max}} P(X = i) \log _2 P(X=i) \\
+        &= - \sum_{i=0}^{n_{\max}} \frac{1}{n_{\max} + 1} \log_2 \left( \frac{1}{n_{\max} + 1} \right) \\
+        &= - \log_2 \left( \frac{1}{n_{\max} + 1} \right) \\
+        &= \log_2 \left( n_{\max} + 1 \right)
+\end{align*}
+Therefore, the maximum entropy of the binned spike counts of a neuron is $\log _2 \left( n_{\max} + 1 \right)$. Of course, it would be very unusual for a neuron to fire in accordance with the discrete uniform distribution. Most measures of entropy taken on binned spiking data will be much lower than the maximum. See figure \ref{fig:entropy_limit} to see the maximum entropy as a function of the maximum observed spike count.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/entropy_limit.png}
+  \caption{\textbf{Entropy Limit:} The uppper limit on entropy of binned spike count data as a function of the maximum observed spike count. The orange line is the analytical maximum. The blue line is the entropy of samples with $N=1000$ data points taken from the discrete uniform distribution.}
+  \label{fig:entropy_limit}
+\end{figure}
 
 \subsubsection{Mutual Information $I(X;Y)$}
 The mutual information can be defined mathematically in a number of ways, all of which are equivalent. These definitions illustrate the different ways of interpreting the mutual information.
@@ -184,14 +210,14 @@ The symmetric uncertainty attains its minimum value when the mutual information 
 In practice, we measured the mutual information using Python and the python package \texttt{pyentropy} \cite{ince}. This also enabled us to use the `quadratic extrapolation' bias correction technique to measure $I(X;Y)$ more accurately \cite{strong, treves}.
 
 \subsection{Kolmogorov-Smirnov Statistical Test}\label{sec:ks_test}
-The Kolmogorov-Smirnov test is a statistical test of the equality of one dimensional probability distributions. It can also be used to measure the probability of a sample coming from a reference distribution. We use it to measure the probability of two samples coming from the same distribution. This is more commonly referred to as the `two sample K-S test'.
+The Kolmogorov-Smirnov test is a statistical test of the equality of one dimensional probability distributions. It can also be used to measure the probability of a sample coming from a reference distribution. We used it to measure the probability of two samples coming from the same distribution. This is more commonly referred to as the `two sample K-S test'.
 
 \subsubsection{Empirical distribution function}
 The empirical distribution function is the empirical analogue of the cumulative distribution function. Given some sample $\mathbf{X}$ with $n$ data points, the empirical distribution function is a step function that increases by $1/n$ at each data point value. Mathematically,
 \begin{align}
   \hat{F}_{n}(t) = \frac{1}{n} \sum_{i=1}^n \mathbf{1}_{X_i \leq t}
 \end{align}
-where $\mathbf{1}_{A}$ is the indicator of condition $A$.
+where $\mathbf{1}_{A}$ is the indicator function of condition $A$.
 
 Assuming there is some underlying distribution $P(X)$ for the sample, with cumulative distribution function $F(t)$, in the regime where $n \rightarrow \infty$, $\hat{F}_n (t) \rightarrow F(X)$.
 
@@ -516,7 +542,7 @@ We tested if the spike count correlations and mutual information measurements ta
 \end{table}
 
 \subsubsection{Histograms for strongly responding neurons}
-We made histograms similar to those described in section \ref{sec:histograms} for strongly responding cells only. See figures \ref{fig:strong_corr_histograms} and \ref{fig:strong_info_histograms} for the correlation coefficient and mutual information histograms respectively. Note that the number of pairs that were available was significantly less than that for figures \ref{fig:all_corr_histograms} and \ref{fig:all_info_histograms} for most regions. Despite that, the mutual information histograms appear to show that the strongly responding neurons are more dependent than their weakly responding counterparts.
+We made histograms similar to those described in section \ref{sec:histograms} for strongly responding cells only. See figures \ref{fig:strong_corr_histograms}, \ref{fig:strong_info_histograms}, and \ref{fig:strong_sym_unc_histograms} for the correlation coefficient, mutual information, and symmetric uncertainty histograms respectively. Note that the number of pairs that were available was significantly less than that for figures \ref{fig:all_corr_histograms}, \ref{fig:all_info_histograms}, and \ref{fig:all_symm_unc_histograms} for most regions. Despite that, the mutual information histograms appear to show that the strongly responding neurons are more dependent than their weakly responding counterparts.
 
 We also performed statistical tests comparing the distribution of correlation coefficients and mutual information measurements in pairs of strongly responding neurons with the distributions of those measurements using the $1000$ randomly selected pairs as mentioned in section \ref{sec:histograms}. We found that some regions have the same distribution of correlation coefficients for both strongly and weakly repsonding neurons. But for mutual information, the strongly repsonding neurons always had a different distribution, see tables \ref{tab:strong_corr_ks_test} and \ref{tab:strong_info_ks_test}.
 
@@ -628,7 +654,93 @@ We also performed statistical tests comparing the distribution of correlation co
 \end{table}
 
 \subsection{Firing rate geometric mean, spike count correlation, mutual information}
+Having measured the firing rates of each neuron, and the spike count correlations and mutual information for many pairs of neurons, we investigated the relationships between these quantities.
 
+\subsubsection{Regional spike count correlations \& firing rate geometric means}
+We compared the spike count correlations for pairs of neurons to the geometric means of their firing rates. We did this for each region. There appeared to be little or not correlation between the two quantities, see figure \ref{fig:corr_vs_geometric_mean}.
+
+De la rocha paper in here.
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/corr_vs_geometric_hippocampus_8.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/corr_vs_geometric_motor_cortex_16.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/corr_vs_geometric_striatum_16.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/corr_vs_geometric_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/corr_vs_geometric_v1_8.png}
+  \end{subfigure}
+  \caption{$\mathbf{r_{SC}}$ \textbf{ vs firing rate geometric mean:} Spike count correlations of pairs of neurons plotted against geometric means of the firing rate of those pairs for each region. Inset, $\rho$ denotes the correlation between these two quantities.}
+  \label{fig:corr_vs_geometric_mean}
+\end{figure}
+
+\subsubsection{Regional mutual information \& firing rate geometric means}
+We compared the mutual information for pairs of neurons to the geometric means of their firing rates. We did this for each region. There was an obvious positive correlation between the two quantities, see figure \ref{fig:info_vs_geometric_mean}. This is to be expected from a numerical point of view. Keeping the bin width constant, as the firing rate of a neuron increases the maximum number of spikes observed in any time bin will increase. This increases the upper limit on the entropy of the neurons' responses (see section \ref{sec:entropy_limit}). Since the $I(X;Y) \leq \min \lbrace H(X), H(Y) \rbrace$, increasing the firing rate of either neuron in a pair will increase both the geomteric mean of the firing rate and the upper limit on the mutual information.
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_geometric_hippocampus_8.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_geometric_motor_cortex_16.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_geometric_striatum_16.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_geometric_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_geometric_v1_8.png}
+  \end{subfigure}
+  \caption{$\mathbf{I(X;Y)}$ \textbf{ vs firing rate geometric mean:} Mutual information of pairs of neurons plotted against geometric means of the firing rate of those pairs for each region. Inset, $\rho$ denotes the correlation between these two quantities.}
+  \label{fig:info_vs_geometric_mean}
+\end{figure}
+
+\subsubsection{Correlation coefficient \& Mutual Information}
+To investigate the relationship between correlation and mutual information, we plotted these two quantities against each other for $1000$ randomly chosen responding pairs. We might expect the relationship to be quadratic, with a turning point at $r_{SC} = 0$ as correlated (or anti-correlated) responses should be informative about each other. It is hard to say if this is case, from our results (see figure \ref{fig:info_vs_corr}).
+
+\begin{figure}[p]
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_corr_hippocampus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_corr_motor_cortex_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_corr_striatum_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_corr_thalamus_15.png}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/info_vs_corr_v1_15.png}
+  \end{subfigure}
+  \caption{$\mathbf{r_{SC}}$\textbf{ vs }$\mathbf{I(X;Y):}$ Correlation coefficients of pairs of neurons plotted against the mutual information of those pairs for each region. Each coloured dot represents a pair. The black lines show the fit of a quadratic polynomial, fitted by minimising the squared error. [\textbf{Question for Cian:} Should I remove the quadratic lines?]}
+  \label{fig:info_vs_corr}
+\end{figure}
 
 \section*{Things to discuss with Cian}
 \begin{enumerate}
