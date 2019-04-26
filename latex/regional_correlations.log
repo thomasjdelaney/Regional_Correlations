@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  24 APR 2019 20:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.24)  26 APR 2019 22:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1434,83 +1434,83 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 [25 <./figures/corr_vs_geometric_hippocampus_8.png> <./figures/corr_vs_geometri
 c_motor_cortex_16.png> <./figures/corr_vs_geometric_striatum_16.png> <./figures
 /corr_vs_geometric_thalamus_15.png> <./figures/corr_vs_geometric_v1_8.png>]
-<figures/info_vs_geometric_hippocampus_8.png, id=551, 289.08pt x 216.81pt>
+<figures/info_vs_geometric_hippocampus_8.png, id=552, 289.08pt x 216.81pt>
 File: figures/info_vs_geometric_hippocampus_8.png Graphic file (type png)
 <use figures/info_vs_geometric_hippocampus_8.png>
 Package pdftex.def Info: figures/info_vs_geometric_hippocampus_8.png  used on i
-nput line 695.
+nput line 699.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_geometric_motor_cortex_16.png, id=552, 289.08pt x 216.81pt>
+<figures/info_vs_geometric_motor_cortex_16.png, id=553, 289.08pt x 216.81pt>
 File: figures/info_vs_geometric_motor_cortex_16.png Graphic file (type png)
 <use figures/info_vs_geometric_motor_cortex_16.png>
 Package pdftex.def Info: figures/info_vs_geometric_motor_cortex_16.png  used on
- input line 699.
+ input line 703.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_geometric_striatum_16.png, id=553, 289.08pt x 216.81pt>
+<figures/info_vs_geometric_striatum_16.png, id=554, 289.08pt x 216.81pt>
 File: figures/info_vs_geometric_striatum_16.png Graphic file (type png)
 <use figures/info_vs_geometric_striatum_16.png>
 Package pdftex.def Info: figures/info_vs_geometric_striatum_16.png  used on inp
-ut line 703.
+ut line 707.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_geometric_thalamus_15.png, id=554, 289.08pt x 216.81pt>
+<figures/info_vs_geometric_thalamus_15.png, id=555, 289.08pt x 216.81pt>
 File: figures/info_vs_geometric_thalamus_15.png Graphic file (type png)
 <use figures/info_vs_geometric_thalamus_15.png>
 Package pdftex.def Info: figures/info_vs_geometric_thalamus_15.png  used on inp
-ut line 707.
+ut line 711.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_geometric_v1_8.png, id=555, 289.08pt x 216.81pt>
+<figures/info_vs_geometric_v1_8.png, id=556, 289.08pt x 216.81pt>
 File: figures/info_vs_geometric_v1_8.png Graphic file (type png)
 <use figures/info_vs_geometric_v1_8.png>
 Package pdftex.def Info: figures/info_vs_geometric_v1_8.png  used on input line
- 711.
+ 715.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 693--713
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 697--717
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 693--713
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 697--717
 []$ $[]$
  []
 
-<figures/info_vs_corr_hippocampus_15.png, id=557, 289.08pt x 216.81pt>
+<figures/info_vs_corr_hippocampus_15.png, id=558, 289.08pt x 216.81pt>
 File: figures/info_vs_corr_hippocampus_15.png Graphic file (type png)
 <use figures/info_vs_corr_hippocampus_15.png>
 Package pdftex.def Info: figures/info_vs_corr_hippocampus_15.png  used on input
- line 723.
+ line 727.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_corr_motor_cortex_15.png, id=558, 289.08pt x 216.81pt>
+<figures/info_vs_corr_motor_cortex_15.png, id=559, 289.08pt x 216.81pt>
 File: figures/info_vs_corr_motor_cortex_15.png Graphic file (type png)
 <use figures/info_vs_corr_motor_cortex_15.png>
 Package pdftex.def Info: figures/info_vs_corr_motor_cortex_15.png  used on inpu
-t line 727.
+t line 731.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_corr_striatum_15.png, id=559, 289.08pt x 216.81pt>
+<figures/info_vs_corr_striatum_15.png, id=560, 289.08pt x 216.81pt>
 File: figures/info_vs_corr_striatum_15.png Graphic file (type png)
 <use figures/info_vs_corr_striatum_15.png>
 Package pdftex.def Info: figures/info_vs_corr_striatum_15.png  used on input li
-ne 731.
+ne 735.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_corr_thalamus_15.png, id=560, 289.08pt x 216.81pt>
+<figures/info_vs_corr_thalamus_15.png, id=561, 289.08pt x 216.81pt>
 File: figures/info_vs_corr_thalamus_15.png Graphic file (type png)
 <use figures/info_vs_corr_thalamus_15.png>
 Package pdftex.def Info: figures/info_vs_corr_thalamus_15.png  used on input li
-ne 735.
+ne 739.
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
-<figures/info_vs_corr_v1_15.png, id=561, 289.08pt x 216.81pt>
+<figures/info_vs_corr_v1_15.png, id=562, 289.08pt x 216.81pt>
 File: figures/info_vs_corr_v1_15.png Graphic file (type png)
 <use figures/info_vs_corr_v1_15.png>
-Package pdftex.def Info: figures/info_vs_corr_v1_15.png  used on input line 739
+Package pdftex.def Info: figures/info_vs_corr_v1_15.png  used on input line 743
 .
 (pdftex.def)             Requested size: 213.39568pt x 160.04651pt.
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 721--741
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 725--745
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.28003pt too wide) in paragraph at lines 721--741
+Overfull \hbox (2.28003pt too wide) in paragraph at lines 725--745
 []$ $[]$
  []
 
@@ -1540,7 +1540,7 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 ortex_15.png> <./figures/info_vs_corr_striatum_15.png> <./figures/info_vs_corr_
 thalamus_15.png> <./figures/info_vs_corr_v1_15.png>]
 (./regional_correlations.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 758.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 762.
 
 
 Package Fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1549,13 +1549,13 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [29]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 758.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 762.
  (./regional_correlations.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 758.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 758.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 762.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 762.
 Package rerunfilecheck Info: File `regional_correlations.out' has not changed.
 (rerunfilecheck)             Checksum: 13398C5BF959EE609426E84DBF31F480;3128.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 758.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 762.
  ) 
 Here is how much of TeX's memory you used:
  9736 strings out of 492701
@@ -1583,10 +1583,10 @@ ive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dis
 t/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/u
 rw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8
 a.pfb>
-Output written on regional_correlations.pdf (29 pages, 1239484 bytes).
+Output written on regional_correlations.pdf (29 pages, 1239773 bytes).
 PDF statistics:
- 674 PDF objects out of 1000 (max. 8388607)
- 466 compressed objects within 5 object streams
+ 675 PDF objects out of 1000 (max. 8388607)
+ 467 compressed objects within 5 object streams
  123 named destinations out of 1000 (max. 500000)
  690 words of extra memory for PDF output out of 10000 (max. 10000000)
 

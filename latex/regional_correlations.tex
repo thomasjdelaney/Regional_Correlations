@@ -687,7 +687,11 @@ De la rocha paper in here.
 \end{figure}
 
 \subsubsection{Regional mutual information \& firing rate geometric means}
-We compared the mutual information for pairs of neurons to the geometric means of their firing rates. We did this for each region. There was an obvious positive correlation between the two quantities, see figure \ref{fig:info_vs_geometric_mean}. This is to be expected from a numerical point of view. Keeping the bin width constant, as the firing rate of a neuron increases the maximum number of spikes observed in any time bin will increase. This increases the upper limit on the entropy of the neurons' responses (see section \ref{sec:entropy_limit}). Since the $I(X;Y) \leq \min \lbrace H(X), H(Y) \rbrace$, increasing the firing rate of either neuron in a pair will increase both the geomteric mean of the firing rate and the upper limit on the mutual information.
+We compared the mutual information for pairs of neurons to the geometric means of their firing rates. We did this for each region. There was an obvious positive correlation between the two quantities, see figure \ref{fig:info_vs_geometric_mean}. 
+
+This is to be expected from a numerical point of view. Keeping the bin width constant, as the firing rate of a neuron increases the maximum number of spikes observed in any time bin will increase. This increases the upper limit on the entropy of the neurons' responses (see section \ref{sec:entropy_limit}). Since the $I(X;Y) \leq \min \lbrace H(X), H(Y) \rbrace$, increasing the firing rate of either neuron in a pair will increase both the geomteric mean of the firing rate and the upper limit on the mutual information.
+
+Although an increased firing rate will increase the upper limit on $I(X;Y)$, the lower limit is still $0$ bits. It is worth noting that according to figure \ref{fig:info_vs_geometric_mean} a high geometric mean rarely corresponds with a low $I(X;Y)$. 
 
 \begin{figure}[p]
   \begin{subfigure}{0.5\textwidth}

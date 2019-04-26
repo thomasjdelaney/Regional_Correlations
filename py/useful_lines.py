@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
+import STCDT as cd
 from scipy.io import loadmat
 from itertools import combinations
 
@@ -25,7 +26,7 @@ pd.set_option('max_rows',30) # setting display options for terminal display
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 image_dir = os.path.join(proj_dir, 'images')
@@ -75,4 +76,5 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and i
 pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
 corr_matrix, symm_unc_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
-rcp.plotCorrMatrix(symm_unc_matrix, cell_info, region_sorted_cell_ids)
+P = np.outer(np.sum(symm_unc_matrix, axis=0), np.sum(symm_unc_matrix, axis=1)) / np.sum(symm_unc_matrix)
+Q, L, centres = cd.cluster_graph(symm_unc_matrix, P, 7, n_clusters=None)

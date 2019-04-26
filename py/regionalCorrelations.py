@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 from itertools import product, combinations
-from pyentropy import DiscreteSystem
+if float(sys.version[:3])<3.0:
+    from pyentropy import DiscreteSystem
 from scipy.stats import pearsonr
 
 regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
