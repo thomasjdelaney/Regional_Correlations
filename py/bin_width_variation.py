@@ -8,10 +8,8 @@ if float(sys.version[:3])<3.0:
 import numpy as np
 import pandas as pd
 import datetime as dt
-from pyentropy import DiscreteSystem
 from scipy.io import loadmat
 from itertools import product
-from scipy.stats import pearsonr
 
 parser = argparse.ArgumentParser(description='Calculate pairwise correlations between given choice of neurons.')
 parser.add_argument('-n', '--wanted_num_pairs', help='The number of strongly (or weakly) responding pairs to use.', default=30, type=int)
@@ -39,19 +37,6 @@ image_dir = os.path.join(proj_dir, 'images')
 sys.path.append(py_dir)
 import regionalCorrelations as rc
 
-def getMutualInfoFromPair(pair, exp_frame):
-    first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
-    second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
-    first_response_dims = [1, 1 + first_response.max()]
-    second_response_dims = [1, 1 + second_response.max()]
-    discrete_system = DiscreteSystem(first_response, first_response_dims, second_response, second_response_dims)
-    return rc.calcInfo(discrete_system)
-
-def getCorrCoefFromPair(pair, exp_frame):
-    first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
-    second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
-    return pearsonr(first_response, second_response)
-
 def getCorrFrameForWidth(bin_width, pairs, trials_info, spike_time_dict, cell_info, stim_id, region):
     print(dt.datetime.now().isoformat() + ' INFO: Calculating correlations for bin width = ' + str(bin_width) + '...')
     cells = np.unique(pairs)
@@ -61,8 +46,8 @@ def getCorrFrameForWidth(bin_width, pairs, trials_info, spike_time_dict, cell_in
     correlation_coefficients = np.zeros(num_pairs)
     p_values = np.zeros(num_pairs)
     for i, pair in enumerate(pairs):
-        correlation_coefficients[i], p_values[i] = getCorrCoefFromPair(pair, width_exp_frame)
-        mutual_infos[i] = getMutualInfoFromPair(pair, width_exp_frame)
+        correlation_coefficients[i], p_values[i] = rc.getCorrCoefFromPair(pair, width_exp_frame)
+        mutual_infos[i] = rc.getMutualInfoFromPair(pair, width_exp_frame)
     return pd.DataFrame({'stim_id':np.repeat(stim_id, num_pairs), 'region':np.repeat(region, num_pairs), 'first_cell_id':pairs[:,0], 'second_cell_id':pairs[:,1], 'mutual_info_plugin':mutual_infos[:,0], 'symm_unc_plugin':mutual_infos[:,1], 'mutual_info_qe':mutual_infos[:,2], 'symm_unc_qe':mutual_infos[:,3], 'corr_coef':correlation_coefficients, 'p_value':p_values, 'bin_width':np.repeat(bin_width, num_pairs)})
 
 def getAllWidthFrameForRegionStim(cell_info, stim_info, id_adjustor, region, stim_id, group, wanted_num_pairs, is_weak, bin_widths, threshold):

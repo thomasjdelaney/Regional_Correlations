@@ -4,6 +4,8 @@ then comparing these clusters to the biological paritioning of the cells.
     exec(open(os.path.join(os.environ['HOME'], '.pystartup')).read())
 """
 import os, argparse, sys
+if float(sys.version[:3])<3.0:
+    execfile(os.path.join(os.environ['HOME'], '.pystartup'))
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,7 +34,7 @@ np.random.seed(args.numpy_seed) # setting seed
 pd.set_option('max_rows',30) # setting display options for terminal display
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['SPACE'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')

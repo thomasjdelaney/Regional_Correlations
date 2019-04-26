@@ -27,6 +27,7 @@ image_dir = os.path.join(proj_dir, 'images')
 # loading useful functions
 sys.path.append(py_dir)
 import regionalCorrelations as rc
+import regionalCorrelationsPlotting as rcp
 
 def getDataFrames(single_file, paired_file, bin_width):
     firing_frame = pd.read_csv(os.path.join(csv_dir, args.single_file), usecols=lambda x: x != 'Unnamed: 0')
@@ -53,7 +54,7 @@ def plotMeasureVsGeomMeanForRegion(working_frame, region, measure, y_label, y_li
     geom_max = working_frame.geometric_mean.max()
     text_y = -0.95 if measure=='corr_coef' else 0.05
     fig = plt.figure(figsize=(4,3))
-    plt.scatter(working_frame.geometric_mean, working_frame[measure], marker='.', color=rc.region_to_colour[region], label=region.replace('_', ' ').capitalize())
+    plt.scatter(working_frame.geometric_mean, working_frame[measure], marker='.', color=rcp.region_to_colour[region], label=region.replace('_', ' ').capitalize())
     plt.ylabel(y_label, fontsize='large')
     plt.ylim(y_lim)
     plt.xlabel(r'Geometric Mean (a.u.)', fontsize='large')
@@ -78,7 +79,7 @@ def plotMeasuresVsGeomMean(working_frame, region, stim_id, prefix):
     saveAndClose(filename, 'geometric_mean')
 
 def plotInfoVsCorr(pairwise_region_frame, region, max_mi, stim_id, prefix):
-    pairwise_region_frame.plot('corr_coef', 'mutual_info_qe', kind='scatter', figsize=(4,3), grid=False, color=rc.region_to_colour[region], label=region.replace('_', ' ').capitalize(), xlim=[-1,1], ylim=[0, max_mi])
+    pairwise_region_frame.plot('corr_coef', 'mutual_info_qe', kind='scatter', figsize=(4,3), grid=False, color=rcp.region_to_colour[region], label=region.replace('_', ' ').capitalize(), xlim=[-1,1], ylim=[0, max_mi])
     p = np.polyfit(pairwise_region_frame.corr_coef, pairwise_region_frame.mutual_info_qe, 2)
     x = np.arange(-1,1.05,0.05)
     plt.plot(x, p[0]*np.power(x,2) + p[1]*x + p[1], color='black')

@@ -4,12 +4,11 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
 import datetime as dt
-import matplotlib.cm as cm
 from itertools import product, combinations
+from pyentropy import DiscreteSystem
+from scipy.stats import pearsonr
 
 regions = ['motor_cortex', 'striatum', 'hippocampus', 'thalamus', 'v1']
-colours = cm.gist_rainbow(np.linspace(0, 1, 5)) # 5 regions
-region_to_colour = dict(list(zip(regions, colours)))
 bin_widths = np.array([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
 
 def loadCellInfo(csv_dir):
@@ -23,12 +22,14 @@ def loadCellInfo(csv_dir):
     cell_info = from_file.set_index('adj_cluster_id')
     return cell_info, id_adjustor
 
-def getRandomSelection(cell_info, num_cells, group, probe, region):
+def getRandomSelection(cell_info, trials_info, num_cells, group, probe, region, posterior_dir, frontal_dir, id_adjustor, is_weak=False, strong_threshold=20.0):
     # Get a random selection of cells. Filtering by group, probe, and region is possible.
     is_group = np.array([g in group for g in cell_info['group']])
     is_probe = np.array([p in probe for p in cell_info['probe']])
     is_region = np.array([r in region for r in cell_info['region']])
-    chosen_cells = np.random.choice(cell_info.index[is_region & (is_group & is_probe)], size=num_cells, replace=False)
+    all_cells = cell_info.index[is_region & (is_group & is_probe)]
+    spike_time_dict = loadSpikeTimes(posterior_dir, frontal_dir, all_cells, id_adjustor)
+    chosen_cells = getRespondingCells(all_cells, trials_info, spike_time_dict, cell_info, num_cells=num_cells, is_weak=is_weak, strong_threshold=strong_threshold)
     chosen_cells.sort()
     return chosen_cells
 
@@ -109,7 +110,7 @@ def getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, bin_wi
         spike_counts = np.histogram(spike_time_dict[cell_id], starts_and_stops)[0]
         spike_counts = np.delete(spike_counts, [np.where(starts_and_stops == bin_stop)[0][0] for bin_stop in bin_stops[:-1]])
         trials_frame['num_spikes'] = spike_counts
-        trials_frame['cell_id'] = cell_id.repeat(spike_counts.size)
+        trials_frame['cell_id'] = np.repeat(cell_id, spike_counts.size)
         exp_frame = exp_frame.append(trials_frame, ignore_index=True)
     for col in ['stim_id', 'cell_id', 'num_spikes']:
         exp_frame[col] = exp_frame[col].astype(int)
@@ -165,3 +166,16 @@ def calcInfo(discrete_system):
     discrete_system.calculate_entropies(method='qe', calc=['HX', 'HXY', 'HY'])
     qe = getMISymmUnc(discrete_system)
     return np.hstack([plugin, qe])
+
+def getMutualInfoFromPair(pair, exp_frame):
+    first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
+    second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
+    first_response_dims = [1, 1 + first_response.max()]
+    second_response_dims = [1, 1 + second_response.max()]
+    discrete_system = DiscreteSystem(first_response, first_response_dims, second_response, second_response_dims)
+    return calcInfo(discrete_system)
+
+def getCorrCoefFromPair(pair, exp_frame):
+    first_response = exp_frame[exp_frame.cell_id == pair[0]]['num_spikes']
+    second_response = exp_frame[exp_frame.cell_id == pair[1]]['num_spikes']
+    return pearsonr(first_response, second_response)

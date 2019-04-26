@@ -35,9 +35,10 @@ pd.options.mode.chained_assignment = None  # default='warn'
 # loading useful functions
 sys.path.append(py_dir)
 import regionalCorrelations as rc
+import regionalCorrelationsPlotting as rcp
 
 def plotRegionalHistogram(region_stim_bin_frame, region, x_col, x_label, x_lim, y_lim, use_title=False):
-    region_stim_bin_frame[x_col].hist(grid=False, bins=25, color=rc.region_to_colour[region], range=x_lim, label=region.replace('_', ' ').capitalize(), figsize=(4,3))
+    region_stim_bin_frame[x_col].hist(grid=False, bins=25, color=rcp.region_to_colour[region], range=x_lim, label=region.replace('_', ' ').capitalize(), figsize=(4,3))
     plt.xlim(x_lim)
     plt.ylim(y_lim)
     plt.xlabel(x_label, fontsize='large')
