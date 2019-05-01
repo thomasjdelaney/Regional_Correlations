@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import STCDT as cd
 from scipy.io import loadmat
 from itertools import combinations
+from scipy.cluster.vq import whiten, kmeans2
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=10, type=int)
@@ -59,6 +60,38 @@ def getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measu
         symm_unc_matrix[first_index, second_index] = symm_unc_matrix[second_index, first_index] = pair_record.symm_unc_qe
     return corr_matrix, symm_unc_matrix
 
+def getClusterAndMod(num_clusters, e_vectors, modularity_matrix):
+    num_nodes, _ = e_vectors.shape
+    init_centres = cd.initialise_centres(e_vectors, num_clusters)
+    whitened_vectors = whiten(e_vectors)
+    test_centres, labels = kmeans2(whitened_vectors, init_centres)
+    membership_matrix = np.zeros([num_nodes, num_clusters], dtype=int)
+    for k in range(num_nodes):
+        membership_matrix[k, labels[k]] = 1
+    modularity = np.matrix.trace(np.dot(np.dot(membership_matrix.T, modularity_matrix), membership_matrix))
+    return labels, modularity
+
+def kMeansSweep(e_vectors, modularity_matrix, reps=7):
+    num_nodes, num_e_vectors = e_vectors.shape
+    max_num_clusters = num_e_vectors + 1
+    clustering_labels = np.zeros([num_e_vectors, num_nodes])
+    Q = 0 # modularity, we want to maximise this
+    for num_clusters in range(2, max_num_clusters + 1):
+        for j in range(reps):
+            labels, modularity = getClusterAndMod(num_clusters, e_vectors, modularity_matrix)
+            if modularity > Q:
+                clustering_labels, Q  = labels, modularity
+    return clustering_labels
+
+def getManyClusterings(pairwise_measure_matrix, num_clusterings=50):
+    num_nodes = pairwise_measure_matrix.shape[0]
+    null_network = np.outer(np.sum(pairwise_measure_matrix, axis=0), np.sum(pairwise_measure_matrix, axis=1)) / np.sum(pairwise_measure_matrix)
+    modularity_matrix = pairwise_measure_matrix - null_network
+    eigenvalues, eigenvectors = np.linalg.eigh(modularity_matrix)
+    e_vectors = eigenvectors[:, eigenvalues>0] 
+    clusterings = np.vstack([kMeansSweep(e_vectors, modularity_matrix) for i in range(num_clusterings)])
+    return clusterings
+
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
@@ -76,5 +109,5 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and i
 pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
 corr_matrix, symm_unc_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
-P = np.outer(np.sum(symm_unc_matrix, axis=0), np.sum(symm_unc_matrix, axis=1)) / np.sum(symm_unc_matrix)
-Q, L, centres = cd.cluster_graph(symm_unc_matrix, P, 7, n_clusters=None)
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
+many_clusterings = getManyClusterings(symm_unc_matrix)
