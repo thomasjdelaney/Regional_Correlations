@@ -6,6 +6,7 @@ import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
 import STCDT as cd
+import bct
 from scipy.io import loadmat
 from itertools import combinations
 from scipy.cluster.vq import whiten, kmeans2
@@ -51,25 +52,32 @@ def getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, stim_id, bin_width)
 
 def getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements):
     num_cells = region_sorted_cell_ids.size
-    corr_matrix = np.zeros([num_cells, num_cells]); symm_unc_matrix = np.zeros([num_cells, num_cells]);
+    corr_matrix = np.zeros([num_cells, num_cells]) 
+    symm_unc_matrix = np.zeros([num_cells, num_cells])
+    info_matrix = np.zeros([num_cells, num_cells])
     for pair in pairs:
         first_index = region_sorted_cell_ids.tolist().index(pair[0])
         second_index = region_sorted_cell_ids.tolist().index(pair[1])
         pair_record = pairwise_measurements[(pairwise_measurements.first_cell_id == pair[0]) & (pairwise_measurements.second_cell_id == pair[1])].iloc[0]
         corr_matrix[first_index, second_index] = corr_matrix[second_index, first_index] = pair_record.corr_coef
         symm_unc_matrix[first_index, second_index] = symm_unc_matrix[second_index, first_index] = pair_record.symm_unc_qe
-    return corr_matrix, symm_unc_matrix
+        info_matrix[first_index, second_index] = info_matrix[second_index, first_index] = pair_record.mutual_info_qe
+    return corr_matrix, symm_unc_matrix, info_matrix
 
-def getClusterAndMod(num_clusters, e_vectors, modularity_matrix):
-    num_nodes, _ = e_vectors.shape
-    init_centres = cd.initialise_centres(e_vectors, num_clusters)
-    whitened_vectors = whiten(e_vectors)
-    test_centres, labels = kmeans2(whitened_vectors, init_centres)
+def getClusteringModularity(clustering, modularity_matrix):
+    num_nodes = clustering.size
+    num_clusters = clustering.max() + 1
     membership_matrix = np.zeros([num_nodes, num_clusters], dtype=int)
     for k in range(num_nodes):
-        membership_matrix[k, labels[k]] = 1
+        membership_matrix[k, clustering[k]] = 1
     modularity = np.matrix.trace(np.dot(np.dot(membership_matrix.T, modularity_matrix), membership_matrix))
-    return labels, modularity
+    return modularity
+
+def getClusterAndMod(num_clusters, e_vectors, modularity_matrix):
+    init_centres = cd.initialise_centres(e_vectors, num_clusters)
+    whitened_vectors = whiten(e_vectors)
+    test_centres, clustering = kmeans2(whitened_vectors, init_centres)
+    return clustering, getClusteringModularity(clustering, modularity_matrix)
 
 def kMeansSweep(e_vectors, modularity_matrix, reps=7):
     num_nodes, num_e_vectors = e_vectors.shape
@@ -81,16 +89,63 @@ def kMeansSweep(e_vectors, modularity_matrix, reps=7):
             labels, modularity = getClusterAndMod(num_clusters, e_vectors, modularity_matrix)
             if modularity > Q:
                 clustering_labels, Q  = labels, modularity
-    return clustering_labels
+    return clustering_labels, Q
 
-def getManyClusterings(pairwise_measure_matrix, num_clusterings=50):
+def getManyClusteringsWithMods(pairwise_measure_matrix, num_clusterings=100):
     num_nodes = pairwise_measure_matrix.shape[0]
     null_network = np.outer(np.sum(pairwise_measure_matrix, axis=0), np.sum(pairwise_measure_matrix, axis=1)) / np.sum(pairwise_measure_matrix)
     modularity_matrix = pairwise_measure_matrix - null_network
     eigenvalues, eigenvectors = np.linalg.eigh(modularity_matrix)
-    e_vectors = eigenvectors[:, eigenvalues>0] 
-    clusterings = np.vstack([kMeansSweep(e_vectors, modularity_matrix) for i in range(num_clusterings)])
-    return clusterings
+    e_vectors = eigenvectors[:, eigenvalues>0]
+    clusterings = np.zeros([num_clusterings, num_nodes], dtype=int)
+    modularities = np.zeros(num_clusterings)
+    for i in range(num_clusterings):
+        clusterings[i], modularities[i] = kMeansSweep(e_vectors, modularity_matrix)
+    return clusterings, modularities
+
+def getBiggestComponent(pairwise_measure_matrix):
+    comp_assign, comp_size = bct.get_components(pairwise_measure_matrix)
+    keep_indices = np.where(comp_assign == comp_size.argmax() + 1)[0]
+    biggest_comp = pairwise_measure_matrix[keep_indices]
+    np.fill_diagonal(biggest_comp, 0)
+    return biggest_comp, keep_indices, comp_assign, comp_size
+
+def convertPairwiseMeasureMatrix(pairwise_measure_matrix, scale_coef = 100):
+    return (scale_coef * pairwise_measure_matrix).round().astype(int)
+
+def recoverPairwiseMeasureMatrix(pairwise_measure_int, scale_coef = 100):
+    return pairwise_measure_int / scale_coef
+
+def getExpectedNullNetwork(pairwise_measure_matrix):
+    return np.outer(np.sum(pairwise_measure_matrix, axis=0), np.sum(pairwise_measure_matrix, axis=1)) / np.sum(pairwise_measure_matrix)
+
+def sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix):
+    sample_null_net = np.zeros([num_nodes, num_nodes])
+    expected_num_links = np.triu(expected_null, k=1)
+    pair_rows, pair_cols = np.nonzero(expected_num_links)
+    prob_is_link = strength_distn[pair_rows] * strength_distn[pair_cols]
+    prob_is_link = prob_is_link / prob_is_link.sum()
+    poisson_rate = total_weights * prob_is_link
+    sampled_num_links = np.random.poisson(poisson_rate)
+    sample_null_net[pair_rows, pair_cols] = sampled_num_links
+    sample_null_net = sample_null_net.T + sample_null_net # symmetrise
+    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net)
+    sample_eig_vals, sample_eig_vecs = np.linalg.eig(pairwise_measure_matrix - sample_null_net)
+    sort_indices = np.argsort(sample_eig_vals)
+    return sample_eig_vals[sort_indices], sample_null_net
+
+def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples):
+    num_nodes = pairwise_measure_matrix.shape[0]
+    strength_distn = pairwise_measure_matrix.sum(axis=0)
+    degree_distn = (pairwise_measure_matrix > 0).astype(int).sum(axis=0)
+    pairwise_measure_int = convertPairwiseMeasureMatrix(pairwise_measure_matrix)
+    total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
+    expected_null = getExpectedNullNetwork(pairwise_measure_int)
+    samples_eig_vals = np.zeros([num_samples, num_nodes])
+    null_net_samples = np.zeros([num_samples, num_nodes, num_nodes])
+    for i in range(num_samples):
+        samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix)
+    return samples_eig_vals, null_net_samples
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -108,6 +163,13 @@ pairs = np.array(list(combinations(region_sorted_cell_ids, 2)))
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and information...')
 pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
-corr_matrix, symm_unc_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
-many_clusterings = getManyClusterings(symm_unc_matrix)
+corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
+info_matrix, keep_indices, comp_assign, comp_size = getBiggestComponent(info_matrix)
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sampling from null model...')
+samples_eig_vals, null_net_samples = getPoissonWeightedConfModel(info_matrix, 100)
+# set conversion parameter
+# print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
+# clusterings, modularities = getManyClusteringsWithMods(info_matrix)
+# agreement = bct.agreement(clusterings.T)/clusterings.shape[0]
+#       Calculate consensus partition of agreement/consensus matrix
+# NB picking tau may be a pain, cycle from 0.02 to 0.4 in steps of 0.2, calculate the modularity along the way.
