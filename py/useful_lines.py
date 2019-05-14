@@ -28,7 +28,7 @@ pd.set_option('max_rows',30) # setting display options for terminal display
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['PROJ'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 image_dir = os.path.join(proj_dir, 'images')
@@ -52,7 +52,7 @@ def getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, stim_id, bin_width)
 
 def getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements):
     num_cells = region_sorted_cell_ids.size
-    corr_matrix = np.zeros([num_cells, num_cells]) 
+    corr_matrix = np.zeros([num_cells, num_cells])
     symm_unc_matrix = np.zeros([num_cells, num_cells])
     info_matrix = np.zeros([num_cells, num_cells])
     for pair in pairs:
@@ -105,21 +105,30 @@ def getManyClusteringsWithMods(pairwise_measure_matrix, num_clusterings=100):
 
 def getBiggestComponent(pairwise_measure_matrix):
     comp_assign, comp_size = bct.get_components(pairwise_measure_matrix)
-    keep_indices = np.where(comp_assign == comp_size.argmax() + 1)[0]
+    keep_indices = np.nonzero(comp_assign == comp_size.argmax() + 1)[0]
     biggest_comp = pairwise_measure_matrix[keep_indices]
     np.fill_diagonal(biggest_comp, 0)
     return biggest_comp, keep_indices, comp_assign, comp_size
 
 def convertPairwiseMeasureMatrix(pairwise_measure_matrix, scale_coef = 100):
-    return (scale_coef * pairwise_measure_matrix).round().astype(int)
+    pairwise_measure_int = pairwise_measure_matrix.astype(int)
+    is_all_int = (pairwise_measure_matrix == pairwise_measure_int).all()
+    if is_all_int:
+        scale_coef = 1
+    else:
+        pairwise_measure_int = (scale_coef * pairwise_measure_matrix).round().astype(int)
+    return pairwise_measure_int, scale_coef
 
 def recoverPairwiseMeasureMatrix(pairwise_measure_int, scale_coef = 100):
-    return pairwise_measure_int / scale_coef
+    if scale_coef == 1:
+        return pairwise_measure_int
+    else:
+        return pairwise_measure_int / scale_coef
 
-def getExpectedNullNetwork(pairwise_measure_matrix):
-    return np.outer(np.sum(pairwise_measure_matrix, axis=0), np.sum(pairwise_measure_matrix, axis=1)) / np.sum(pairwise_measure_matrix)
+def getExpectedNullNetwork(pairwise_measure_int):
+    return np.outer(np.sum(pairwise_measure_int, axis=0), np.sum(pairwise_measure_int, axis=1)) / np.sum(pairwise_measure_int).astype(float)
 
-def sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix):
+def sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix, scale_coef):
     sample_null_net = np.zeros([num_nodes, num_nodes])
     expected_num_links = np.triu(expected_null, k=1)
     pair_rows, pair_cols = np.nonzero(expected_num_links)
@@ -129,7 +138,7 @@ def sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total
     sampled_num_links = np.random.poisson(poisson_rate)
     sample_null_net[pair_rows, pair_cols] = sampled_num_links
     sample_null_net = sample_null_net.T + sample_null_net # symmetrise
-    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net)
+    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net, scale_coef)
     sample_eig_vals, sample_eig_vecs = np.linalg.eig(pairwise_measure_matrix - sample_null_net)
     sort_indices = np.argsort(sample_eig_vals)
     return sample_eig_vals[sort_indices], sample_null_net
@@ -138,13 +147,13 @@ def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples):
     num_nodes = pairwise_measure_matrix.shape[0]
     strength_distn = pairwise_measure_matrix.sum(axis=0)
     degree_distn = (pairwise_measure_matrix > 0).astype(int).sum(axis=0)
-    pairwise_measure_int = convertPairwiseMeasureMatrix(pairwise_measure_matrix)
+    pairwise_measure_int, scale_coef = convertPairwiseMeasureMatrix(pairwise_measure_matrix)
     total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
     expected_null = getExpectedNullNetwork(pairwise_measure_int)
     samples_eig_vals = np.zeros([num_samples, num_nodes])
     null_net_samples = np.zeros([num_samples, num_nodes, num_nodes])
     for i in range(num_samples):
-        samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix)
+        samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_int, scale_coef)
     return samples_eig_vals, null_net_samples
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
@@ -164,9 +173,25 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and i
 pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
 corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
+# now we have the measurements,
+# we want to sample from the null space
+# then we want to get all the eigenvalues
+# then we want to get the smaller subspace (if it exists)
+# then we want to cluster that
+# then we want to show the clusters
+
 info_matrix, keep_indices, comp_assign, comp_size = getBiggestComponent(info_matrix)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sampling from null model...')
 samples_eig_vals, null_net_samples = getPoissonWeightedConfModel(info_matrix, 100)
+
+# testing with Les Miserables data
+m = loadmat(os.path.join(os.environ['PROJ'], 'Network_Noise_Rejection', 'Networks', 'lesmis.mat'))
+problem = m['Problem']
+A = problem['A'][0][0].todense().A
+data_keys = ['A', 'ixRetain', 'Comps', 'CompSizes', 'Emodel', 'ExpA']
+data = {data_keys[i]:v for i,v in enumerate(getBiggestComponent(A))} # all match
+data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100))})
+
 # set conversion parameter
 # print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
 # clusterings, modularities = getManyClusteringsWithMods(info_matrix)
