@@ -24,6 +24,7 @@ parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, ac
 args = parser.parse_args()
 
 np.random.seed(args.numpy_seed) # setting seed
+np.set_printoptions(linewidth=200) # make it easier to see numpy arrays
 pd.set_option('max_rows',30) # setting display options for terminal display
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -125,36 +126,68 @@ def recoverPairwiseMeasureMatrix(pairwise_measure_int, scale_coef = 100):
     else:
         return pairwise_measure_int / scale_coef
 
-def getExpectedNullNetwork(pairwise_measure_int):
+def getExpectedNullNetworkFromData(pairwise_measure_int):
     return np.outer(np.sum(pairwise_measure_int, axis=0), np.sum(pairwise_measure_int, axis=1)) / np.sum(pairwise_measure_int).astype(float)
 
-def sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_matrix, scale_coef):
-    sample_null_net = np.zeros([num_nodes, num_nodes])
+def getExpectedNullNetworkFromSamples(null_net_samples):
+    num_samples = null_net_samples.shape[0]
+    return null_net_samples.sum(axis=0)/num_samples
+
+def getFullPoissonRates(num_nodes, expected_null, strength_distn, total_weights):
+    poisson_rates = np.zeros([num_nodes, num_nodes])
     expected_num_links = np.triu(expected_null, k=1)
     pair_rows, pair_cols = np.nonzero(expected_num_links)
     prob_is_link = strength_distn[pair_rows] * strength_distn[pair_cols]
     prob_is_link = prob_is_link / prob_is_link.sum()
-    poisson_rate = total_weights * prob_is_link
-    sampled_num_links = np.random.poisson(poisson_rate)
-    sample_null_net[pair_rows, pair_cols] = sampled_num_links
+    poisson_rates[pair_rows, pair_cols] = total_weights * prob_is_link # the rate calculation and indexing all work perfectly, checked
+    return poisson_rates
+
+def sampleNullNetworkFullPoisson(poisson_rates, expected_null, scale_coef):
+    sample_null_net = np.random.poisson(poisson_rates)
     sample_null_net = sample_null_net.T + sample_null_net # symmetrise
     sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net, scale_coef)
-    sample_eig_vals, sample_eig_vecs = np.linalg.eig(pairwise_measure_matrix - sample_null_net)
+    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_null_net - expected_null)
     sort_indices = np.argsort(sample_eig_vals)
     return sample_eig_vals[sort_indices], sample_null_net
 
-def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples):
+def sampleNullNetworkSparsePoisson(num_nodes, expected_null, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link):
+    adjacency_sample = (np.random.rand(num_nodes, num_nodes) < np.triu(prob_link, k=1)).astype(int)
+    pair_rows, pair_cols = np.nonzero(np.triu(adjacency_sample, k=0))
+    num_links_to_place = int(round(int_total_strength/2.0)) - pair_rows.size # nLinks
+    if (total_weights != total_degrees) & (num_links_to_place > 0): # we have a weighted network, with links to place
+        poisson_rates = getFullPoissonRates(num_nodes, adjacency_sample, strength_distn, num_links_to_place)
+        sampled_adjacency = np.random.poisson(poisson_rates)
+        sample_null_net = poisson_rates + adjacency_sample
+        sample_null_net = sample_null_net.T + sample_null_net
+    else:
+        sample_null_net = adjacency_sample.T + adjacency_sample
+    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net, scale_coef)
+    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_null_net - expected_null)
+    sort_indices = np.argsort(sample_eig_vals)
+    return sample_eig_vals[sort_indices], sample_null_net
+
+def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=False):
     num_nodes = pairwise_measure_matrix.shape[0]
-    strength_distn = pairwise_measure_matrix.sum(axis=0)
-    degree_distn = (pairwise_measure_matrix > 0).astype(int).sum(axis=0)
+    strength_distn = pairwise_measure_matrix.sum(axis=0) # sA
+    total_strength = pairwise_measure_matrix.sum() # S
+    degree_distn = (pairwise_measure_matrix > 0).astype(int).sum(axis=0) # kA
+    total_degrees = (pairwise_measure_matrix > 0).astype(int).sum() # K
     pairwise_measure_int, scale_coef = convertPairwiseMeasureMatrix(pairwise_measure_matrix)
+    int_strength_distn = pairwise_measure_int.sum(axis=0)
+    int_total_strength = pairwise_measure_int.sum()
     total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
-    expected_null = getExpectedNullNetwork(pairwise_measure_int)
+    expected_null = getExpectedNullNetworkFromData(pairwise_measure_int) # matches
+    prob_link = getExpectedNullNetworkFromData(pairwise_measure_matrix > 0)
     samples_eig_vals = np.zeros([num_samples, num_nodes])
     null_net_samples = np.zeros([num_samples, num_nodes, num_nodes])
-    for i in range(num_samples):
-        samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(num_nodes, expected_null, strength_distn, total_weights, pairwise_measure_int, scale_coef)
-    return samples_eig_vals, null_net_samples
+    if is_sparse:
+        for i in range(num_samples):
+            samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkSparsePoisson(num_nodes, expected_null, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link)
+    else:
+        poisson_rates = getFullPoissonRates(num_nodes, expected_null, strength_distn, total_weights)
+        for i in range(num_samples):
+            samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_null, scale_coef)
+    return samples_eig_vals, getExpectedNullNetworkFromSamples(null_net_samples)
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -188,9 +221,10 @@ samples_eig_vals, null_net_samples = getPoissonWeightedConfModel(info_matrix, 10
 m = loadmat(os.path.join(os.environ['PROJ'], 'Network_Noise_Rejection', 'Networks', 'lesmis.mat'))
 problem = m['Problem']
 A = problem['A'][0][0].todense().A
-data_keys = ['A', 'ixRetain', 'Comps', 'CompSizes', 'Emodel', 'ExpA']
+data_keys = ['A', 'ixRetain', 'Comps', 'CompSizes', 'Emodel', 'ExpA', 'B']
 data = {data_keys[i]:v for i,v in enumerate(getBiggestComponent(A))} # all match
-data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100))})
+data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100, is_sparse=True))}) # not matching, but very similar, setting seeds doesn't work
+data['B'] = data['A'] - data['ExpA']
 
 # set conversion parameter
 # print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
