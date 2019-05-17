@@ -10,6 +10,7 @@ import bct
 from scipy.io import loadmat
 from itertools import combinations
 from scipy.cluster.vq import whiten, kmeans2
+from scipy import stats
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=10, type=int)
@@ -126,45 +127,41 @@ def recoverPairwiseMeasureMatrix(pairwise_measure_int, scale_coef = 100):
     else:
         return pairwise_measure_int / scale_coef
 
-def getExpectedNullNetworkFromData(pairwise_measure_int):
+def getExpectedNetworkFromData(pairwise_measure_int):
     return np.outer(np.sum(pairwise_measure_int, axis=0), np.sum(pairwise_measure_int, axis=1)) / np.sum(pairwise_measure_int).astype(float)
 
-def getExpectedNullNetworkFromSamples(null_net_samples):
+def getExpectedNetworkFromSamples(null_net_samples):
     num_samples = null_net_samples.shape[0]
     return null_net_samples.sum(axis=0)/num_samples
 
-def getFullPoissonRates(num_nodes, expected_null, strength_distn, total_weights):
+def getFullPoissonRates(num_nodes, expected_net, strength_distn, total_weights):
     poisson_rates = np.zeros([num_nodes, num_nodes])
-    expected_num_links = np.triu(expected_null, k=1)
+    expected_num_links = np.triu(expected_net, k=1)
     pair_rows, pair_cols = np.nonzero(expected_num_links)
     prob_is_link = strength_distn[pair_rows] * strength_distn[pair_cols]
     prob_is_link = prob_is_link / prob_is_link.sum()
     poisson_rates[pair_rows, pair_cols] = total_weights * prob_is_link # the rate calculation and indexing all work perfectly, checked
     return poisson_rates
 
-def sampleNullNetworkFullPoisson(poisson_rates, expected_null, scale_coef):
-    sample_null_net = np.random.poisson(poisson_rates)
-    sample_null_net = sample_null_net.T + sample_null_net # symmetrise
-    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net, scale_coef)
-    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_null_net - expected_null)
-    sort_indices = np.argsort(sample_eig_vals)
-    return sample_eig_vals[sort_indices], sample_null_net
+def sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef):
+    sample_net = np.random.poisson(poisson_rates)
+    sample_net = sample_net.T + sample_net # symmetrise
+    sample_net = recoverPairwiseMeasureMatrix(sample_net, scale_coef)
+    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_net - expected_net)
+    return sample_net
 
-def sampleNullNetworkSparsePoisson(num_nodes, expected_null, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link):
+def sampleNullNetworkSparsePoisson(num_nodes, expected_net, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link):
     adjacency_sample = (np.random.rand(num_nodes, num_nodes) < np.triu(prob_link, k=1)).astype(int)
     pair_rows, pair_cols = np.nonzero(np.triu(adjacency_sample, k=0))
     num_links_to_place = int(round(int_total_strength/2.0)) - pair_rows.size # nLinks
     if (total_weights != total_degrees) & (num_links_to_place > 0): # we have a weighted network, with links to place
         poisson_rates = getFullPoissonRates(num_nodes, adjacency_sample, strength_distn, num_links_to_place)
-        sampled_adjacency = np.random.poisson(poisson_rates)
-        sample_null_net = poisson_rates + adjacency_sample
-        sample_null_net = sample_null_net.T + sample_null_net
+        sampled_weights = np.random.poisson(poisson_rates)
+        sample_net = sampled_weights + adjacency_sample
+        sample_net = sample_net.T + sample_net
     else:
-        sample_null_net = adjacency_sample.T + adjacency_sample
-    sample_null_net = recoverPairwiseMeasureMatrix(sample_null_net, scale_coef)
-    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_null_net - expected_null)
-    sort_indices = np.argsort(sample_eig_vals)
-    return sample_eig_vals[sort_indices], sample_null_net
+        sample_net = adjacency_sample.T + adjacency_sample
+    return recoverPairwiseMeasureMatrix(sample_net, scale_coef)
 
 def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=False):
     num_nodes = pairwise_measure_matrix.shape[0]
@@ -176,18 +173,57 @@ def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=
     int_strength_distn = pairwise_measure_int.sum(axis=0)
     int_total_strength = pairwise_measure_int.sum()
     total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
-    expected_null = getExpectedNullNetworkFromData(pairwise_measure_int) # matches
-    prob_link = getExpectedNullNetworkFromData(pairwise_measure_matrix > 0)
+    expected_net = getExpectedNetworkFromData(pairwise_measure_int) # matches
+    prob_link = getExpectedNetworkFromData(pairwise_measure_matrix > 0) # pnode
+    net_samples = np.zeros([num_samples, num_nodes, num_nodes])
     samples_eig_vals = np.zeros([num_samples, num_nodes])
-    null_net_samples = np.zeros([num_samples, num_nodes, num_nodes])
     if is_sparse:
         for i in range(num_samples):
-            samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkSparsePoisson(num_nodes, expected_null, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link)
-    else:
-        poisson_rates = getFullPoissonRates(num_nodes, expected_null, strength_distn, total_weights)
+            net_samples[i] = sampleNullNetworkSparsePoisson(num_nodes, expected_net, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link)
+        expected_wcm = getExpectedNetworkFromSamples(net_samples)
         for i in range(num_samples):
-            samples_eig_vals[i], null_net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_null, scale_coef)
-    return samples_eig_vals, getExpectedNullNetworkFromSamples(null_net_samples)
+            samples_eig_vals[i] = np.linalg.eigh(net_samples[i] - expected_wcm)[0]
+    else:
+        poisson_rates = getFullPoissonRates(num_nodes, expected_net, strength_distn, total_weights)
+        for i in range(num_samples):
+            net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef)
+        expected_wcm = getExpectedNetworkFromSamples(net_samples)
+        for i in range(num_samples):
+            samples_eig_vals[i] = np.linalg.eigh(net_samples[i] - expected_wcm)[0]
+    return samples_eig_vals, expected_wcm
+
+def getConfidenceIntervalFromStdErr(st_dev, num_samples, interval):
+    if interval == 0:
+        return 0.0
+    else:
+        symm_interval = 1-(1-interval)/2.0
+        t_val = stats.t.ppf(symm_interval, num_samples)
+        return t_val * st_dev / np.sqrt(num_samples)
+
+def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI'):
+    num_nodes = modularity_matrix.shape[0]
+    num_samples = eig_vals.shape[0]
+    if num_nodes != eig_vals.shape[1]:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Eigenvalue matrix is the wrong shape...')
+    mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
+    mins_eig, maxs_eig = eig_vals.min(axis=1), eig_vals.max(axis=1)
+    if int_type == 'CI':
+        mean_mins_eig = mins_eig.mean()
+        min_confidence_ints = getConfidenceIntervalFromStdErr(mins_eig.std(), num_samples, confidence_level)
+        eig_lower_confidence_int = mean_mins_eig - min_confidence_ints
+        mean_maxs_eig = maxs_eig.mean()
+        max_confidence_ints = getConfidenceIntervalFromStdErr(maxs_eig.std(), num_samples, confidence_level)
+        eig_upper_confidence_int = mean_maxs_eig + max_confidence_ints
+    elif int_type == 'PI':
+        # implement this
+        return 0
+    else:
+        std.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
+    eig_vals_exceeding_upper_bound_inds = np.flatnonzero(mod_eig_vals >= eig_upper_confidence_int)
+    eig_vals_below_lower_bound_inds = np.flatnonzero(mod_eig_vals <= eig_lower_confidence_int)
+    exceeding_eig_space = mod_eig_vecs[eig_vals_exceeding_upper_bound_inds]
+    below_eig_space = mod_eig_vecs[eig_vals_below_lower_bound_inds]
+    return below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints]
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -223,12 +259,10 @@ problem = m['Problem']
 A = problem['A'][0][0].todense().A
 data_keys = ['A', 'ixRetain', 'Comps', 'CompSizes', 'Emodel', 'ExpA', 'B']
 data = {data_keys[i]:v for i,v in enumerate(getBiggestComponent(A))} # all match
-data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100, is_sparse=True))}) # not matching, but very similar, setting seeds doesn't work
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting E-values and <P> of sparse WCM...')
+data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100, is_sparse=True))}) # not matching, but similar, setting seeds doesn't make them match
 data['B'] = data['A'] - data['ExpA']
-
-# set conversion parameter
-# print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting many clusterings...')
-# clusterings, modularities = getManyClusteringsWithMods(info_matrix)
-# agreement = bct.agreement(clusterings.T)/clusterings.shape[0]
-#       Calculate consensus partition of agreement/consensus matrix
-# NB picking tau may be a pain, cycle from 0.02 to 0.4 in steps of 0.2, calculate the modularity along the way.
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting low dimensional space...')
+below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
+data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
+data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[0]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
