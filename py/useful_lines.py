@@ -112,6 +112,16 @@ def getBiggestComponent(pairwise_measure_matrix):
     np.fill_diagonal(biggest_comp, 0)
     return biggest_comp, keep_indices, comp_assign, comp_size
 
+def checkDirected(network_matrix): # a symmetric matrix represents an undirected network
+    if (network_matrix == network_matrix.T).all():
+        return network_matrix
+    else:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Network is undirected! Converting to directed...')
+        return (network_matrix + network_matrix.T)/2.0
+
+def getUnifyingScaleCoef(pairwise_measure_matrix):
+    return 1/pairwise_measure_matrix[pairwise_measure_matrix > 0].min()
+
 def convertPairwiseMeasureMatrix(pairwise_measure_matrix, scale_coef = 100):
     pairwise_measure_int = pairwise_measure_matrix.astype(int)
     is_all_int = (pairwise_measure_matrix == pairwise_measure_int).all()
@@ -134,28 +144,27 @@ def getExpectedNetworkFromSamples(null_net_samples):
     num_samples = null_net_samples.shape[0]
     return null_net_samples.sum(axis=0)/num_samples
 
-def getFullPoissonRates(num_nodes, expected_net, strength_distn, total_weights):
-    poisson_rates = np.zeros([num_nodes, num_nodes])
-    expected_num_links = np.triu(expected_net, k=1)
+def getPoissonRates(expected_weights, strength_distn, weight_to_place, has_loops=False):
+    poisson_rates = np.zeros(expected_weights.shape)
+    expected_num_links = np.triu(expected_weights, k=int(not(has_loops)))
     pair_rows, pair_cols = np.nonzero(expected_num_links)
     prob_is_link = strength_distn[pair_rows] * strength_distn[pair_cols]
     prob_is_link = prob_is_link / prob_is_link.sum()
-    poisson_rates[pair_rows, pair_cols] = total_weights * prob_is_link # the rate calculation and indexing all work perfectly, checked
+    poisson_rates[pair_rows, pair_cols] = weight_to_place * prob_is_link # the rate calculation and indexing all work perfectly, checked
     return poisson_rates
 
 def sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef):
     sample_net = np.random.poisson(poisson_rates)
     sample_net = sample_net.T + sample_net # symmetrise
     sample_net = recoverPairwiseMeasureMatrix(sample_net, scale_coef)
-    sample_eig_vals, sample_eig_vecs = np.linalg.eigh(sample_net - expected_net)
     return sample_net
 
-def sampleNullNetworkSparsePoisson(num_nodes, expected_net, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link):
-    adjacency_sample = (np.random.rand(num_nodes, num_nodes) < np.triu(prob_link, k=1)).astype(int)
+def sampleNullNetworkSparsePoisson(strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link, has_loops):
+    adjacency_sample = (np.random.rand(strength_distn.size, strength_distn.size) < np.triu(prob_link, k=1)).astype(int)
     pair_rows, pair_cols = np.nonzero(np.triu(adjacency_sample, k=0))
     num_links_to_place = int(round(int_total_strength/2.0)) - pair_rows.size # nLinks
     if (total_weights != total_degrees) & (num_links_to_place > 0): # we have a weighted network, with links to place
-        poisson_rates = getFullPoissonRates(num_nodes, adjacency_sample, strength_distn, num_links_to_place)
+        poisson_rates = getPoissonRates(adjacency_sample, strength_distn, num_links_to_place, has_loops=has_loops)
         sampled_weights = np.random.poisson(poisson_rates)
         sample_net = sampled_weights + adjacency_sample
         sample_net = sample_net.T + sample_net
@@ -163,34 +172,68 @@ def sampleNullNetworkSparsePoisson(num_nodes, expected_net, strength_distn, scal
         sample_net = adjacency_sample.T + adjacency_sample
     return recoverPairwiseMeasureMatrix(sample_net, scale_coef)
 
-def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=False):
+def getSparsePoissonWeightedConfModel(pairwise_measure_matrix, pairwise_measure_int, num_samples, expected_net, strength_distn, total_weights, scale_coef, has_loops, return_type, return_eig_vecs):
     num_nodes = pairwise_measure_matrix.shape[0]
-    strength_distn = pairwise_measure_matrix.sum(axis=0) # sA
-    total_strength = pairwise_measure_matrix.sum() # S
-    degree_distn = (pairwise_measure_matrix > 0).astype(int).sum(axis=0) # kA
     total_degrees = (pairwise_measure_matrix > 0).astype(int).sum() # K
-    pairwise_measure_int, scale_coef = convertPairwiseMeasureMatrix(pairwise_measure_matrix)
-    int_strength_distn = pairwise_measure_int.sum(axis=0)
     int_total_strength = pairwise_measure_int.sum()
-    total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
-    expected_net = getExpectedNetworkFromData(pairwise_measure_int) # matches
     prob_link = getExpectedNetworkFromData(pairwise_measure_matrix > 0) # pnode
     net_samples = np.zeros([num_samples, num_nodes, num_nodes])
+    for i in range(num_samples):
+        net_samples[i] = sampleNullNetworkSparsePoisson(strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link, has_loops=has_loops)
+    expected = getExpectedNetworkFromSamples(net_samples) if return_type in ['expected', 'both'] else expected_net
     samples_eig_vals = np.zeros([num_samples, num_nodes])
-    if is_sparse:
-        for i in range(num_samples):
-            net_samples[i] = sampleNullNetworkSparsePoisson(num_nodes, expected_net, strength_distn, scale_coef, total_degrees, int_total_strength, total_weights, prob_link)
-        expected_wcm = getExpectedNetworkFromSamples(net_samples)
-        for i in range(num_samples):
-            samples_eig_vals[i] = np.linalg.eigh(net_samples[i] - expected_wcm)[0]
+    samples_eig_vecs = np.zeros([num_samples, num_nodes, num_nodes])
+    for i in range(num_samples):
+        samples_eig_vals[i], samples_eig_vecs[i] = np.linalg.eigh(net_samples[i] - expected)
+    if return_type == 'expected':
+        optional_returns = {'expected_wcm':expected}
+    elif return_type in 'all':
+        optional_returns = {'expected_net':expected, 'net_samples':net_samples}
+    elif return_type == 'both':
+        optional_returns = {'expected_wcm':expected, 'net_samples':net_samples}
     else:
-        poisson_rates = getFullPoissonRates(num_nodes, expected_net, strength_distn, total_weights)
-        for i in range(num_samples):
-            net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef)
-        expected_wcm = getExpectedNetworkFromSamples(net_samples)
-        for i in range(num_samples):
-            samples_eig_vals[i] = np.linalg.eigh(net_samples[i] - expected_wcm)[0]
-    return samples_eig_vals, expected_wcm
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised return type...')
+    if return_eig_vecs:
+        optional_returns['eig_vecs'] = samples_eig_vecs
+    return samples_eig_vals, optional_returns
+
+def getFullPoissonWeightedConfModel(num_samples, expected_net, strength_distn, total_weights, scale_coef, has_loops, return_type, return_eig_vecs):
+    poisson_rates = getPoissonRates(expected_net, strength_distn, total_weights, has_loops=has_loops)
+    num_nodes = expected_net.shape[0]
+    net_samples = np.zeros([num_samples, num_nodes, num_nodes])
+    for i in range(num_samples):
+        net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef)
+    expected = getExpectedNetworkFromSamples(net_samples) if return_type == ['expected', 'both'] else expected_net
+    samples_eig_vals = np.zeros([num_samples, num_nodes])
+    samples_eig_vecs = np.zeros([num_samples, num_nodes, num_nodes])
+    for i in range(num_samples):
+        samples_eig_vals[i], samples_eig_vecs[i] = np.linalg.eigh(net_samples[i] - expected)
+    if return_type == 'expected':
+        optional_returns = {'expected_wcm':expected}
+    elif return_type in 'all':
+        optional_returns = {'expected_net':expected, 'net_samples':net_samples}
+    elif return_type == 'both':
+        optional_returns = {'expected_wcm':expected, 'net_samples':net_samples}
+    else:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unrecognised return type...')
+    if return_eig_vecs:
+        optional_returns['eig_vecs'] = samples_eig_vecs
+    return samples_eig_vals, optional_returns
+
+def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=False, has_loops=False, return_type='expected', return_eig_vecs=False):
+    # return type can be 'expected', 'all', or 'both'
+    pairwise_measure_matrix = checkDirected(pairwise_measure_matrix)
+    if (pairwise_measure_matrix < 0).any():
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Weights must be positive...')
+    strength_distn = pairwise_measure_matrix.sum(axis=0) # sA
+    pairwise_measure_int, scale_coef = convertPairwiseMeasureMatrix(pairwise_measure_matrix, scale_coef = getUnifyingScaleCoef(pairwise_measure_matrix))
+    expected_net = getExpectedNetworkFromData(pairwise_measure_int) # P, matches
+    total_weights = (pairwise_measure_int.sum()/2).astype(int) # nLinks
+    if is_sparse:
+        samples_eig_vals, optional_returns = getSparsePoissonWeightedConfModel(pairwise_measure_matrix, pairwise_measure_int, num_samples, expected_net, strength_distn, total_weights, scale_coef, has_loops, return_type, return_eig_vecs)
+    else:
+        samples_eig_vals, optional_returns = getFullPoissonWeightedConfModel(num_samples, expected_net, strength_distn, total_weights, scale_coef, has_loops, return_type, return_eig_vecs)
+    return samples_eig_vals, optional_returns
 
 def getConfidenceIntervalFromStdErr(st_dev, num_samples, interval):
     if interval == 0:
@@ -201,29 +244,46 @@ def getConfidenceIntervalFromStdErr(st_dev, num_samples, interval):
         return t_val * st_dev / np.sqrt(num_samples)
 
 def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI'):
-    num_nodes = modularity_matrix.shape[0]
-    num_samples = eig_vals.shape[0]
-    if num_nodes != eig_vals.shape[1]:
+    if modularity_matrix.shape[0] != eig_vals.shape[1]:
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Eigenvalue matrix is the wrong shape...')
     mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
     mins_eig, maxs_eig = eig_vals.min(axis=1), eig_vals.max(axis=1)
     if int_type == 'CI':
         mean_mins_eig = mins_eig.mean()
-        min_confidence_ints = getConfidenceIntervalFromStdErr(mins_eig.std(), num_samples, confidence_level)
+        min_confidence_ints = getConfidenceIntervalFromStdErr(mins_eig.std(), eig_vals.shape[0], confidence_level)
         eig_lower_confidence_int = mean_mins_eig - min_confidence_ints
         mean_maxs_eig = maxs_eig.mean()
-        max_confidence_ints = getConfidenceIntervalFromStdErr(maxs_eig.std(), num_samples, confidence_level)
+        max_confidence_ints = getConfidenceIntervalFromStdErr(maxs_eig.std(), eig_vals.shape[0], confidence_level)
         eig_upper_confidence_int = mean_maxs_eig + max_confidence_ints
     elif int_type == 'PI':
         # implement this
         return 0
     else:
-        std.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
-    eig_vals_exceeding_upper_bound_inds = np.flatnonzero(mod_eig_vals >= eig_upper_confidence_int)
-    eig_vals_below_lower_bound_inds = np.flatnonzero(mod_eig_vals <= eig_lower_confidence_int)
-    exceeding_eig_space = mod_eig_vecs[eig_vals_exceeding_upper_bound_inds]
-    below_eig_space = mod_eig_vecs[eig_vals_below_lower_bound_inds]
-    return below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints]
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
+    exceeding_upper_bound_inds = np.flatnonzero(mod_eig_vals >= eig_upper_confidence_int)
+    below_lower_bound_inds = np.flatnonzero(mod_eig_vals <= eig_lower_confidence_int)
+    exceeding_eig_space = mod_eig_vecs[exceeding_upper_bound_inds]
+    below_eig_space = mod_eig_vecs[below_lower_bound_inds]
+    return below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints]
+
+def nodeRejection(modularity_matrix, eig_vals, confidence_level, eig_vecs, weight_type='linear', norm='L2', int_type='CI', bounds='upper'):
+    num_samples, num_nodes = eig_vals.shape
+    mod_eig_vals = np.linalg.eigh(modularity_matrix)[0]
+    if bounds == 'upper':
+        lowd_eig_space, lowd_indices = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)[3:5]
+    elif bounds == 'lower':
+        lowd_eig_space, lowd_indices = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)[0:2]
+    else:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
+    nPos = lowd_eig_space.shape[0]
+    if weight_type == 'none':
+        Vweighted = lowd_eig_space
+        VmodelW = eig_vecs[:,lowd_indices,:]
+    elif weight_type == 'linear':
+        Vweighted = mod_eig_vals[lowd_indices] * lowd_eig_space.T # possible dimensions problems here
+        a= [eig_vals[i, lowd_indices] * eig_vecs[i,lowd_indices,:].T for i in range(num_samples)]
+
+    return 0
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -260,9 +320,12 @@ A = problem['A'][0][0].todense().A
 data_keys = ['A', 'ixRetain', 'Comps', 'CompSizes', 'Emodel', 'ExpA', 'B']
 data = {data_keys[i]:v for i,v in enumerate(getBiggestComponent(A))} # all match
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting E-values and <P> of sparse WCM...')
-data.update({data_keys[i+len(data)]:v for i,v in enumerate(getPoissonWeightedConfModel(data['A'], 100, is_sparse=True))}) # not matching, but similar, setting seeds doesn't make them match
+wcm = getPoissonWeightedConfModel(data['A'], 100, is_sparse=True, return_eig_vecs=True)
+data['Emodel'] = wcm[0]; data['ExpA'] = wcm[1]['expected_wcm'];Vmodel = wcm[1]['eig_vecs']
 data['B'] = data['A'] - data['ExpA']
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting low dimensional space...')
-below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
-data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
-data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[0]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
+eig_vecs = Vmodel;modularity_matrix = data['B'];eig_vals = data['Emodel'];confidence_level = 0;
+# commenting out low d space lines to work on node rejection
+# below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
+# data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
+# data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[0]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
