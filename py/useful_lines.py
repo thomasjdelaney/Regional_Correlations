@@ -237,11 +237,17 @@ def getPoissonWeightedConfModel(pairwise_measure_matrix, num_samples, is_sparse=
 
 def getConfidenceIntervalFromStdErr(st_dev, num_samples, interval):
     if interval == 0:
-        return 0.0
+        if np.isscalar(st_dev):
+            return 0.0
+        else:
+            return np.repeat(0.0, st_dev.shape)
     else:
         symm_interval = 1-(1-interval)/2.0
         t_val = stats.t.ppf(symm_interval, num_samples)
         return t_val * st_dev / np.sqrt(num_samples)
+
+def getNonParaPredictionInterval(sample):
+    return 0 # implement this
 
 def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI'):
     if modularity_matrix.shape[0] != eig_vals.shape[1]:
@@ -262,28 +268,70 @@ def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI')
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
     exceeding_upper_bound_inds = np.flatnonzero(mod_eig_vals >= eig_upper_confidence_int)
     below_lower_bound_inds = np.flatnonzero(mod_eig_vals <= eig_lower_confidence_int)
-    exceeding_eig_space = mod_eig_vecs[exceeding_upper_bound_inds]
-    below_eig_space = mod_eig_vecs[below_lower_bound_inds]
+    exceeding_eig_space = mod_eig_vecs[:,exceeding_upper_bound_inds]
+    below_eig_space = mod_eig_vecs[:,below_lower_bound_inds]
     return below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints]
+
+def getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type):
+    upper_and_lower = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)
+    lowd_eig_space, lowd_indices = upper_and_lower[3:5] if bounds == 'upper' else upper_and_lower[0:2]
+    if not(bounds in ['upper', 'lower']):
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown bound!')
+    return lowd_eig_space, lowd_indices
+
+def getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals):
+    if weight_type == 'none':
+        weighted_lowd_space = lowd_eig_space
+        weighted_model_projections = eig_vecs[:,:,lowd_indices]
+    elif weight_type == 'linear':
+        weighted_lowd_space = mod_eig_vals[lowd_indices] * lowd_eig_space # Vweighted
+        weighted_model_projections = np.array([eig_vals[i, lowd_indices] * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)]) # VmodelW
+    elif weight_type == 'sqrt':
+        weighted_lowd_space = np.sqrt(mod_eig_vals[lowd_indices]) * lowd_eig_space
+        weighted_model_projections = np.array([np.sqrt(eig_vals[i, lowd_indices]) * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)])
+    else:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown weight type!')
+    return weighted_lowd_space, weighted_model_projections
+
+def getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections):
+    if norm == 'L2':
+        lowd_lengths = np.sqrt(np.power(weighted_lowd_space, 2).sum(axis=1))
+        model_lengths = np.sqrt(np.power(weighted_model_projections,2).sum(axis=2))
+    elif norm == 'L1':
+        lowd_lengths = np.abs(weighted_lowd_space).sum(axis=1)
+        model_lengths = np.abs(weighted_model_projections).sum(axis=2)
+    elif norm == 'Lmax':
+        lowd_lengths = np.abs(weighted_lowd_space).max(axis=1)
+        model_lengths = np.abs(weighted_model_projections).max(axis=2)
+    else:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown norm!')
+    return lowd_lengths, model_lengths
 
 def nodeRejection(modularity_matrix, eig_vals, confidence_level, eig_vecs, weight_type='linear', norm='L2', int_type='CI', bounds='upper'):
     num_samples, num_nodes = eig_vals.shape
     mod_eig_vals = np.linalg.eigh(modularity_matrix)[0]
-    if bounds == 'upper':
-        lowd_eig_space, lowd_indices = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)[3:5]
-    elif bounds == 'lower':
-        lowd_eig_space, lowd_indices = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)[0:2]
+    lowd_eig_space, lowd_indices = getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type)
+    weighted_lowd_space, weighted_model_projections = getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals)
+    lowd_lengths, model_lengths = getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections)
+    reject_dict = {}
+    reject_dict['mModel'] = model_lengths.mean(axis=0)
+    if int_type == 'CI':
+        reject_dict['CIModel'] = getConfidenceIntervalFromStdErr(model_lengths.std(axis=0), num_samples, confidence_level)
+        reject_dict['difference'] = {}
+        reject_dict['difference']['raw'] = lowd_lengths - (reject_dict['mModel'] + reject_dict['CIModel'])
+        reject_dict['difference']['norm'] = reject_dict['difference']['raw'] / (reject_dict['mModel'] + reject_dict['CIModel'])
+        reject_dict['neg_difference'] = {}
+        reject_dict['neg_difference']['raw'] = lowd_lengths - (reject_dict['mModel'] - reject_dict['CIModel'])
+        reject_dict['neg_difference']['norm'] = reject_dict['neg_difference']['raw'] / (reject_dict['mModel'] - reject_dict['CIModel'])
+    elif int_type == 'PI':
+        # implement this
+        return 0
     else:
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
-    nPos = lowd_eig_space.shape[0]
-    if weight_type == 'none':
-        Vweighted = lowd_eig_space
-        VmodelW = eig_vecs[:,lowd_indices,:]
-    elif weight_type == 'linear':
-        Vweighted = mod_eig_vals[lowd_indices] * lowd_eig_space.T # possible dimensions problems here
-        a= [eig_vals[i, lowd_indices] * eig_vecs[i,lowd_indices,:].T for i in range(num_samples)]
-
-    return 0
+    reject_dict['ixSignal'] = np.flatnonzero(reject_dict['difference']['raw'] > 0)
+    reject_dict['ixNoise'] = np.flatnonzero(reject_dict['difference']['raw'] <= 0)
+    reject_dict['ixNegative'] = np.flatnonzero(reject_dict['neg_difference']['raw'] <= 0)
+    return d
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
