@@ -247,7 +247,14 @@ def getConfidenceIntervalFromStdErr(st_dev, num_samples, interval):
         return t_val * st_dev / np.sqrt(num_samples)
 
 def getNonParaPredictionInterval(sample):
-    return 0 # implement this
+    num_data_points = sample.size
+    cutoff = int(num_data_points/2.0)
+    ordered_sample = np.sort(sample)
+    prediction_intervals = np.zeros([cutoff, 3])
+    for i in range(cutoff):
+        pi = (1 - 2*(i+1) / (num_data_points + 1.0))
+        prediction_intervals[i,:] = [pi, ordered_sample[i], ordered_sample[num_data_points - 1 - i]]
+    return prediction_intervals
 
 def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI'):
     if modularity_matrix.shape[0] != eig_vals.shape[1]:
@@ -262,8 +269,17 @@ def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI')
         max_confidence_ints = getConfidenceIntervalFromStdErr(maxs_eig.std(), eig_vals.shape[0], confidence_level)
         eig_upper_confidence_int = mean_maxs_eig + max_confidence_ints
     elif int_type == 'PI':
-        # implement this
-        return 0
+        if 1 == np.mod(maxs_eig.size, 2):
+            prediction_intervals_min, prediction_intervals_max = getNonParaPredictionInterval(mins_eig), getNonParaPredictionInterval(maxs_eig)
+        else:
+            prediction_intervals_min, prediction_intervals_max = getNonParaPredictionInterval(mins_eig[0:-1]), getNonParaPredictionInterval(maxs_eig[0:-1])
+        try:
+            mean_mins_eig, min_confidence_ints = prediction_intervals_min[prediction_intervals_min[:,0] == confidence_level, 1:3][0]
+            mean_maxs_eig, max_confidence_ints = prediction_intervals_max[prediction_intervals_max[:,0] == confidence_level, 1:3][0]
+            eig_upper_confidence_int = prediction_intervals_max[prediction_intervals_max[:,0] == confidence_level, 2][0]
+            eig_lower_confidence_int = prediction_intervals_min[prediction_intervals_min[:,0] == confidence_level, 1][0]
+        except:
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Cannot find specified prediction interval!')
     else:
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
     exceeding_upper_bound_inds = np.flatnonzero(mod_eig_vals >= eig_upper_confidence_int)
@@ -272,66 +288,76 @@ def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI')
     below_eig_space = mod_eig_vecs[:,below_lower_bound_inds]
     return below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints]
 
-def getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type):
-    upper_and_lower = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)
-    lowd_eig_space, lowd_indices = upper_and_lower[3:5] if bounds == 'upper' else upper_and_lower[0:2]
-    if not(bounds in ['upper', 'lower']):
-        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown bound!')
-    return lowd_eig_space, lowd_indices
-
-def getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals):
-    if weight_type == 'none':
-        weighted_lowd_space = lowd_eig_space
-        weighted_model_projections = eig_vecs[:,:,lowd_indices]
-    elif weight_type == 'linear':
-        weighted_lowd_space = mod_eig_vals[lowd_indices] * lowd_eig_space # Vweighted
-        weighted_model_projections = np.array([eig_vals[i, lowd_indices] * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)]) # VmodelW
-    elif weight_type == 'sqrt':
-        weighted_lowd_space = np.sqrt(mod_eig_vals[lowd_indices]) * lowd_eig_space
-        weighted_model_projections = np.array([np.sqrt(eig_vals[i, lowd_indices]) * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)])
-    else:
-        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown weight type!')
-    return weighted_lowd_space, weighted_model_projections
-
-def getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections):
-    if norm == 'L2':
-        lowd_lengths = np.sqrt(np.power(weighted_lowd_space, 2).sum(axis=1))
-        model_lengths = np.sqrt(np.power(weighted_model_projections,2).sum(axis=2))
-    elif norm == 'L1':
-        lowd_lengths = np.abs(weighted_lowd_space).sum(axis=1)
-        model_lengths = np.abs(weighted_model_projections).sum(axis=2)
-    elif norm == 'Lmax':
-        lowd_lengths = np.abs(weighted_lowd_space).max(axis=1)
-        model_lengths = np.abs(weighted_model_projections).max(axis=2)
-    else:
-        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown norm!')
-    return lowd_lengths, model_lengths
-
 def nodeRejection(modularity_matrix, eig_vals, confidence_level, eig_vecs, weight_type='linear', norm='L2', int_type='CI', bounds='upper'):
+
+    def getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type):
+        upper_and_lower = getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type=int_type)
+        lowd_eig_space, lowd_indices = upper_and_lower[3:5] if bounds == 'upper' else upper_and_lower[0:2]
+        if not(bounds in ['upper', 'lower']):
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown bound!')
+        return lowd_eig_space, lowd_indices
+
+    def getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals):
+        if weight_type == 'none':
+            weighted_lowd_space = lowd_eig_space
+            weighted_model_projections = eig_vecs[:,:,lowd_indices]
+        elif weight_type == 'linear':
+            weighted_lowd_space = mod_eig_vals[lowd_indices] * lowd_eig_space # Vweighted
+            weighted_model_projections = np.array([eig_vals[i, lowd_indices] * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)]) # VmodelW
+        elif weight_type == 'sqrt':
+            weighted_lowd_space = np.sqrt(mod_eig_vals[lowd_indices]) * lowd_eig_space
+            weighted_model_projections = np.array([np.sqrt(eig_vals[i, lowd_indices]) * eig_vecs[i,:,lowd_indices].T for i in range(num_samples)])
+        else:
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown weight type!')
+        return weighted_lowd_space, weighted_model_projections
+
+    def getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections):
+        if norm == 'L2':
+            lowd_lengths = np.sqrt(np.power(weighted_lowd_space, 2).sum(axis=1))
+            model_lengths = np.sqrt(np.power(weighted_model_projections,2).sum(axis=2)) # VmodelL
+        elif norm == 'L1':
+            lowd_lengths = np.abs(weighted_lowd_space).sum(axis=1)
+            model_lengths = np.abs(weighted_model_projections).sum(axis=2)
+        elif norm == 'Lmax':
+            lowd_lengths = np.abs(weighted_lowd_space).max(axis=1)
+            model_lengths = np.abs(weighted_model_projections).max(axis=2)
+        else:
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown norm!')
+        return lowd_lengths, model_lengths
+
     num_samples, num_nodes = eig_vals.shape
     mod_eig_vals = np.linalg.eigh(modularity_matrix)[0]
     lowd_eig_space, lowd_indices = getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type)
     weighted_lowd_space, weighted_model_projections = getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals)
     lowd_lengths, model_lengths = getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections)
     reject_dict = {}
-    reject_dict['mModel'] = model_lengths.mean(axis=0)
+    reject_dict['m_model'] = model_lengths.mean(axis=0)
     if int_type == 'CI':
-        reject_dict['CIModel'] = getConfidenceIntervalFromStdErr(model_lengths.std(axis=0), num_samples, confidence_level)
-        reject_dict['difference'] = {}
-        reject_dict['difference']['raw'] = lowd_lengths - (reject_dict['mModel'] + reject_dict['CIModel'])
-        reject_dict['difference']['norm'] = reject_dict['difference']['raw'] / (reject_dict['mModel'] + reject_dict['CIModel'])
-        reject_dict['neg_difference'] = {}
-        reject_dict['neg_difference']['raw'] = lowd_lengths - (reject_dict['mModel'] - reject_dict['CIModel'])
-        reject_dict['neg_difference']['norm'] = reject_dict['neg_difference']['raw'] / (reject_dict['mModel'] - reject_dict['CIModel'])
+        reject_dict['CI_model'] = getConfidenceIntervalFromStdErr(model_lengths.std(axis=0), num_samples, confidence_level)
+        reject_dict['difference'] = {}; reject_dict['neg_difference'] = {}
+        reject_dict['difference']['raw'] = lowd_lengths - (reject_dict['m_model'] + reject_dict['CI_model'])
+        reject_dict['difference']['norm'] = reject_dict['difference']['raw'] / (reject_dict['m_model'] + reject_dict['CI_model'])
+        reject_dict['neg_difference']['raw'] = lowd_lengths - (reject_dict['m_model'] - reject_dict['CI_model'])
+        reject_dict['neg_difference']['norm'] = reject_dict['neg_difference']['raw'] / (reject_dict['m_model'] - reject_dict['CI_model'])
     elif int_type == 'PI':
-        # implement this
-        return 0
+        reject_dict['PI_model'] = np.zeros([num_nodes, 2])
+        for i in range(num_nodes):
+            prediction_intervals = getNonParaPredictionInterval(model_lengths[:,i]) if 1 == np.mod(model_lengths.shape[0], 2) else getNonParaPredictionInterval(model_lengths[0:-1,i])
+            try:
+                reject_dict['PI_model'][i,:] = prediction_intervals[prediction_intervals[:,0] == confidence_level, 1:3][0]
+            except:
+                sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Cannot find specified prediction interval!')
+        reject_dict['difference'] = {}; reject_dict['neg_difference'] = {}
+        reject_dict['difference']['raw'] = lowd_lengths - reject_dict['PI_model'][:,1]
+        reject_dict['difference']['norm'] = reject_dict['difference']['raw'] / reject_dict['PI_model'][:,1]
+        reject_dict['neg_difference']['raw'] = lowd_lengths - reject_dict['PI_model'][:,0]
+        reject_dict['neg_difference']['raw'] = lowd_lengths / reject_dict['PI_model'][:,0]
     else:
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown interval type!')
-    reject_dict['ixSignal'] = np.flatnonzero(reject_dict['difference']['raw'] > 0)
-    reject_dict['ixNoise'] = np.flatnonzero(reject_dict['difference']['raw'] <= 0)
-    reject_dict['ixNegative'] = np.flatnonzero(reject_dict['neg_difference']['raw'] <= 0)
-    return d
+    reject_dict['signal_inds'] = np.flatnonzero(reject_dict['difference']['raw'] > 0)
+    reject_dict['noise_inds'] = np.flatnonzero(reject_dict['difference']['raw'] <= 0)
+    reject_dict['neg_signal_inds'] = np.flatnonzero(reject_dict['neg_difference']['raw'] <= 0)
+    return reject_dict
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -371,8 +397,19 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting E-values and <P> of s
 wcm = getPoissonWeightedConfModel(data['A'], 100, is_sparse=True, return_eig_vecs=True)
 data['Emodel'] = wcm[0]; data['ExpA'] = wcm[1]['expected_wcm'];Vmodel = wcm[1]['eig_vecs']
 data['B'] = data['A'] - data['ExpA']
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting low dimensional space...')
-eig_vecs = Vmodel;modularity_matrix = data['B'];eig_vals = data['Emodel'];confidence_level = 0;
+print(dt.datetime.now().isoformat() + ' INFO: ' + 'Rejecting nodes...')
+reject_dict = nodeRejection(data['B'], data['Emodel'], 0, Vmodel, weight_type='linear', norm='L2', int_type='CI', bounds='upper') # extra signal nodes compared to Matlab version
+data['Asignal'] = data['A'][reject_dict['signal_inds']][:,reject_dict['signal_inds']]
+new_keys = ['Asignal_comp', 'signal_ixRetain', 'SignalComps', 'SignalComp_sizes']
+data.update({new_keys[i]:v for i,v in enumerate(getBiggestComponent(data['Asignal']))})
+data['ixSignal_comp'] = reject_dict['signal_inds'][data['signal_ixRetain']]
+K = data['Asignal_comp'].sum(axis=0)
+ixLeaves = np.flatnonzero(K==1)
+ixKeep = np.flatnonzero(K > 1)
+data['ixSignal_Final'] = data['ixSignal_comp'][ixKeep]
+data['ixSignal_Leaves'] = data['ixSignal_comp'][ixLeaves]
+data['Asignal_final'] = data['Asignal_comp'][ixKeep][:,ixKeep]
+
 # commenting out low d space lines to work on node rejection
 # below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
 # data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
