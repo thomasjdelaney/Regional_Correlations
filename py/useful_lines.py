@@ -81,7 +81,7 @@ def getClusterAndMod(num_clusters, e_vectors, modularity_matrix):
     test_centres, clustering = kmeans2(whitened_vectors, init_centres)
     return clustering, getClusteringModularity(clustering, modularity_matrix)
 
-def kMeansSweep(e_vectors, modularity_matrix, reps=7):
+def oldKMeansSweep(e_vectors, modularity_matrix, reps=7):
     num_nodes, num_e_vectors = e_vectors.shape
     max_num_clusters = num_e_vectors + 1
     clustering_labels = np.zeros([num_e_vectors, num_nodes])
@@ -359,6 +359,44 @@ def nodeRejection(modularity_matrix, eig_vals, confidence_level, eig_vecs, weigh
     reject_dict['neg_signal_inds'] = np.flatnonzero(reject_dict['neg_difference']['raw'] <= 0)
     return reject_dict
 
+def kMeansSweep(e_vectors, min_groups, max_groups, reps, dims):
+    if min_groups < 2:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Minimum number of groups must be at least 2!')
+    if min_groups > max_groups:
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Minimum number of groups greater than maximum number of groups!')
+    num_nodes, num_e_vectors = e_vectors.shape
+    if (dims == 'scale') & (num_e_vectors < max_groups - 1):
+        sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Not enough embedding dimensions to scale upper bound!')
+    num_possible_groups = 1 + max_groups - min_groups
+    all_groups = np.zeros([num_nodes, reps])
+    for num_groups in range(min_groups, max_groups + 1):
+        if dims == 'all':
+            this_vector = e_vectors
+        elif dims == 'scale':
+            this_vector = e_vectors[:, num_groups-1]
+        else:
+            sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Unknown dims!')
+        for i in range(reps):
+            init_centres = cd.initialise_centres(this_vector, num_groups)
+            whitened_vectors = whiten(this_vector)
+            all_groups[:,i] = kmeans2(whitened_vectors, init_centres)[1]
+    return all_groups
+
+def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups, kmeans_reps=50, dims='all', is_explore=True):
+    if (np.diag(signal_measure_matrix) != 0).any():
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Measure matrix has self loops...')
+    if (signal_measure_matrix < 0).any():
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Measure matrix has negative values...')
+    num_nodes = signal_measure_matrix.shape[0]
+    total_unique_weight = signal_measure_matrix.sum()/2.0
+    consensus_interations = 1
+    is_converged = False
+    modularity_matrix = signal_measure_matrix - signal_expected_wcm
+    mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
+    e_vectors = mod_eig_vecs[:,1-max_groups:]
+    all_groups = kMeansSweep(e_vectors, min_groups, max_groups, kmeans_reps, dims)
+    
+
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
@@ -388,6 +426,7 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sampling from null model...')
 samples_eig_vals, null_net_samples = getPoissonWeightedConfModel(info_matrix, 100)
 
 # testing with Les Miserables data
+# node rejection here:
 m = loadmat(os.path.join(os.environ['PROJ'], 'Network_Noise_Rejection', 'Networks', 'lesmis.mat'))
 problem = m['Problem']
 A = problem['A'][0][0].todense().A
@@ -414,3 +453,14 @@ data['Asignal_final'] = data['Asignal_comp'][ixKeep][:,ixKeep]
 # below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
 # data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
 # data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[0]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
+
+# clustering part here:
+r = loadmat(os.path.join(os.environ['PROJ'], 'Network_Noise_Rejection', 'Results', 'Rejected_Lesmis.mat'))
+Data = r['Data'][0,0];
+pyData = {}; pyData['Dn'] = Data['Dn'][0][0]; pyData['ixSignal_Final'] = Data['ixSignal_Final'].flatten().astype(int)-1;
+pyData['ExpA'] = Data['ExpA']; pyData['Asignal_final'] = Data['Asignal_final'];
+(pyData['Dn'] > 0) & (pyData['ixSignal_Final'].size > 3)
+P = pyData['ExpA'][pyData['ixSignal_Final']][:, pyData['ixSignal_Final']]
+nreps=100; nLouvain = 5; is_explore = True;
+kmean_reps=50; dims='all'; is_explore=True;
+signal_measure_matrix, signal_expected_wcm, min_groups, max_groups = pyData['Asignal_final'], P, pyData['Dn'] + 1, pyData['Dn'] + 1
