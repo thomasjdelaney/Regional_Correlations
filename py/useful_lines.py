@@ -11,6 +11,7 @@ from scipy.io import loadmat
 from itertools import combinations
 from scipy.cluster.vq import whiten, kmeans2
 from scipy import stats
+from skimage.filters import threshold_otsu
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=10, type=int)
@@ -65,45 +66,6 @@ def getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measu
         symm_unc_matrix[first_index, second_index] = symm_unc_matrix[second_index, first_index] = pair_record.symm_unc_qe
         info_matrix[first_index, second_index] = info_matrix[second_index, first_index] = pair_record.mutual_info_qe
     return corr_matrix, symm_unc_matrix, info_matrix
-
-def getClusteringModularity(clustering, modularity_matrix):
-    num_nodes = clustering.size
-    num_clusters = clustering.max() + 1
-    membership_matrix = np.zeros([num_nodes, num_clusters], dtype=int)
-    for k in range(num_nodes):
-        membership_matrix[k, clustering[k]] = 1
-    modularity = np.matrix.trace(np.dot(np.dot(membership_matrix.T, modularity_matrix), membership_matrix))
-    return modularity
-
-def getClusterAndMod(num_clusters, e_vectors, modularity_matrix):
-    init_centres = cd.initialise_centres(e_vectors, num_clusters)
-    whitened_vectors = whiten(e_vectors)
-    test_centres, clustering = kmeans2(whitened_vectors, init_centres)
-    return clustering, getClusteringModularity(clustering, modularity_matrix)
-
-def oldKMeansSweep(e_vectors, modularity_matrix, reps=7):
-    num_nodes, num_e_vectors = e_vectors.shape
-    max_num_clusters = num_e_vectors + 1
-    clustering_labels = np.zeros([num_e_vectors, num_nodes])
-    Q = 0 # modularity, we want to maximise this
-    for num_clusters in range(2, max_num_clusters + 1):
-        for j in range(reps):
-            labels, modularity = getClusterAndMod(num_clusters, e_vectors, modularity_matrix)
-            if modularity > Q:
-                clustering_labels, Q  = labels, modularity
-    return clustering_labels, Q
-
-def getManyClusteringsWithMods(pairwise_measure_matrix, num_clusterings=100):
-    num_nodes = pairwise_measure_matrix.shape[0]
-    null_network = np.outer(np.sum(pairwise_measure_matrix, axis=0), np.sum(pairwise_measure_matrix, axis=1)) / np.sum(pairwise_measure_matrix)
-    modularity_matrix = pairwise_measure_matrix - null_network
-    eigenvalues, eigenvectors = np.linalg.eigh(modularity_matrix)
-    e_vectors = eigenvectors[:, eigenvalues>0]
-    clusterings = np.zeros([num_clusterings, num_nodes], dtype=int)
-    modularities = np.zeros(num_clusterings)
-    for i in range(num_clusterings):
-        clusterings[i], modularities[i] = kMeansSweep(e_vectors, modularity_matrix)
-    return clusterings, modularities
 
 def getBiggestComponent(pairwise_measure_matrix):
     comp_assign, comp_size = bct.get_components(pairwise_measure_matrix)
@@ -368,7 +330,7 @@ def kMeansSweep(e_vectors, min_groups, max_groups, reps, dims):
     if (dims == 'scale') & (num_e_vectors < max_groups - 1):
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Not enough embedding dimensions to scale upper bound!')
     num_possible_groups = 1 + max_groups - min_groups
-    all_groups = np.zeros([num_nodes, reps])
+    clusterings = np.zeros([num_nodes, reps], dtype=int)
     for num_groups in range(min_groups, max_groups + 1):
         if dims == 'all':
             this_vector = e_vectors
@@ -379,10 +341,32 @@ def kMeansSweep(e_vectors, min_groups, max_groups, reps, dims):
         for i in range(reps):
             init_centres = cd.initialise_centres(this_vector, num_groups)
             whitened_vectors = whiten(this_vector)
-            all_groups[:,i] = kmeans2(whitened_vectors, init_centres)[1]
-    return all_groups
+            clusterings[:,i] = kmeans2(whitened_vectors, init_centres)[1].astype(int) # each column is a cluster
+    return clusterings
 
-def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups, kmeans_reps=50, dims='all', is_explore=True):
+def getClusteringModularity(clustering, modularity_matrix, m=1):
+    num_nodes = clustering.size
+    num_clusters = clustering.max() + 1
+    membership_matrix = np.zeros([num_nodes, num_clusters], dtype=int)
+    for k in range(num_nodes):
+        membership_matrix[k, clustering[k]] = 1
+    modularity = np.matrix.trace(np.dot(np.dot(membership_matrix.T, modularity_matrix), membership_matrix)) / (2*m)
+    return modularity
+
+def checkConvergenceConsensus(consensus_matrix):
+    num_nodes = consensus_matrix.shape[0]
+    pair_rows, pair_cols = np.array(list(combinations(range(num_nodes),2))).T # upper triangle indices
+    consensuses = consensus_matrix[pair_rows, pair_cols]
+    bin_width = 0.1 # Otsu's method
+    if (consensuses == 1).all():
+        theta = -np.inf
+    else:
+        bin_counts, edges = np.histogram(consensuses, bins = np.arange(consensuses.min(), consensuses.max(), 0.01))
+        bin_theta = threshold_otsu(bin_counts)
+        theta = edges[bin_theta]
+    return 0
+
+def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups, kmeans_reps=100, dims='all', is_explore=True):
     if (np.diag(signal_measure_matrix) != 0).any():
         print(dt.datetime.now().isoformat() + ' WARN: ' + 'Measure matrix has self loops...')
     if (signal_measure_matrix < 0).any():
@@ -394,8 +378,17 @@ def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_gro
     modularity_matrix = signal_measure_matrix - signal_expected_wcm
     mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
     e_vectors = mod_eig_vecs[:,1-max_groups:]
-    all_groups = kMeansSweep(e_vectors, min_groups, max_groups, kmeans_reps, dims)
-    
+    kmeans_clusterings = kMeansSweep(e_vectors, min_groups, max_groups, kmeans_reps, dims) # C
+    clustering_modularities = np.array([getClusteringModularity(clustering, modularity_matrix, total_unique_weight) for clustering in kmeans_clusterings.T]) # Q
+    if (kmeans_clusterings == 0).all() | (clustering_modularities <= 0).all():
+        return 0 # return empty results
+    max_modularity = clustering_modularities.max()
+    max_mod_cluster = kmeans_clusterings.T[clustering_modularities.argmax()]
+    while not(is_converged):
+        allowed_clusterings = kmeans_clusterings[:,clustering_modularities > 0]
+        consensus_matrix = bct.agreement(allowed_clusterings) / float(kmeans_reps)
+        is_converged, consensus_clustering, threshold = checkConvergenceConsensus(consensus_matrix)
+
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
