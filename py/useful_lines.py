@@ -357,13 +357,17 @@ def checkConvergenceConsensus(consensus_matrix):
     num_nodes = consensus_matrix.shape[0]
     pair_rows, pair_cols = np.array(list(combinations(range(num_nodes),2))).T # upper triangle indices
     consensuses = consensus_matrix[pair_rows, pair_cols]
-    bin_width = 0.1 # Otsu's method
+    bin_width = 0.01 # Otsu's method
     if (consensuses == 1).all():
         theta = -np.inf
     else:
-        bin_counts, edges = np.histogram(consensuses, bins = np.arange(consensuses.min(), consensuses.max(), 0.01))
+        bin_counts, edges = np.histogram(consensuses, bins = np.arange(consensuses.min(), consensuses.max(), bin_width))
         bin_theta = threshold_otsu(bin_counts)
         theta = edges[bin_theta]
+    high_consensus = consensus_matrix.copy()
+    high_consensus[consensus_matrix < theta] = 0
+    for i in range(num_nodes):
+        print("Go through all the fucking nodes.")
     return 0
 
 def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups, kmeans_reps=100, dims='all', is_explore=True):
