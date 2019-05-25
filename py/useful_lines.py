@@ -359,16 +359,31 @@ def checkConvergenceConsensus(consensus_matrix):
     consensuses = consensus_matrix[pair_rows, pair_cols]
     bin_width = 0.01 # Otsu's method
     if (consensuses == 1).all():
-        theta = -np.inf
+        threshold = -np.inf
     else:
         bin_counts, edges = np.histogram(consensuses, bins = np.arange(consensuses.min(), consensuses.max(), bin_width))
-        bin_theta = threshold_otsu(bin_counts)
-        theta = edges[bin_theta]
+        threshold_bin = threshold_otsu(bin_counts)
+        threshold = edges[threshold_bin]
     high_consensus = consensus_matrix.copy()
-    high_consensus[consensus_matrix < theta] = 0
+    high_consensus[consensus_matrix < threshold] = 0
+    consensus_clustering = np.array([], dtype=int)
+    clustered_nodes = np.array([], dtype=int)
+    is_converged = False
+    consensus_clustering_iterations = 0
     for i in range(num_nodes):
-        print("Go through all the fucking nodes.")
-    return 0
+        if not(i in clustered_nodes): # if not already sorted
+            this_cluster = np.hstack([i, np.flatnonzero(high_consensus[i,:] > 0)])
+            # if any of the nodes in this cluster are already in a cluster, then this is not transitive
+            if np.intersect1d(clustered_nodes, this_cluster).size > 0:
+                is_converged = False
+                return is_converged, consensus_clustering, threshold
+            else:
+                is_converged = True
+            consensus_clustering = np.hstack([consensus_clustering, consensus_clustering_iterations * np.ones(this_cluster.size, dtype=int)])
+            clustered_nodes = np.hstack([clustered_nodes, this_cluster])
+            consensus_clustering_iterations += 1
+    sort_inds = np.argsort(clustered_nodes)
+    return is_converged, consensus_clustering[sort_inds], threshold
 
 def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups, kmeans_reps=100, dims='all', is_explore=True):
     if (np.diag(signal_measure_matrix) != 0).any():
@@ -391,7 +406,7 @@ def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_gro
     while not(is_converged):
         allowed_clusterings = kmeans_clusterings[:,clustering_modularities > 0]
         consensus_matrix = bct.agreement(allowed_clusterings) / float(kmeans_reps)
-        is_converged, consensus_clustering, threshold = checkConvergenceConsensus(consensus_matrix)
+        is_converged, consensus_clustering, threshold = checkConvergenceConsensus(consensus_matrix) # doesn't match. Some investigation required.
 
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
