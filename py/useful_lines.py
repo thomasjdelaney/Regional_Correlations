@@ -68,7 +68,8 @@ def getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measu
     return corr_matrix, symm_unc_matrix, info_matrix
 
 def getBiggestComponent(pairwise_measure_matrix):
-    comp_assign, comp_size = bct.get_components(pairwise_measure_matrix)
+    adjacency_matrix = (pairwise_measure_matrix > 0).astype(int)
+    comp_assign, comp_size = bct.get_components(adjacency_matrix)
     keep_indices = np.nonzero(comp_assign == comp_size.argmax() + 1)[0]
     biggest_comp = pairwise_measure_matrix[keep_indices]
     np.fill_diagonal(biggest_comp, 0)
@@ -134,6 +135,15 @@ def sampleNullNetworkSparsePoisson(strength_distn, scale_coef, total_degrees, in
         sample_net = adjacency_sample.T + adjacency_sample
     return recoverPairwiseMeasureMatrix(sample_net, scale_coef)
 
+def getDescSortedEigSpec(m):
+    if (m == m.T).all(): # check symmetric
+        eig_vals, eig_vecs = np.linalg.eigh(m)
+    else:
+        print(dt.datetime.now().isoformat() + ' WARN: ' + 'Input matrix is not symmetric...')
+        eig_vals, eig_vecs = np.linalg.eig(m)
+    desc_sort_inds = np.argsort(eig_vals)[::-1]
+    return eig_vals[desc_sort_inds], eig_vecs[desc_sort_inds]
+
 def getSparsePoissonWeightedConfModel(pairwise_measure_matrix, pairwise_measure_int, num_samples, expected_net, strength_distn, total_weights, scale_coef, has_loops, return_type, return_eig_vecs):
     num_nodes = pairwise_measure_matrix.shape[0]
     total_degrees = (pairwise_measure_matrix > 0).astype(int).sum() # K
@@ -146,7 +156,7 @@ def getSparsePoissonWeightedConfModel(pairwise_measure_matrix, pairwise_measure_
     samples_eig_vals = np.zeros([num_samples, num_nodes])
     samples_eig_vecs = np.zeros([num_samples, num_nodes, num_nodes])
     for i in range(num_samples):
-        samples_eig_vals[i], samples_eig_vecs[i] = np.linalg.eigh(net_samples[i] - expected)
+        samples_eig_vals[i], samples_eig_vecs[i] = getDescSortedEigSpec(net_samples[i] - expected)
     if return_type == 'expected':
         optional_returns = {'expected_wcm':expected}
     elif return_type in 'all':
@@ -169,7 +179,7 @@ def getFullPoissonWeightedConfModel(num_samples, expected_net, strength_distn, t
     samples_eig_vals = np.zeros([num_samples, num_nodes])
     samples_eig_vecs = np.zeros([num_samples, num_nodes, num_nodes])
     for i in range(num_samples):
-        samples_eig_vals[i], samples_eig_vecs[i] = np.linalg.eigh(net_samples[i] - expected)
+        samples_eig_vals[i], samples_eig_vecs[i] = getDescSortedEigSpec(net_samples[i] - expected)
     if return_type == 'expected':
         optional_returns = {'expected_wcm':expected}
     elif return_type in 'all':
@@ -221,7 +231,7 @@ def getNonParaPredictionInterval(sample):
 def getLowDimSpace(modularity_matrix, eig_vals, confidence_level, int_type='CI'):
     if modularity_matrix.shape[0] != eig_vals.shape[1]:
         sys.exit(dt.datetime.now().isoformat() + ' ERROR: ' + 'Eigenvalue matrix is the wrong shape...')
-    mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
+    mod_eig_vals, mod_eig_vecs = getDescSortedEigSpec(modularity_matrix)
     mins_eig, maxs_eig = eig_vals.min(axis=1), eig_vals.max(axis=1)
     if int_type == 'CI':
         mean_mins_eig = mins_eig.mean()
@@ -288,7 +298,7 @@ def nodeRejection(modularity_matrix, eig_vals, confidence_level, eig_vecs, weigh
         return lowd_lengths, model_lengths
 
     num_samples, num_nodes = eig_vals.shape
-    mod_eig_vals = np.linalg.eigh(modularity_matrix)[0]
+    mod_eig_vals = getDescSortedEigSpec(modularity_matrix)[0]
     lowd_eig_space, lowd_indices = getBoundedSpace(bounds, modularity_matrix, eig_vals, confidence_level, int_type)
     weighted_lowd_space, weighted_model_projections = getWeightedLowDSpaceProjections(weight_type, num_samples, lowd_eig_space, lowd_indices, eig_vals, eig_vecs, mod_eig_vals)
     lowd_lengths, model_lengths = getLowDModelLengths(norm, weighted_lowd_space, weighted_model_projections)
@@ -376,8 +386,8 @@ def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_gro
     consensus_interations = 1
     is_converged = False
     modularity_matrix = signal_measure_matrix - signal_expected_wcm
-    mod_eig_vals, mod_eig_vecs = np.linalg.eigh(modularity_matrix)
-    e_vectors = mod_eig_vecs[:,1-max_groups:]
+    mod_eig_vals, mod_eig_vecs = getDescSortedEigSpec(modularity_matrix)
+    e_vectors = mod_eig_vecs[:,0:max_groups]
     kmeans_clusterings = kMeansSweep(e_vectors, min_groups, max_groups, kmeans_reps, dims) # C
     clustering_modularities = np.array([getClusteringModularity(clustering, modularity_matrix, total_unique_weight) for clustering in kmeans_clusterings.T]) # Q
     if (kmeans_clusterings == 0).all() | (clustering_modularities <= 0).all():
@@ -443,9 +453,9 @@ data['ixSignal_Leaves'] = data['ixSignal_comp'][ixLeaves]
 data['Asignal_final'] = data['Asignal_comp'][ixKeep][:,ixKeep]
 
 # commenting out low d space lines to work on node rejection
-# below_eig_space, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
-# data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[0]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
-# data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[0]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
+# below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints] = getLowDimSpace(data['B'], data['Emodel'], 0)
+# data['Dspace'] = exceeding_eig_space; data['Dn'] = exceeding_eig_space.shape[1]; data['EigEst'] = [mean_maxs_eig, max_confidence_ints];
+# data['Nspace'] = below_eig_space; data['Dneg'] = below_eig_space.shape[1]; data['NEigEst'] = [mean_mins_eig, min_confidence_ints];
 
 # clustering part here:
 r = loadmat(os.path.join(os.environ['PROJ'], 'Network_Noise_Rejection', 'Results', 'Rejected_Lesmis.mat'))
