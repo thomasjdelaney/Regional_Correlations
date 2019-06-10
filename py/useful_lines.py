@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from scipy.io import loadmat
 from itertools import combinations
 from scipy import stats
@@ -477,6 +478,46 @@ def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_gro
                     clustering_modularities = np.array([getClusteringModularity(clustering, modularity_matrix, total_unique_weight) for clustering in kmeans_clusterings.T])
     return max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations
 
+def sortMatrixBySimilarity(clustering, measure_matrix):
+    num_nodes = clustering.size
+    groups = np.unique(clustering)
+    num_groups = labels.size
+    similarity_in = np.zeros(num_nodes); similarity_out = np.zeros(num_nodes); similarity_groups = np.zeros(num_groups)
+    for i in range(num_nodes):
+        this_group = clustering[i]
+        in_group_clusters = np.setdiff1d(np.flatnonzero(clustering == this_group), this_group)
+        out_group_clusters = np.flatnonzero(clustering != this_group)
+        if in_group_clusters.size > 0:
+            similarity_in[i] = measure_matrix[i, in_group_clusters].sum() / float(in_group_clusters.size)
+        similarity_out[i] = measure_matrix[i, out_group_clusters].sum() / float(out_group_clusters.size)
+    for g in groups:
+        group_clusters = np.flatnonzero(clustering == g)
+        similarity_groups[g] = similarity_in[group_clusters].sum() / float(group_clusters.size)
+    sorted_similarity_inds = np.argsort(similarity_groups)
+    return groups[sorted_similarity_inds], similarity_groups, similarity_in, similarity_out
+
+def plotClusterMap(measure_matrix, clustering, is_sort=True):
+    if is_sort:
+        sorted_nodes = np.array([], dtype=int)
+        sorted_clustering = np.array([], dtype=int)
+        sorted_groups, similarity_groups, similarity_in, similarity_out = sortMatrixBySimilarity(clustering, measure_matrix)
+        for g in sorted_groups:
+            group_clusters = np.flatnonzero(clustering == g)
+            group_clusters_similarity = similarity_in[group_clusters]
+            sorted_similarity_inds = np.argsort(group_clusters_similarity)
+            sorted_nodes = np.concatenate([sorted_nodes, group_clusters[sorted_similarity_inds]])
+            sorted_clustering = np.concatenate([sorted_clustering, np.repeat(g, group_clusters.size)])
+    else:
+        sorted_clustering_inds = np.argsort(clustering)
+        sorted_clustering = clustering[sorted_clustering_inds]
+        sorted_nodes = sorted_clustering_inds
+    cluster_changes = np.hstack([0, np.flatnonzero(np.diff(sorted_clustering) != 0), clustering.size])
+    fig = plt.figure()
+    plt.matshow(measure_matrix[sorted_nodes][:,sorted_nodes], cmap=cm.Blues_r)
+    # colour bar
+    # square
+    # lines indicating clusters
+    return 0
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -545,3 +586,4 @@ pyData['ExpA'] = Data['ExpA']; pyData['Asignal_final'] = Data['Asignal_final'];
 P = pyData['ExpA'][pyData['ixSignal_Final']][:, pyData['ixSignal_Final']]
 signal_measure_matrix, signal_expected_wcm, min_groups, max_groups = pyData['Asignal_final'], P, pyData['Dn'] + 1, pyData['Dn'] + 1
 max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups)
+measure_matrix = signal_measure_matrix; clustering = consensus_clustering;
