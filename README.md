@@ -2,6 +2,8 @@ A repository for calculating the pairwise correlations between neural firing dat
 
 Note that the neuropixels data shared by Nick Steinmetz is the databased used here. But it is not contained within the repo, because it takes up too much space.
 
+We used  Dr. Mark Humphries 'Network Noise Rejection' community detection method for detecting communities. Read more about that here: https://github.com/mdhumphries/NetworkNoiseRejection
+
 ### correlation_matrix.py
 
 Calculate pairwise correlations between given choice of neurons.
@@ -63,8 +65,4 @@ For carrying out statistical tests on the samples in the csv directory.
 
 ###### TO DO:
 - update the README.md
-- add symmetric uncertainty to the pdf
-- correlations vs mutual information
-- community detection
-- population coupling (Okun)
-- big correlation matrices
+- move everything in useful lines to its own project

@@ -7,6 +7,7 @@ import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.io import loadmat
 from itertools import combinations
 from scipy import stats
@@ -481,7 +482,7 @@ def consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_gro
 def sortMatrixBySimilarity(clustering, measure_matrix):
     num_nodes = clustering.size
     groups = np.unique(clustering)
-    num_groups = labels.size
+    num_groups = groups.size
     similarity_in = np.zeros(num_nodes); similarity_out = np.zeros(num_nodes); similarity_groups = np.zeros(num_groups)
     for i in range(num_nodes):
         this_group = clustering[i]
@@ -496,7 +497,7 @@ def sortMatrixBySimilarity(clustering, measure_matrix):
     sorted_similarity_inds = np.argsort(similarity_groups)
     return groups[sorted_similarity_inds], similarity_groups, similarity_in, similarity_out
 
-def plotClusterMap(measure_matrix, clustering, is_sort=True):
+def plotClusterMap(measure_matrix, clustering, is_sort=True, node_labels=np.array([None])):
     if is_sort:
         sorted_nodes = np.array([], dtype=int)
         sorted_clustering = np.array([], dtype=int)
@@ -511,13 +512,19 @@ def plotClusterMap(measure_matrix, clustering, is_sort=True):
         sorted_clustering_inds = np.argsort(clustering)
         sorted_clustering = clustering[sorted_clustering_inds]
         sorted_nodes = sorted_clustering_inds
-    cluster_changes = np.hstack([0, np.flatnonzero(np.diff(sorted_clustering) != 0), clustering.size])
-    fig = plt.figure()
-    plt.matshow(measure_matrix[sorted_nodes][:,sorted_nodes], cmap=cm.Blues_r)
-    # colour bar
-    # square
-    # lines indicating clusters
-    return 0
+    cluster_changes = np.hstack([-1, np.flatnonzero(np.diff(sorted_clustering[::-1]) != 0), clustering.size-1]) + 0.5
+    plt.figure()
+    ax = plt.gca()
+    im = ax.matshow(measure_matrix[sorted_nodes[::-1]][:,sorted_nodes[::-1]], cmap=cm.Blues_r)
+    for i in range(cluster_changes.size-2):
+        ax.plot([cluster_changes[i+1], cluster_changes[i+1]], [cluster_changes[i], cluster_changes[i+2]], color='white', linewidth=2.0)
+        ax.plot([cluster_changes[i], cluster_changes[i+2]], [cluster_changes[i+1], cluster_changes[i+1]], color='white', linewidth=2.0)
+    if (node_labels != None).all():
+        plt.yticks(range(node_labels.size), node_labels[sorted_nodes[::-1]])
+        plt.xticks([])
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    plt.colorbar(im, cax=cax)
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
@@ -586,4 +593,4 @@ pyData['ExpA'] = Data['ExpA']; pyData['Asignal_final'] = Data['Asignal_final'];
 P = pyData['ExpA'][pyData['ixSignal_Final']][:, pyData['ixSignal_Final']]
 signal_measure_matrix, signal_expected_wcm, min_groups, max_groups = pyData['Asignal_final'], P, pyData['Dn'] + 1, pyData['Dn'] + 1
 max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = consensusCommunityDetect(signal_measure_matrix, signal_expected_wcm, min_groups, max_groups)
-measure_matrix = signal_measure_matrix; clustering = consensus_clustering;
+measure_matrix = signal_measure_matrix; clustering = consensus_clustering; node_labels = nodelabels[pyData['ixSignal_Final']]
