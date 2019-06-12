@@ -117,7 +117,7 @@ def getPoissonRates(expected_weights, strength_distn, weight_to_place, has_loops
     poisson_rates[pair_rows, pair_cols] = weight_to_place * prob_is_link # the rate calculation and indexing all work perfectly, checked
     return poisson_rates
 
-def sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef):
+def sampleNullNetworkFullPoisson(poisson_rates, scale_coef):
     sample_net = np.random.poisson(poisson_rates)
     sample_net = sample_net.T + sample_net # symmetrise
     sample_net = recoverPairwiseMeasureMatrix(sample_net, scale_coef)
@@ -176,7 +176,7 @@ def getFullPoissonWeightedConfModel(num_samples, expected_net, strength_distn, t
     num_nodes = expected_net.shape[0]
     net_samples = np.zeros([num_samples, num_nodes, num_nodes])
     for i in range(num_samples):
-        net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, expected_net, scale_coef)
+        net_samples[i] = sampleNullNetworkFullPoisson(poisson_rates, scale_coef)
     expected = getExpectedNetworkFromSamples(net_samples) if return_type == ['expected', 'both'] else expected_net
     samples_eig_vals = np.zeros([num_samples, num_nodes])
     samples_eig_vecs = np.zeros([num_samples, num_nodes, num_nodes])
