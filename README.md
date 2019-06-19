@@ -65,4 +65,4 @@ For carrying out statistical tests on the samples in the csv directory.
 
 ###### TO DO:
 - update the README.md
-- move everything in useful lines to its own project
+- Sparsify data, using percentiles, or shuffling, or something
