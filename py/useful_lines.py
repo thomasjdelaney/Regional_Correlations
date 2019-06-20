@@ -1,6 +1,7 @@
 import os, sys, argparse
 if float(sys.version[:3])<3.0:
     execfile(os.path.join(os.environ['HOME'], '.pystartup'))
+import glob
 import numpy as np
 import pandas as pd
 import datetime as dt
@@ -18,7 +19,7 @@ parser.add_argument('-j', '--stim_id', help='A stim_id for use in the correlatio
 parser.add_argument('-s', '--numpy_seed', help='The seed to use to initialise numpy.random.', default=1798, type=int)
 parser.add_argument('-x', '--prefix', help='A prefix for the image file names.', type=str, default='')
 parser.add_argument('-a', '--percentile', help='Percentile to use when sparsifying measure matrix', type=float, default=50.0)
-parser.add_argument('-f', '--numpy_file', help='If used, indicates a file containing the pairwise measurements.', type=str, default='')
+parser.add_argument('-f', '--numpy_file_prefix', help='If used, indicates a set of files containing saved data.', type=str, default='')
 parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, action='store_true')
 args = parser.parse_args()
 
@@ -79,20 +80,26 @@ print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
 stim_info = loadmat(os.path.join(mat_dir, 'experiment2stimInfo.mat'))
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading trials info...')
 trials_info = rc.getStimTimesIds(stim_info, args.stim_id)
-# if args.numpy_file != '':
-#     pairwise_measurements = np.load(os.path.join(npy_dir, args.numpy_file), encoding = 'latin1', allow_pickle=True)
-#     cell_ids =
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Selecting repsonding cells...')
-cell_ids = rc.getRandomSelection(cell_info, trials_info, args.number_of_cells, args.group, args.probe, args.region, posterior_dir, frontal_dir, id_adjustor, is_weak=False, strong_threshold=0.01)
-spike_time_dict = rc.loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor)
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating experiment frame...')
-exp_frame = rc.getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, args.bin_width)
-region_sorted_cell_ids = exp_frame['cell_id'].unique()
-pairs = np.array(list(combinations(region_sorted_cell_ids, 2)))
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and information...')
-pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
-corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
+if args.numpy_file_prefix != '':
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading data from disc...')
+    region_sorted_cell_ids = np.load(os.path.join(npy_dir, args.numpy_file_prefix + '_responding_sorted_cell_ids.npy'), allow_pickle=True)
+    pairs = np.load(os.path.join(npy_dir, args.numpy_file_prefix + '_responding_pairs.npy'), allow_pickle=True)
+    pairwise_measurements = pd.read_pickle(os.path.join(npy_dir, args.numpy_file_prefix + '_pairwise_measurements.pkl'))
+    info_matrix = np.load(os.path.join(npy_dir, args.numpy_file_prefix + '_info_matrix.npy'), allow_pickle=True)
+    corr_matrix = np.load(os.path.join(npy_dir, args.numpy_file_prefix + '_corr_matrix.npy'), allow_pickle=True)
+    symm_unc_matrix = np.load(os.path.join(npy_dir, args.numpy_file_prefix + '_symm_unc_matrix.npy'), allow_pickle=True)
+else:
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Selecting repsonding cells...')
+    cell_ids = rc.getRandomSelection(cell_info, trials_info, args.number_of_cells, args.group, args.probe, args.region, posterior_dir, frontal_dir, id_adjustor, is_weak=False, strong_threshold=0.01)
+    spike_time_dict = rc.loadSpikeTimes(posterior_dir, frontal_dir, cell_ids, id_adjustor)
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating experiment frame...')
+    exp_frame = rc.getExperimentFrame(cell_ids, trials_info, spike_time_dict, cell_info, args.bin_width)
+    region_sorted_cell_ids = exp_frame['cell_id'].unique()
+    pairs = np.array(list(combinations(region_sorted_cell_ids, 2)))
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Calculating correlation and information...')
+    pairwise_measurements = getPairwiseMeasurementFrame(pairs, exp_frame, cell_info, args.stim_id, args.bin_width)
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
+    corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
 
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sparsifying info matrix...')
 info_matrix = sparsifyMeasureMatrix(info_matrix, args.percentile)
@@ -133,6 +140,10 @@ signal_final_cell_info = cell_info.loc[signal_final_cell_ids]
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Detecting communities...')
 signal_expected_wcm = expected_wcm[signal_final_inds][:, signal_final_inds]
 max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = nnr.consensusCommunityDetect(final_weighted_adjacency_matrix, signal_expected_wcm, exceeding_space_dims+1, exceeding_space_dims+1)
-nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True, node_labels=signal_final_cell_info['region'].values)
+nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True)
+plt.figure()
+nnr.plotModEigValsVsNullEigHist(network_modularity_matrix, samples_eig_vals)
+plt.figure()
+nnr.plotModEigValsVsNullEig(network_modularity_matrix, mean_mins_eig, mean_maxs_eig)
 plt.show(block=False)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
