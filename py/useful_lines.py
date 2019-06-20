@@ -140,7 +140,7 @@ signal_final_cell_info = cell_info.loc[signal_final_cell_ids]
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Detecting communities...')
 signal_expected_wcm = expected_wcm[signal_final_inds][:, signal_final_inds]
 max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = nnr.consensusCommunityDetect(final_weighted_adjacency_matrix, signal_expected_wcm, exceeding_space_dims+1, exceeding_space_dims+1)
-nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True)
+nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True) # node_labels=signal_final_cell_info['region'].values
 plt.figure()
 nnr.plotModEigValsVsNullEigHist(network_modularity_matrix, samples_eig_vals)
 plt.figure()
