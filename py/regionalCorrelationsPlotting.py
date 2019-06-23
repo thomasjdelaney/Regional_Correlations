@@ -26,10 +26,13 @@ def plotRasterWithCellsAndTimes(region_sorted_cell_ids, spike_time_dict, start_t
             plt.vlines(x=spike_times, ymin=i+0.05, ymax=i+0.95, color=region_to_colour[relevant_cell_info.loc[cell_id]['region']], alpha=1.0)
     plt.ylim([0, num_cells])
     for trial_info in relevant_trials_info:
-        trial_start = trial_info[0]; trial_stop = trial_info[1];
-        plt.fill_between(x=[trial_start, trial_stop], y1=0, y2=num_cells, color='black', alpha=0.2)
+        if trial_info[2] != 17:
+            trial_start = trial_info[0]; trial_stop = trial_info[1];
+            plt.fill_between(x=[trial_start, trial_stop], y1=0, y2=num_cells, color='black', alpha=0.2)
     plt.xlabel('Time (s)', fontsize='large')
     plt.xlim([start_time, stop_time])
-    plt.yticks(0.5+np.arange(num_cells), relevant_cell_info['region'].values, fontsize='large')
+    y_ticks = np.array([np.flatnonzero(relevant_cell_info['region'] == r).mean() for r in relevant_cell_info['region'].unique()])
+    tick_labels = np.array([r.replace('_', ' ').capitalize() for r in relevant_cell_info['region'].unique()])
+    plt.yticks(y_ticks, tick_labels, fontsize='large')
     plt.tight_layout()
 
