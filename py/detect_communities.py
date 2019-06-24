@@ -1,3 +1,6 @@
+"""
+Script for detecting communities in the networks created by measuring correlations and mutual information.
+"""
 import os, sys, argparse
 if float(sys.version[:3])<3.0:
     execfile(os.path.join(os.environ['HOME'], '.pystartup'))
@@ -74,6 +77,66 @@ def sparsifyMeasureMatrix(measure_matrix, percentile):
     measure_matrix[measure_matrix < threshold] = 0
     return measure_matrix
 
+def runNNRSaveFigsData(measure_matrix, measure_type): # measure type, 'info' or 'corr'
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sparsifying info matrix...')
+    measure_matrix = sparsifyMeasureMatrix(measure_matrix, args.percentile)
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Checking the data is symmetric...')
+    measure_matrix = nnr.checkDirected(measure_matrix)
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting the biggest component...')
+    measure_matrix, keep_indices, comp_assign, comp_size = nnr.getBiggestComponent(measure_matrix)
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sampling from null model...')
+    samples_eig_vals, optional_returns = nnr.getPoissonWeightedConfModel(measure_matrix, 100, return_eig_vecs=True, is_sparse=True)
+    samples_eig_vecs = optional_returns['eig_vecs']
+    expected_wcm = optional_returns['expected_wcm']
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Constructing network modularity matrix...')
+    network_modularity_matrix = measure_matrix - expected_wcm
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting low dimensional space...')
+    below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints] = nnr.getLowDimSpace(network_modularity_matrix, samples_eig_vals, 0, int_type='CI')
+    exceeding_space_dims = exceeding_eig_space.shape[1]
+    below_space_dims = below_eig_space.shape[1]
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Splitting network into noise and signal...')
+    reject_dict = nnr.nodeRejection(network_modularity_matrix, samples_eig_vals, 0, samples_eig_vecs, weight_type='linear', norm='L2', int_type='CI', bounds='upper')
+    signal_weighted_adjacency_matrix = measure_matrix[reject_dict['signal_inds']][:, reject_dict['signal_inds']]
+
+    if reject_dict['signal_inds'].size == 0:
+        noise_final_cell_info = cell_info.loc[region_sorted_cell_ids[reject_dict['noise_inds']]]
+        noise_final_cell_info.to_pickle(os.path.join(npy_dir, measure_type, 'noise_final_cell_info_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.pkl'))
+        return 0
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Constructing final signal network without leaves...')
+    biggest_signal_comp, biggest_signal_inds, biggest_signal_assing, biggest_signal_size = nnr.getBiggestComponent(signal_weighted_adjacency_matrix)
+    signal_comp_inds = reject_dict['signal_inds'][biggest_signal_inds]
+    degree_distn = (biggest_signal_comp > 0).sum(axis=0)
+    leaf_inds = np.flatnonzero(degree_distn == 1)
+    keep_inds = np.flatnonzero(degree_distn > 1)
+    signal_final_inds = signal_comp_inds[keep_inds]
+    signal_leaf_inds = signal_comp_inds[leaf_inds]
+    final_weighted_adjacency_matrix = biggest_signal_comp[keep_inds][:, keep_inds]
+    signal_final_cell_ids = region_sorted_cell_ids[signal_final_inds]
+    signal_final_cell_info = cell_info.loc[signal_final_cell_ids]
+    noise_final_cell_info = cell_info.loc[region_sorted_cell_ids[reject_dict['noise_inds']]]
+
+    print(dt.datetime.now().isoformat() + ' INFO: ' + 'Detecting communities...')
+    signal_expected_wcm = expected_wcm[signal_final_inds][:, signal_final_inds]
+    max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = nnr.consensusCommunityDetect(final_weighted_adjacency_matrix, signal_expected_wcm, exceeding_space_dims+1, exceeding_space_dims+1)
+    signal_final_cell_info['consensus_cluster'] = consensus_clustering
+    nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True) # node_labels=signal_final_cell_info['region'].values
+    plt.savefig(os.path.join(image_dir, 'community_detection', measure_type, 'cons_cluster_map_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.png'))
+    plt.close()
+    nnr.plotModEigValsVsNullEigHist(network_modularity_matrix, samples_eig_vals)
+    plt.savefig(os.path.join(image_dir, 'community_detection', measure_type, 'eig_hist_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.png'))
+    plt.close()
+    nnr.plotModEigValsVsNullEig(network_modularity_matrix, mean_mins_eig, mean_maxs_eig)
+    plt.savefig(os.path.join(image_dir, 'community_detection', measure_type, 'eig_plot_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.png'))
+    plt.close()
+    signal_final_cell_info.to_pickle(os.path.join(npy_dir, measure_type, 'signal_final_cell_info_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.pkl'))
+    noise_final_cell_info.to_pickle(os.path.join(npy_dir, measure_type, 'noise_final_cell_info_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.pkl'))
+    print(dt.datetime.now().isoformat() + ' INFO: ' + measure_type.capitalize() + ' done.')
+
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
@@ -101,49 +164,6 @@ else:
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
     corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
 
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sparsifying info matrix...')
-info_matrix = sparsifyMeasureMatrix(info_matrix, args.percentile)
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Checking the data is symmetric...')
-info_matrix = nnr.checkDirected(info_matrix)
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting the biggest component...')
-info_matrix, keep_indices, comp_assign, comp_size = nnr.getBiggestComponent(info_matrix)
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Sampling from null model...')
-samples_eig_vals, optional_returns = nnr.getPoissonWeightedConfModel(info_matrix, 100, return_eig_vecs=True, is_sparse=True)
-samples_eig_vecs = optional_returns['eig_vecs']
-expected_wcm = optional_returns['expected_wcm']
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Constructing network modularity matrix...')
-network_modularity_matrix = info_matrix - expected_wcm
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Getting low dimensional space...')
-below_eig_space, below_lower_bound_inds, [mean_mins_eig, min_confidence_ints], exceeding_eig_space, exceeding_upper_bound_inds, [mean_maxs_eig, max_confidence_ints] = nnr.getLowDimSpace(network_modularity_matrix, samples_eig_vals, 0, int_type='CI')
-exceeding_space_dims = exceeding_eig_space.shape[1]
-below_space_dims = below_eig_space.shape[1]
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Splitting network into noise and signal...')
-reject_dict = nnr.nodeRejection(network_modularity_matrix, samples_eig_vals, 0, samples_eig_vecs, weight_type='linear', norm='L2', int_type='CI', bounds='upper')
-signal_weighted_adjacency_matrix = info_matrix[reject_dict['signal_inds']][:, reject_dict['signal_inds']]
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Constructing final signal network without leaves...')
-biggest_signal_comp, biggest_signal_inds, biggest_signal_assing, biggest_signal_size = nnr.getBiggestComponent(signal_weighted_adjacency_matrix)
-signal_comp_inds = reject_dict['signal_inds'][biggest_signal_inds]
-degree_distn = (biggest_signal_comp > 0).sum(axis=0)
-leaf_inds = np.flatnonzero(degree_distn == 1)
-keep_inds = np.flatnonzero(degree_distn > 1)
-signal_final_inds = signal_comp_inds[keep_inds]
-signal_leaf_inds = signal_comp_inds[leaf_inds]
-final_weighted_adjacency_matrix = biggest_signal_comp[keep_inds][:, keep_inds]
-signal_final_cell_ids = region_sorted_cell_ids[signal_final_inds]
-signal_final_cell_info = cell_info.loc[signal_final_cell_ids]
-
-print(dt.datetime.now().isoformat() + ' INFO: ' + 'Detecting communities...')
-signal_expected_wcm = expected_wcm[signal_final_inds][:, signal_final_inds]
-max_mod_cluster, max_modularity, consensus_clustering, consensus_modularity, consensus_iterations = nnr.consensusCommunityDetect(final_weighted_adjacency_matrix, signal_expected_wcm, exceeding_space_dims+1, exceeding_space_dims+1)
-nnr.plotClusterMap(final_weighted_adjacency_matrix, consensus_clustering, is_sort=True) # node_labels=signal_final_cell_info['region'].values
-plt.figure()
-nnr.plotModEigValsVsNullEigHist(network_modularity_matrix, samples_eig_vals)
-plt.figure()
-nnr.plotModEigValsVsNullEig(network_modularity_matrix, mean_mins_eig, mean_maxs_eig)
-plt.show(block=False)
+runNNRSaveFigsData(info_matrix, 'info')
+# runNNRSaveFigsData(np.abs(corr_matrix), 'corr')
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')

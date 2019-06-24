@@ -21,7 +21,7 @@ parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, ac
 args = parser.parse_args()
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['PROJ'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')

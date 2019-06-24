@@ -3,3 +3,5 @@ posterior/
 *.pyc
 csv/all_pairs.csv
 csv/strong_pairs.csv
+npy/corr/
+npy/info/
