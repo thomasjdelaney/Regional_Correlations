@@ -16,7 +16,7 @@ parser.add_argument('-d', '--debug', help='Enter debug mode.', default=False, ac
 args = parser.parse_args()
 
 # defining useful directories
-proj_dir = os.path.join(os.environ['HOME'], 'Regional_Correlations')
+proj_dir = os.path.join(os.environ['PROJ'], 'Regional_Correlations')
 py_dir = os.path.join(proj_dir, 'py')
 csv_dir = os.path.join(proj_dir, 'csv')
 mat_dir = os.path.join(proj_dir, 'mat')
@@ -49,19 +49,24 @@ def getWorkingFrame(firing_region_frame, pairwise_region_frame):
     working_pairwise = working_pairwise.merge(working_firing[['second_cell_id', 'stim_id', 'second_firing_rate']], on=['second_cell_id', 'stim_id'])
     return working_pairwise
 
-def plotMeasureVsGeomMeanForRegion(working_frame, region, measure, y_label, y_lim):
+def plotMeasureVsGeomMeanForRegion(working_frame, region, measure, y_lim, y_label='', is_tight=True, figsize=(4,3)):
     correlation = working_frame[['geometric_mean', measure]].corr().values[0,1]
     geom_max = working_frame.geometric_mean.max()
     text_y = -0.95 if measure=='corr_coef' else 0.05
-    fig = plt.figure(figsize=(4,3))
+    fig = plt.figure(figsize=figsize) if figsize != None else 0
     plt.scatter(working_frame.geometric_mean, working_frame[measure], marker='.', color=rcp.region_to_colour[region], label=region.replace('_', ' ').capitalize())
-    plt.ylabel(y_label, fontsize='large')
+    if y_label != '':
+        plt.ylabel(y_label, fontsize='x-large')
+        plt.yticks(fontsize='x-large')
+    else:
+        plt.yticks([])
     plt.ylim(y_lim)
-    plt.xlabel(r'Geometric Mean (a.u.)', fontsize='large')
+    plt.xlabel(r'Geometric Mean (a.u.)', fontsize='x-large')
+    plt.xticks(fontsize='x-large')
     plt.xlim([0, geom_max])
-    plt.legend(fontsize='large', loc='upper right')
-    plt.text(geom_max*0.75, text_y, r'$\rho=$' + str(round(correlation,2)), fontsize='large')
-    plt.tight_layout()
+    plt.legend(fontsize='x-large', loc='upper right')
+    plt.text(geom_max*0.75, text_y, r'$\rho=$' + str(round(correlation,2)), fontsize='x-large')
+    plt.tight_layout() if is_tight else 0
 
 def saveAndClose(filename, directory):
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
@@ -69,26 +74,35 @@ def saveAndClose(filename, directory):
     plt.close()
 
 def plotMeasuresVsGeomMean(working_frame, region, stim_id, prefix):
-    plotMeasureVsGeomMeanForRegion(working_frame, region, 'corr_coef', r'$r_{SC}$', [-1,1])
+    plotMeasureVsGeomMeanForRegion(working_frame, region, 'corr_coef', [-1,1], y_label=r'$r_{SC}$')
     filename = prefix + 'corr_vs_geometric_' + region + '_' + str(stim_id) + '.png'
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
     plt.savefig(os.path.join(image_dir, 'geometric_mean', filename))
     plt.close()
-    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_qe', r'$I(X;Y)$ (bits)', [0, working_frame.mutual_info_qe.max()])
+    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_qe', [0, working_frame.mutual_info_qe.max()], r'$I(X;Y)$ (bits)')
     filename = prefix + 'info_vs_geometric_' + region + '_' + str(stim_id) + '.png'
     saveAndClose(filename, 'geometric_mean')
 
-def plotInfoVsCorr(pairwise_region_frame, region, max_mi, stim_id, prefix):
-    pairwise_region_frame.plot('corr_coef', 'mutual_info_qe', kind='scatter', figsize=(4,3), grid=False, color=rcp.region_to_colour[region], label=region.replace('_', ' ').capitalize(), xlim=[-1,1], ylim=[0, max_mi])
-    p = np.polyfit(pairwise_region_frame.corr_coef, pairwise_region_frame.mutual_info_qe, 2)
+def plotInfoVsCorr(pairwise_region_frame, region, max_mi, stim_id, prefix, use_ylabel=True, is_tight=True, is_save=True, figsize=(4,3)):
+    plt.figure(figsize=figsize) if figsize != None else 0
+    plt.scatter(pairwise_region_frame.corr_coef, pairwise_region_frame.mutual_info_qe, color=rcp.region_to_colour[region], label=region.replace('_', ' ').capitalize())
+    plt.xlim([-1,1]); plt.ylim([0, max_mi]);
+    z = np.polyfit(pairwise_region_frame.corr_coef, pairwise_region_frame.mutual_info_qe, 2)
     x = np.arange(-1,1.05,0.05)
-    plt.plot(x, p[0]*np.power(x,2) + p[1]*x + p[1], color='black')
-    plt.xlabel(r'$r_{SC}$', fontsize='large')
-    plt.ylabel(r'$I(X;Y)$ (bits)', fontsize='large')
-    plt.legend(fontsize='large')
-    plt.tight_layout()
+    p = np.poly1d(z)
+    plt.plot(x, p(x), color='black', label='Quadratic fit')
+    plt.xlabel(r'$r_{SC}$', fontsize='x-large')
+    plt.xticks(fontsize='x-large')
+    if use_ylabel:
+        plt.ylabel(r'$I(X;Y)$ (bits)', fontsize='x-large')
+        plt.yticks(fontsize='x-large')
+    else:
+        plt.ylabel('')
+        plt.yticks([])
+    plt.legend(fontsize='x-large')
+    plt.tight_layout() if is_tight else 0
     filename = prefix + 'info_vs_corr_' + region + '_' + str(stim_id) + '.png'
-    saveAndClose(filename, 'mutual_info_vs_corr')
+    saveAndClose(filename, 'mutual_info_vs_corr') if is_save else 0
 
 def main():
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Starting main function...')

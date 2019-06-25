@@ -37,15 +37,20 @@ sys.path.append(py_dir)
 import regionalCorrelations as rc
 import regionalCorrelationsPlotting as rcp
 
-def plotRegionalHistogram(region_stim_bin_frame, region, x_col, x_label, x_lim, y_lim, use_title=False):
-    region_stim_bin_frame[x_col].hist(grid=False, bins=25, color=rcp.region_to_colour[region], range=x_lim, label=region.replace('_', ' ').capitalize(), figsize=(4,3))
+def plotRegionalHistogram(region_stim_bin_frame, region, x_col, x_label, x_lim, y_lim, use_title=False, use_ylabel=True, is_tight=True, figsize=(4,3)):
+    region_stim_bin_frame[x_col].hist(grid=False, bins=25, color=rcp.region_to_colour[region], range=x_lim, label=region.replace('_', ' ').capitalize(), figsize=figsize)
     plt.xlim(x_lim)
     plt.ylim(y_lim)
-    plt.xlabel(x_label, fontsize='large')
-    plt.ylabel('Number of pairs', fontsize='large')
+    plt.xlabel(x_label, fontsize='x-large')
+    plt.xticks(fontsize='x-large')
+    if use_ylabel:
+        plt.ylabel('Number of pairs', fontsize='x-large')
+        plt.yticks(fontsize='x-large')
+    else:
+        plt.yticks([])
     plt.title('Number measurements = ' + str(region_stim_bin_frame.shape[0]), fontsize='large') if use_title else 0
-    plt.legend()
-    plt.tight_layout()
+    plt.legend(fontsize='x-large')
+    plt.tight_layout() if is_tight else 0
 
 def saveAndClose(filename, directory):
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')

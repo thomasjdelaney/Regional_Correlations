@@ -164,6 +164,6 @@ else:
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Creating symmetric matrices...')
     corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
 
-runNNRSaveFigsData(info_matrix, 'info')
-# runNNRSaveFigsData(np.abs(corr_matrix), 'corr')
+# runNNRSaveFigsData(info_matrix, 'info')
+runNNRSaveFigsData(np.abs(corr_matrix), 'corr')
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
