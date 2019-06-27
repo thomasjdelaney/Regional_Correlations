@@ -61,11 +61,11 @@ def plotMeasureVsGeomMeanForRegion(working_frame, region, measure, y_lim, y_labe
     else:
         plt.yticks([])
     plt.ylim(y_lim)
-    plt.xlabel(r'Geometric Mean (a.u.)', fontsize='x-large')
+    plt.xlabel(r'Firing Rate Geom. Mean (Hz)', fontsize='x-large')
     plt.xticks(fontsize='x-large')
     plt.xlim([0, geom_max])
     plt.legend(fontsize='x-large', loc='upper right')
-    plt.text(geom_max*0.75, text_y, r'$\rho=$' + str(round(correlation,2)), fontsize='x-large')
+    plt.text(geom_max*0.6, text_y, r'$\rho=$' + str(round(correlation,2)), fontsize='x-large')
     plt.tight_layout() if is_tight else 0
 
 def saveAndClose(filename, directory):
@@ -79,7 +79,7 @@ def plotMeasuresVsGeomMean(working_frame, region, stim_id, prefix):
     print(dt.datetime.now().isoformat() + ' INFO: ' + 'Saving '+ filename + '...')
     plt.savefig(os.path.join(image_dir, 'geometric_mean', filename))
     plt.close()
-    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_qe', [0, working_frame.mutual_info_qe.max()], r'$I(X;Y)$ (bits)')
+    plotMeasureVsGeomMeanForRegion(working_frame, region, 'mutual_info_qe', [0, working_frame.mutual_info_qe.max()], y_label=r'$I(X;Y)$ (bits)')
     filename = prefix + 'info_vs_geometric_' + region + '_' + str(stim_id) + '.png'
     saveAndClose(filename, 'geometric_mean')
 

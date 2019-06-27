@@ -11,6 +11,8 @@ import datetime as dt
 import matplotlib.pyplot as plt
 from itertools import combinations
 from scipy.io import loadmat
+from matplotlib import colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 parser = argparse.ArgumentParser(description='For creating histograms of correlation coefficients.')
 parser.add_argument('-n', '--number_of_cells', help='The number of cells to choose at random.', default=1000, type=int)
@@ -137,6 +139,38 @@ def runNNRSaveFigsData(measure_matrix, measure_type): # measure type, 'info' or 
     noise_final_cell_info.to_pickle(os.path.join(npy_dir, measure_type, 'noise_final_cell_info_' + args.numpy_file_prefix + '_' + str(int(args.percentile)) + '.pkl'))
     print(dt.datetime.now().isoformat() + ' INFO: ' + measure_type.capitalize() + ' done.')
 
+def plotRegionalClusterMap(signal_final_cell_info):
+    colours = rcp.region_to_colour.keys()
+    num_nodes = signal_final_cell_info.shape[0]
+    sorted_final_cell_info = signal_final_cell_info.sort_values(['consensus_cluster', 'region', 'depth'], ascending=[False, True, True])
+    regional_cluster_matrix = np.zeros([num_nodes, num_nodes])
+    for i,j in combinations(np.arange(num_nodes), 2):
+        i_region = sorted_final_cell_info.iloc[i]['region']
+        j_region = sorted_final_cell_info.iloc[j]['region']
+        i_cluster = sorted_final_cell_info.iloc[i]['consensus_cluster']
+        j_cluster = sorted_final_cell_info.iloc[j]['consensus_cluster']
+        if (i_region == j_region) & (i_cluster == j_cluster):
+            regional_cluster_matrix[i,j] = colours.index(i_region)+1
+
+    regional_cluster_matrix = regional_cluster_matrix + regional_cluster_matrix.T
+    sorted_clustering = sorted_final_cell_info['consensus_cluster'].values
+    cluster_changes = np.hstack([-1, np.flatnonzero(np.diff(sorted_clustering) != 0), sorted_clustering.size-1]) + 0.5
+    cmap = colors.ListedColormap(np.vstack([colors.to_rgba('paleturquoise'), rcp.region_to_colour.values()]))
+    bounds = [0,1,2,3,4,5,6]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+    plt.figure()
+    ax = plt.gca()
+    im = ax.matshow(regional_cluster_matrix, cmap=cmap, norm=norm)
+    for i in range(cluster_changes.size-2):
+        ax.plot([cluster_changes[i+1], cluster_changes[i+1]], [cluster_changes[i], cluster_changes[i+2]], color='white', linewidth=2.0)
+        ax.plot([cluster_changes[i], cluster_changes[i+2]], [cluster_changes[i+1], cluster_changes[i+1]], color='white', linewidth=2.0)
+
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    cb = plt.colorbar(im, cax=cax, cmap=cmap, norm=norm, boundaries=bounds, ticks=np.array(bounds)[1:] - 0.5)
+    cb.set_ticklabels([c.replace('_', ' ').capitalize() for c in [''] + colours] )
+    plt.tight_layout()
+
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading cell info...')
 cell_info, id_adjustor = rc.loadCellInfo(csv_dir)
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Loading stim info...')
@@ -165,5 +199,5 @@ else:
     corr_matrix, symm_unc_matrix, info_matrix = getPairwiseMeasurementMatrices(pairs, region_sorted_cell_ids, pairwise_measurements)
 
 # runNNRSaveFigsData(info_matrix, 'info')
-runNNRSaveFigsData(np.abs(corr_matrix), 'corr')
+# runNNRSaveFigsData(np.abs(corr_matrix), 'corr')
 print(dt.datetime.now().isoformat() + ' INFO: ' + 'Done.')
