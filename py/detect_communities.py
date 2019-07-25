@@ -151,7 +151,6 @@ def plotRegionalClusterMap(signal_final_cell_info):
         j_cluster = sorted_final_cell_info.iloc[j]['consensus_cluster']
         if (i_region == j_region) & (i_cluster == j_cluster):
             regional_cluster_matrix[i,j] = colours.index(i_region)+1
-
     regional_cluster_matrix = regional_cluster_matrix + regional_cluster_matrix.T
     sorted_clustering = sorted_final_cell_info['consensus_cluster'].values
     cluster_changes = np.hstack([-1, np.flatnonzero(np.diff(sorted_clustering) != 0), sorted_clustering.size-1]) + 0.5
@@ -164,7 +163,6 @@ def plotRegionalClusterMap(signal_final_cell_info):
     for i in range(cluster_changes.size-2):
         ax.plot([cluster_changes[i+1], cluster_changes[i+1]], [cluster_changes[i], cluster_changes[i+2]], color='white', linewidth=2.0)
         ax.plot([cluster_changes[i], cluster_changes[i+2]], [cluster_changes[i+1], cluster_changes[i+1]], color='white', linewidth=2.0)
-
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
     cb = plt.colorbar(im, cax=cax, cmap=cmap, norm=norm, boundaries=bounds, ticks=np.array(bounds)[1:] - 0.5)
